@@ -62,7 +62,7 @@ export const HeatmapView: React.FC = () => {
       });
 
       // 2. Add high-contrast Mapbox-like Voyager tile layer
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
         subdomains: 'abcd',
         maxZoom: 20
@@ -85,7 +85,7 @@ export const HeatmapView: React.FC = () => {
       let color = '#10B981'; // Green (low priority)
       let urgencyText = 'Low Urgency';
       if (item.urgencyScore >= 75) {
-        color = '#EF4444'; // Red (extremely critical)
+        color = '#E76F51'; // Terracotta Red (extremely critical)
         urgencyText = 'Critical Urgency';
       } else if (item.urgencyScore >= 45) {
         color = '#F59E0B'; // Amber (medium warning)
@@ -96,20 +96,20 @@ export const HeatmapView: React.FC = () => {
       const circle = L.circle([item.lat, item.lng], {
         color: color,
         fillColor: color,
-        fillOpacity: 0.5,
+        fillOpacity: 0.45,
         radius: 180 + (item.urgencyScore * 2) // radius expands with distress
       });
 
-      // Simple HTML Popup with dark styling
+      // Simple HTML Popup with clean light styling
       const popupContent = `
-        <div style="font-family: sans-serif; padding: 6px; width: 220px; color: #f8fafc;">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-bottom: 8px;">
-            <span style="font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: ${color};">${item.category}</span>
-            <span style="background-color: ${color}20; color: ${color}; font-weight: 700; font-size: 11px; padding: 2px 6px; border-radius: 9999px;">${item.urgencyScore}/100</span>
+        <div style="font-family: 'Inter', sans-serif; padding: 4px; width: 220px; color: #3A2E2B;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E5DEC9; padding-bottom: 6px; margin-bottom: 8px;">
+            <span style="font-weight: 800; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: ${color};">${item.category}</span>
+            <span style="background-color: ${color}15; color: ${color}; font-weight: 800; font-size: 10px; padding: 2px 8px; border-radius: 6px; border: 1px solid ${color}20;">${item.urgencyScore}/100</span>
           </div>
-          <p style="font-size: 12px; font-weight: 600; color: #f1f5f9; margin: 0 0 4px 0;">${item.address}</p>
-          <div style="font-size: 11px; font-weight: 500; color: #94a3b8;">
-            Status: <span style="font-weight: 700; color: #cbd5e1;">${urgencyText}</span>
+          <p style="font-size: 12px; font-weight: 800; color: #3A2E2B; margin: 0 0 4px 0;">${item.address}</p>
+          <div style="font-size: 10px; font-weight: 700; color: #9A8C7F; text-transform: uppercase; tracking: 0.05em;">
+            Status: <span style="font-weight: 900; color: #3A2E2B;">${urgencyText}</span>
           </div>
         </div>
       `;
@@ -144,22 +144,22 @@ export const HeatmapView: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[500px] bg-slate-900 border border-slate-800 rounded-2xl shadow-xl">
-        <Loader2 className="w-8 h-8 text-teal-400 animate-spin" />
-        <span className="text-slate-400 font-semibold text-xs mt-3 uppercase tracking-wider">Compiling GIS Spatial Layers...</span>
+      <div className="flex flex-col items-center justify-center h-[500px] bg-[#FFFDF9] rounded-3xl shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] border border-white/40">
+        <Loader2 className="w-8 h-8 text-[#3F6C51] animate-spin" />
+        <span className="text-[#9A8C7F] font-black text-xs mt-3 uppercase tracking-wider">Compiling GIS Spatial Layers...</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-[500px] bg-rose-950/40 border border-rose-900/30 rounded-2xl shadow-xl p-6">
-        <AlertCircle className="w-10 h-10 text-rose-400 mb-2" />
-        <span className="text-rose-300 font-bold text-sm">Mapping Ingress Failure</span>
-        <p className="text-rose-400/80 text-xs text-center mt-1 max-w-sm">{error}</p>
+      <div className="flex flex-col items-center justify-center h-[500px] bg-[#FFFDF9] rounded-3xl shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] border border-white/40 p-6">
+        <AlertCircle className="w-10 h-10 text-[#E76F51] mb-2" />
+        <span className="text-[#3A2E2B] font-black text-sm">Mapping Ingress Failure</span>
+        <p className="text-[#9A8C7F] text-xs text-center mt-1 max-w-sm font-bold">{error}</p>
         <button 
           onClick={fetchHeatmap} 
-          className="mt-4 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow cursor-pointer transition-colors"
+          className="mt-4 px-5 py-2.5 bg-[#E76F51] text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-[4px_4px_8px_rgba(231,111,81,0.25),-4px_-4px_8px_#FFFFFF] cursor-pointer"
         >
           Retry Load
         </button>
@@ -171,30 +171,31 @@ export const HeatmapView: React.FC = () => {
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-1">
         <div>
-          <h3 className="text-base font-bold text-slate-100">Constituency Distress Heatmap</h3>
-          <p className="text-xs text-slate-500 font-medium">Real-time localized grievance clusters scaled by compound urgency factors (2km spatial radius)</p>
+          <h3 className="text-base font-black text-[#3A2E2B]">Constituency Distress Heatmap</h3>
+          <p className="text-xs text-[#9A8C7F] font-bold">Real-time localized grievance clusters scaled by compound urgency factors (2km spatial radius)</p>
         </div>
-        <div className="flex items-center space-x-4 text-[11px] font-semibold flex-wrap">
+        <div className="flex items-center space-x-4 text-[10px] font-black uppercase tracking-wider flex-wrap">
           <div className="flex items-center space-x-1.5">
-            <span className="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
-            <span className="text-slate-400">Critical (75+)</span>
+            <span className="w-2.5 h-2.5 bg-[#E76F51] rounded-full shadow-sm"></span>
+            <span className="text-[#9A8C7F]">Critical (75+)</span>
           </div>
           <div className="flex items-center space-x-1.5">
-            <span className="w-2.5 h-2.5 bg-amber-500 rounded-full"></span>
-            <span className="text-slate-400">High/Medium (45-74)</span>
+            <span className="w-2.5 h-2.5 bg-amber-500 rounded-full shadow-sm"></span>
+            <span className="text-[#9A8C7F]">High/Medium (45-74)</span>
           </div>
           <div className="flex items-center space-x-1.5">
-            <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span>
-            <span className="text-slate-400">Low (&lt;45)</span>
+            <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full shadow-sm"></span>
+            <span className="text-[#9A8C7F]">Low (&lt;45)</span>
           </div>
         </div>
       </div>
 
       <div 
         ref={mapContainerRef} 
-        className="w-full h-[520px] bg-slate-950 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden z-10" 
+        className="w-full h-[520px] bg-[#FFFDF9] rounded-3xl border border-white/40 shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] overflow-hidden z-10" 
         id="map-canvas"
       />
     </div>
   );
 };
+

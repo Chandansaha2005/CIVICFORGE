@@ -52,19 +52,20 @@ export const VouchButton: React.FC<VouchButtonProps> = ({
     <button
       onClick={handleVouch}
       disabled={loading || vouched}
-      className={`flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold border rounded-lg transition-all cursor-pointer ${
+      className={`flex items-center space-x-1.5 px-3 py-1.5 text-xs font-black uppercase rounded-xl transition-all cursor-pointer ${
         vouched
-          ? 'bg-emerald-950/40 text-emerald-400 border-emerald-900/30'
-          : 'bg-slate-950 hover:bg-teal-950/40 text-slate-400 hover:text-teal-400 border-slate-850 hover:border-teal-900/30'
+          ? 'bg-[#FFFDF9] shadow-[inset_2px_2px_5px_rgba(16,185,129,0.15),inset_-2px_-2px_5px_#FFFFFF] text-emerald-600 border border-emerald-500/20'
+          : 'bg-[#FFFDF9] text-[#9A8C7F] shadow-[2px_2px_5px_rgba(142,130,114,0.1),-2px_-2px_5px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 hover:text-[#3F6C51]'
       } disabled:opacity-80`}
       id={`vouch-btn-${solutionId}`}
     >
       {loading ? (
-        <Loader2 className="w-3.5 h-3.5 animate-spin text-teal-600" />
+        <Loader2 className="w-3.5 h-3.5 animate-spin text-[#3F6C51]" />
       ) : (
-        <ThumbsUp className={`w-3.5 h-3.5 ${vouched ? 'fill-emerald-500 text-emerald-600' : ''}`} />
+        <ThumbsUp className={`w-3.5 h-3.5 ${vouched ? 'fill-emerald-500 text-emerald-600' : 'text-[#9A8C7F]'}`} />
       )}
       <span>{vouchCount} {vouchCount === 1 ? 'Vouch' : 'Vouches'}</span>
     </button>
   );
 };
+

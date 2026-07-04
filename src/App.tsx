@@ -18,7 +18,7 @@ export default function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-teal-500/20 selection:text-teal-900" id="app-root-container">
+        <div className="min-h-screen bg-[#FAF6ED] flex flex-col font-sans selection:bg-[#E76F51]/20 selection:text-[#3A2E2B]" id="app-root-container">
           <Navbar />
           
           <main className="flex-1 flex flex-col">
@@ -93,17 +93,17 @@ export default function App() {
           <Toaster 
             position="bottom-right"
             toastOptions={{
-              className: 'text-xs font-bold text-slate-800 bg-white border border-slate-100 rounded-xl shadow-md p-4',
+              className: 'text-xs font-bold text-[#3A2E2B] bg-[#FFFDF9] border border-[#E5DEC9] rounded-xl shadow-md p-4',
               duration: 4000,
               success: {
                 iconTheme: {
-                  primary: '#10B981',
+                  primary: '#3F6C51',
                   secondary: '#FFFFFF'
                 }
               },
               error: {
                 iconTheme: {
-                  primary: '#EF4444',
+                  primary: '#E76F51',
                   secondary: '#FFFFFF'
                 }
               }

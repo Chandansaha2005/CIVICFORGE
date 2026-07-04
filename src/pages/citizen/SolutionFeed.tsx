@@ -7,7 +7,6 @@ import {
   MessageSquare, 
   Share2, 
   ExternalLink, 
-  Tag, 
   MapPin, 
   Trash2, 
   Send, 
@@ -122,8 +121,8 @@ const CommentThread: React.FC<{
   };
 
   return (
-    <div className="mt-4 pt-4 border-t border-slate-800/80 space-y-4">
-      <h4 className="text-xs font-bold uppercase tracking-wider text-teal-400">Discussion Forum</h4>
+    <div className="mt-4 pt-4 border-t border-[#E5DEC9]/60 space-y-4 animate-fade-in">
+      <h4 className="text-xs font-black uppercase tracking-wider text-[#3F6C51]">Discussion Forum</h4>
 
       {/* Comment Form */}
       {(user?.role === 'citizen' || user?.role === 'developer') ? (
@@ -134,51 +133,51 @@ const CommentThread: React.FC<{
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             disabled={submitting}
-            className="flex-1 bg-slate-950 border border-slate-800 focus:border-teal-500 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none transition-all"
+            className="flex-1 neumorphic-concave px-4 py-2.5 text-xs text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
           />
           <button
             type="submit"
             disabled={submitting || !newComment.trim()}
-            className="bg-teal-500 hover:bg-teal-400 disabled:bg-slate-800 text-slate-950 disabled:text-slate-500 rounded-xl px-4 flex items-center justify-center transition-all shrink-0 cursor-pointer"
+            className="bg-[#3F6C51] hover:bg-[#2d4d3a] disabled:bg-slate-300 text-white disabled:text-slate-500 rounded-xl px-4 flex items-center justify-center transition-all shrink-0 cursor-pointer shadow-[3px_3px_6px_rgba(63,108,81,0.2),-3px_-3px_6px_#FFFFFF]"
           >
             <Send className="w-3.5 h-3.5" />
           </button>
         </form>
       ) : (
-        <p className="text-[10px] text-slate-500 italic">Evaluating Member of Parliament cannot write comments.</p>
+        <p className="text-[10px] text-[#9A8C7F] font-bold italic">Evaluating Member of Parliament cannot write comments.</p>
       )}
 
       {/* Comments List */}
       {loading ? (
         <div className="py-4 text-center">
-          <div className="w-4 h-4 border-2 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div className="w-4 h-4 border-2 border-[#3F6C51] border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
       ) : comments.length === 0 ? (
-        <p className="text-xs text-slate-500 py-1">No feedback has been logged yet. Be the first to express support!</p>
+        <p className="text-xs text-[#9A8C7F] font-bold py-1">No feedback has been logged yet. Be the first to express support!</p>
       ) : (
         <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
           {comments.map((comment) => {
             const commentAuthorId = typeof comment.user === 'object' ? comment.user._id : comment.user;
             const isAuthor = commentAuthorId === user?.id || commentAuthorId?._id === user?.id;
             return (
-              <div key={comment._id} className="bg-slate-950 border border-slate-900 rounded-xl p-3 flex justify-between items-start hover:border-slate-800 transition-all">
+              <div key={comment._id} className="bg-[#FAF6ED] border border-[#E5DEC9]/40 rounded-2xl p-3 flex justify-between items-start hover:border-[#E5DEC9]/80 transition-all shadow-[inset_1px_1px_3px_rgba(142,130,114,0.06)]">
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-extrabold text-slate-200">{comment.user?.name || 'Anonymous User'}</span>
-                    <span className="text-[9px] font-bold uppercase tracking-wider bg-slate-900 border border-slate-800 px-1.5 py-0.2 text-slate-500 rounded">
+                    <span className="text-xs font-black text-[#3A2E2B]">{comment.user?.name || 'Anonymous User'}</span>
+                    <span className="text-[8px] font-black uppercase tracking-wider bg-[#FFFDF9] border border-[#E5DEC9]/40 px-1.5 py-0.2 text-[#9A8C7F] rounded">
                       {comment.user?.role}
                     </span>
-                    <span className="text-[10px] text-slate-500 font-mono">
+                    <span className="text-[10px] text-[#9A8C7F] font-bold">
                       {new Date(comment.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-300 font-medium leading-relaxed">{comment.text}</p>
+                  <p className="text-xs text-[#3A2E2B] font-bold leading-relaxed">{comment.text}</p>
                 </div>
 
                 {isAuthor && (
                   <button
                     onClick={() => handleDelete(comment._id)}
-                    className="text-slate-600 hover:text-rose-400 p-1.5 bg-transparent hover:bg-rose-500/10 rounded-lg transition-all border border-transparent cursor-pointer"
+                    className="text-[#9A8C7F] hover:text-[#E76F51] p-1.5 bg-[#FFFDF9] border border-white/40 shadow-[2px_2px_4px_rgba(142,130,114,0.08),-2px_-2px_4px_#FFFFFF] rounded-xl transition-all cursor-pointer"
                     title="Delete Comment"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -354,48 +353,48 @@ export const SolutionFeed: React.FC = () => {
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'deployed':
-        return 'bg-emerald-950/40 text-emerald-400 border-emerald-900/30';
+        return 'bg-[#FAF6ED] text-emerald-600 border border-emerald-500/25 shadow-[inset_1px_1px_3px_rgba(16,185,129,0.1)]';
       case 'matched':
-        return 'bg-indigo-950/40 text-indigo-400 border-indigo-900/30';
+        return 'bg-[#FAF6ED] text-[#3F6C51] border border-[#3F6C51]/25 shadow-[inset_1px_1px_3px_rgba(63,108,81,0.1)]';
       case 'under_review':
-        return 'bg-amber-950/40 text-amber-400 border-amber-900/30';
+        return 'bg-[#FAF6ED] text-amber-600 border border-amber-500/25 shadow-[inset_1px_1px_3px_rgba(217,119,6,0.1)]';
       default:
-        return 'bg-slate-900 text-slate-400 border-slate-800';
+        return 'bg-[#FAF6ED] text-[#9A8C7F] border border-[#E5DEC9]/50';
     }
   };
 
   return (
-    <div className="bg-slate-950 min-h-[calc(100vh-64px)] py-8 px-4 sm:px-6 lg:px-8 text-white" id="solutions-feed-page">
+    <div className="bg-[#FAF6ED] min-h-[calc(100vh-64px)] py-8 px-4 sm:px-6 lg:px-8 text-[#3A2E2B]" id="solutions-feed-page">
       <div className="max-w-4xl mx-auto space-y-8">
         
         {/* Header Hero Banner */}
-        <div className="bg-gradient-to-br from-slate-900 to-slate-950 p-6 rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden">
+        <div className="bg-[#FFFDF9] p-6 rounded-3xl border border-white/40 shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] relative overflow-hidden animate-fade-in">
           <div className="absolute right-0 top-0 transform translate-x-12 -translate-y-12 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl pointer-events-none"></div>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <div className="flex items-center space-x-2">
-                <TrendingUp className="w-4 h-4 text-teal-400 animate-pulse" />
-                <span className="text-teal-400 text-xs font-extrabold uppercase tracking-widest">Social Feed Layer</span>
+                <TrendingUp className="w-4 h-4 text-[#3F6C51] animate-pulse" />
+                <span className="text-[#3F6C51] text-xs font-black uppercase tracking-widest">Social Feed Layer</span>
               </div>
-              <h1 className="text-2xl font-black mt-1 text-slate-100 uppercase tracking-tight">Community Solutions Feed</h1>
-              <p className="text-slate-400 text-sm mt-1">
+              <h1 className="text-2xl font-black mt-1 text-[#3A2E2B] uppercase tracking-tight">Community Solutions Feed</h1>
+              <p className="text-[#9A8C7F] text-xs mt-1 font-bold">
                 Explore tech prototypes built by developers to address real citizen challenges. Log feedback and vouch to support them.
               </p>
             </div>
-            <div className="flex items-center space-x-3 bg-slate-950/50 border border-slate-800 p-3 rounded-xl">
+            <div className="flex items-center space-x-3 bg-[#FAF6ED] border border-white/40 shadow-[inset_1px_1px_3px_rgba(142,130,114,0.08)] p-3 rounded-2xl">
               <div className="text-center px-4">
-                <span className="block text-lg font-black text-teal-400">{solutions.length}</span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Listed</span>
+                <span className="block text-lg font-black text-[#3F6C51]">{solutions.length}</span>
+                <span className="text-[9px] font-black uppercase tracking-wider text-[#9A8C7F]">Listed</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-slate-900 border border-slate-800/80 rounded-2xl p-4 flex flex-col md:flex-row md:items-center gap-4">
-          <div className="flex items-center space-x-2 shrink-0 text-slate-400">
-            <Search className="w-4 h-4 text-teal-500" />
-            <span className="text-xs font-bold uppercase tracking-wider">Refine Feed</span>
+        <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-4 flex flex-col md:flex-row md:items-center gap-4 shadow-[6px_6px_12px_0px_#E5DEC9,-6px_-6px_12px_0px_#FFFFFF] animate-fade-in" style={{ animationDelay: '100ms' }}>
+          <div className="flex items-center space-x-2 shrink-0 text-[#9A8C7F]">
+            <Search className="w-4 h-4 text-[#3F6C51]" />
+            <span className="text-xs font-black uppercase tracking-wider">Refine Feed</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
@@ -404,14 +403,14 @@ export const SolutionFeed: React.FC = () => {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs font-medium text-slate-300 focus:outline-none focus:border-teal-500 appearance-none cursor-pointer"
+                className="w-full neumorphic-concave px-4 py-2.5 text-xs font-bold text-[#3A2E2B] focus:outline-none appearance-none cursor-pointer"
               >
                 <option value="">All Categories</option>
                 {categories.map(cat => (
                   <option key={cat} value={cat}>{cat.toUpperCase()}</option>
                 ))}
               </select>
-              <div className="absolute right-3.5 top-3 pointer-events-none text-slate-500 text-xs">▼</div>
+              <div className="absolute right-3.5 top-3.5 pointer-events-none text-[#9A8C7F] text-[10px]">▼</div>
             </div>
 
             {/* Region Input */}
@@ -421,35 +420,35 @@ export const SolutionFeed: React.FC = () => {
                 placeholder="Search by Developer Region..."
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs font-medium text-slate-300 focus:outline-none focus:border-teal-500"
+                className="w-full neumorphic-concave px-4 py-2.5 text-xs font-bold text-[#3A2E2B] focus:outline-none placeholder-[#9A8C7F]/60"
               />
-              <div className="absolute right-3.5 top-3 pointer-events-none text-slate-500 text-xs">📍</div>
+              <div className="absolute right-3.5 top-3 pointer-events-none text-[#9A8C7F] text-xs">📍</div>
             </div>
           </div>
         </div>
 
         {/* Solutions List */}
         {loading ? (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-16 text-center shadow-xl">
-            <div className="w-8 h-8 border-3 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p className="text-slate-400 font-medium text-xs mt-3.5 uppercase tracking-wider">Fetching solutions archive...</p>
+          <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-16 text-center shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF]">
+            <div className="w-8 h-8 border-3 border-[#3F6C51] border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="text-[#9A8C7F] font-black text-xs mt-3.5 uppercase tracking-wider">Fetching solutions archive...</p>
           </div>
         ) : solutions.length === 0 ? (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-16 text-center shadow-xl space-y-3">
-            <Layers className="w-10 h-10 text-slate-700 mx-auto" />
-            <p className="text-slate-300 text-sm font-semibold">No solutions matched your active criteria.</p>
-            <p className="text-slate-500 text-xs">Try clearing filters or check back later for new developer submissions.</p>
+          <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-16 text-center shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] space-y-3 animate-fade-in">
+            <Layers className="w-10 h-10 text-[#9A8C7F] mx-auto" />
+            <p className="text-[#3A2E2B] text-sm font-black">No solutions matched your active criteria.</p>
+            <p className="text-[#9A8C7F] text-xs font-bold">Try clearing filters or check back later for new developer submissions.</p>
           </div>
         ) : (
-          <div className="space-y-6" id="solutions-feed-container">
+          <div className="space-y-6 animate-fade-in" style={{ animationDelay: '150ms' }} id="solutions-feed-container">
             {solutions.map((sol) => (
               <div 
                 key={sol._id} 
-                className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-4 hover:border-slate-700 transition-all relative overflow-hidden"
+                className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-6 shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] space-y-4 hover:bg-[#FFFDF9]/95 transition-all duration-300 relative overflow-hidden"
               >
                 {/* Deployed Badge Watermark/Top bar */}
                 {sol.status === 'deployed' && (
-                  <div className="absolute top-0 right-0 bg-emerald-500 text-slate-950 text-[10px] font-extrabold uppercase tracking-widest px-4 py-1.5 rounded-bl-xl shadow-md flex items-center space-x-1">
+                  <div className="absolute top-0 right-0 bg-emerald-600 text-white text-[9px] font-black uppercase tracking-wider px-4 py-1.5 rounded-bl-2xl shadow-sm flex items-center space-x-1">
                     <Award className="w-3.5 h-3.5" />
                     <span>Deployed</span>
                   </div>
@@ -459,22 +458,22 @@ export const SolutionFeed: React.FC = () => {
                 <div className="flex justify-between items-start">
                   <div className="space-y-0.5">
                     <div className="flex items-center space-x-2">
-                      <span className="text-xs text-slate-400 font-bold">Created by</span>
-                      <span className="text-sm font-black text-slate-100">{sol.developer?.name || 'Anonymous Developer'}</span>
+                      <span className="text-xs text-[#9A8C7F] font-bold">Created by</span>
+                      <span className="text-sm font-black text-[#3A2E2B]">{sol.developer?.name || 'Anonymous Developer'}</span>
                     </div>
                     {sol.developer?.region && (
-                      <div className="flex items-center space-x-1 text-[10px] text-slate-500 font-bold">
-                        <MapPin className="w-3 h-3 text-slate-600" />
+                      <div className="flex items-center space-x-1 text-[10px] text-[#9A8C7F] font-bold">
+                        <MapPin className="w-3 h-3 text-[#E76F51]" />
                         <span>{sol.developer.region}</span>
                       </div>
                     )}
                   </div>
 
                   <div className="flex items-center space-x-2 shrink-0 mr-12 sm:mr-0">
-                    <span className="text-[10px] font-black uppercase tracking-widest bg-slate-950 text-slate-400 px-2 py-0.5 border border-slate-800 rounded">
+                    <span className="bg-[#FAF6ED] text-[#9A8C7F] text-[9px] font-black uppercase tracking-wider px-2 py-0.5 border border-[#E5DEC9]/60 rounded-md">
                       {sol.targetCategory}
                     </span>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 border rounded-full ${getStatusBadgeColor(sol.status)}`}>
+                    <span className={`text-[9px] font-black uppercase tracking-wider px-2.5 py-1 border rounded-full ${getStatusBadgeColor(sol.status)}`}>
                       {sol.status.replace('_', ' ')}
                     </span>
                   </div>
@@ -482,8 +481,8 @@ export const SolutionFeed: React.FC = () => {
 
                 {/* Title & Description */}
                 <div className="space-y-1.5">
-                  <h3 className="text-base font-extrabold text-teal-400 tracking-tight">{sol.title}</h3>
-                  <p className="text-slate-300 text-xs font-medium leading-relaxed">{sol.description}</p>
+                  <h3 className="text-base font-black text-[#3F6C51] tracking-tight">{sol.title}</h3>
+                  <p className="text-[#3A2E2B] text-xs font-bold leading-relaxed">{sol.description}</p>
                 </div>
 
                 {/* Tech Stack Tags */}
@@ -492,7 +491,7 @@ export const SolutionFeed: React.FC = () => {
                     {sol.techStack.map((tech, idx) => (
                       <span 
                         key={idx} 
-                        className="text-[9px] font-extrabold font-mono uppercase tracking-wider bg-slate-950 text-slate-400 border border-slate-800/80 px-2 py-0.5 rounded"
+                        className="text-[9px] font-black font-mono uppercase tracking-wider bg-[#FAF6ED] text-[#9A8C7F] border border-[#E5DEC9]/60 px-2 py-0.5 rounded-md"
                       >
                         {tech}
                       </span>
@@ -508,9 +507,9 @@ export const SolutionFeed: React.FC = () => {
                         href={sol.repoUrl} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="text-slate-400 hover:text-teal-400 flex items-center space-x-1 transition-all"
+                        className="text-[#9A8C7F] hover:text-[#3F6C51] flex items-center space-x-1 transition-all"
                       >
-                        <ExternalLink className="w-3.5 h-3.5" />
+                        <ExternalLink className="w-3.5 h-3.5 text-[#3F6C51]" />
                         <span>Source Code</span>
                       </a>
                     )}
@@ -519,9 +518,9 @@ export const SolutionFeed: React.FC = () => {
                         href={sol.demoUrl} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="text-slate-400 hover:text-teal-400 flex items-center space-x-1 transition-all"
+                        className="text-[#9A8C7F] hover:text-[#3F6C51] flex items-center space-x-1 transition-all"
                       >
-                        <ExternalLink className="w-3.5 h-3.5" />
+                        <ExternalLink className="w-3.5 h-3.5 text-[#3F6C51]" />
                         <span>Live Demo</span>
                       </a>
                     )}
@@ -530,31 +529,31 @@ export const SolutionFeed: React.FC = () => {
                         href={sol.docsUrl} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="text-slate-400 hover:text-teal-400 flex items-center space-x-1 transition-all"
+                        className="text-[#9A8C7F] hover:text-[#3F6C51] flex items-center space-x-1 transition-all"
                       >
-                        <ExternalLink className="w-3.5 h-3.5" />
+                        <ExternalLink className="w-3.5 h-3.5 text-[#3F6C51]" />
                         <span>Documentation</span>
                       </a>
                     )}
                   </div>
                 )}
 
-                <div className="h-px bg-slate-800/60 my-2"></div>
+                <div className="h-px bg-[#E5DEC9]/60 my-2"></div>
 
                 {/* Card Action Controls: Vouch, Comment, Share */}
-                <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+                <div className="flex items-center justify-between text-xs font-bold text-[#9A8C7F]">
                   <div className="flex items-center space-x-5">
                     {/* Vouch Toggle Button */}
                     <button
                       onClick={() => handleVouchToggle(sol._id)}
                       className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
                         sol.vouched 
-                          ? 'text-rose-400 bg-rose-950/20 border-rose-900/30' 
-                          : 'hover:text-rose-400 bg-transparent border-transparent'
+                          ? 'text-[#E76F51] bg-[#FAF6ED] border border-white/50 shadow-[inset_2px_2px_4px_rgba(231,111,81,0.1)]' 
+                          : 'bg-[#FFFDF9] border border-white/40 shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] text-[#9A8C7F] hover:text-[#E76F51]'
                       }`}
                       title={sol.vouched ? 'Remove Vouch' : 'Vouch for this Solution'}
                     >
-                      <Heart className={`w-4 h-4 transition-transform active:scale-125 ${sol.vouched ? 'fill-rose-400 text-rose-400' : ''}`} />
+                      <Heart className={`w-4 h-4 transition-transform active:scale-125 ${sol.vouched ? 'fill-[#E76F51] text-[#E76F51]' : ''}`} />
                       <span>{sol.vouchCount || 0} Support</span>
                     </button>
 
@@ -563,8 +562,8 @@ export const SolutionFeed: React.FC = () => {
                       onClick={() => toggleComments(sol._id)}
                       className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
                         expandedSolutions[sol._id]
-                          ? 'text-teal-400 bg-teal-950/20 border-teal-900/30'
-                          : 'hover:text-teal-400 bg-transparent border-transparent'
+                          ? 'text-[#3F6C51] bg-[#FAF6ED] border border-white/50 shadow-[inset_2px_2px_4px_rgba(63,108,81,0.1)]'
+                          : 'bg-[#FFFDF9] border border-white/40 shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] text-[#9A8C7F] hover:text-[#3F6C51]'
                       }`}
                     >
                       <MessageSquare className="w-4 h-4" />
@@ -575,7 +574,7 @@ export const SolutionFeed: React.FC = () => {
                   {/* Share Tracking Link Copy */}
                   <button
                     onClick={() => handleShare(sol._id)}
-                    className="flex items-center space-x-1.5 hover:text-teal-400 px-3 py-1.5 rounded-xl border border-transparent hover:border-slate-800 hover:bg-slate-950 transition-all cursor-pointer"
+                    className="flex items-center space-x-1.5 bg-[#FFFDF9] border border-white/40 shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] text-[#9A8C7F] hover:text-[#3F6C51] px-3 py-1.5 rounded-xl transition-all cursor-pointer"
                     title="Copy Shareable Link"
                   >
                     <Share2 className="w-4 h-4" />
@@ -603,7 +602,7 @@ export const SolutionFeed: React.FC = () => {
             <button
               onClick={loadMore}
               disabled={loadingMore}
-              className="bg-slate-900 border border-slate-850 hover:border-teal-500 text-teal-400 hover:text-teal-300 rounded-xl px-6 py-3 text-xs font-bold uppercase tracking-wider shadow-lg hover:shadow-teal-500/5 transition-all cursor-pointer disabled:opacity-50"
+              className="bg-[#FFFDF9] border border-white/40 hover:shadow-[inset_2px_2px_4px_rgba(142,130,114,0.1)] text-[#3F6C51] hover:text-[#2d4d3a] rounded-xl px-6 py-3 text-xs font-black uppercase tracking-wider shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] transition-all cursor-pointer disabled:opacity-50"
             >
               {loadingMore ? 'Loading Feeds...' : 'Retrieve More Solutions'}
             </button>
@@ -614,3 +613,4 @@ export const SolutionFeed: React.FC = () => {
     </div>
   );
 };
+

@@ -12,10 +12,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowe
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+      <div className="flex items-center justify-center min-h-screen bg-[#FAF6ED]">
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" id="loader-spinner"></div>
-          <p className="text-slate-500 font-medium">Securing session...</p>
+          <div className="w-12 h-12 border-4 border-[#3F6C51] border-t-transparent rounded-full animate-spin" id="loader-spinner"></div>
+          <p className="text-[#9A8C7F] font-bold">Securing session...</p>
         </div>
       </div>
     );

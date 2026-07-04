@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, ArrowUpDown, MapPin, Sparkles, Plus, AlertTriangle, Check } from 'lucide-react';
+import { ArrowUpDown, MapPin, Sparkles, Check } from 'lucide-react';
 
 interface Grievance {
   _id: string;
@@ -55,12 +55,12 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
 
   const getUrgencyBadge = (score: number) => {
     if (score >= 75) {
-      return 'bg-rose-950/40 text-rose-400 border-rose-900/30';
+      return 'bg-[#FAF6ED] text-[#E76F51] border border-[#E76F51]/25 shadow-[inset_1px_1px_3px_rgba(231,111,81,0.1)]';
     }
     if (score >= 45) {
-      return 'bg-amber-950/40 text-amber-400 border-amber-900/30';
+      return 'bg-[#FAF6ED] text-amber-600 border border-amber-500/25 shadow-[inset_1px_1px_3px_rgba(217,119,6,0.1)]';
     }
-    return 'bg-emerald-950/40 text-emerald-400 border-emerald-900/30';
+    return 'bg-[#FAF6ED] text-emerald-600 border border-emerald-500/25 shadow-[inset_1px_1px_3px_rgba(16,185,129,0.1)]';
   };
 
   // Filter and Sort Data
@@ -89,13 +89,13 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
           placeholder="Search by keywords or address..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-teal-500"
+          className="w-full neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
         />
 
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-teal-500"
+          className="neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] font-bold focus:outline-none"
         >
           <option value="">All Categories</option>
           <option value="water">Water</option>
@@ -110,7 +110,7 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-teal-500"
+          className="neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] font-bold focus:outline-none"
         >
           <option value="">All Statuses</option>
           <option value="pending_review">Pending Review</option>
@@ -121,44 +121,44 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
       </div>
 
       {/* 2. Priority Ranked Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+      <div className="bg-[#FFFDF9] rounded-3xl shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] border border-white/40 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse" id="priority-table">
             <thead>
-              <tr className="bg-slate-950 border-b border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                <th className="py-3.5 px-5">Location & Issue Details</th>
-                <th className="py-3.5 px-3 text-center cursor-pointer hover:bg-slate-900/60 transition-colors select-none" onClick={() => handleSort('urgencyScore')}>
+              <tr className="bg-[#FAF6ED] border-b border-[#E5DEC9]/60 text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">
+                <th className="py-4 px-5">Location & Issue Details</th>
+                <th className="py-4 px-3 text-center cursor-pointer hover:bg-[#FAF6ED]/50 transition-colors select-none" onClick={() => handleSort('urgencyScore')}>
                   <div className="flex items-center justify-center space-x-1">
                     <span>Urgency</span>
-                    <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" />
+                    <ArrowUpDown className="w-3 h-3 text-[#9A8C7F]" />
                   </div>
                 </th>
-                <th className="py-3.5 px-3 text-center cursor-pointer hover:bg-slate-900/60 transition-colors select-none" onClick={() => handleSort('recurrenceCount')}>
+                <th className="py-4 px-3 text-center cursor-pointer hover:bg-[#FAF6ED]/50 transition-colors select-none" onClick={() => handleSort('recurrenceCount')}>
                   <div className="flex items-center justify-center space-x-1">
                     <span>Recurrence</span>
-                    <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" />
+                    <ArrowUpDown className="w-3 h-3 text-[#9A8C7F]" />
                   </div>
                 </th>
-                <th className="py-3.5 px-3 text-center cursor-pointer hover:bg-slate-900/60 transition-colors select-none" onClick={() => handleSort('stressScore')}>
+                <th className="py-4 px-3 text-center cursor-pointer hover:bg-[#FAF6ED]/50 transition-colors select-none" onClick={() => handleSort('stressScore')}>
                   <div className="flex items-center justify-center space-x-1">
-                    <span>Stress Score</span>
-                    <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Stress</span>
+                    <ArrowUpDown className="w-3 h-3 text-[#9A8C7F]" />
                   </div>
                 </th>
-                <th className="py-3.5 px-3 text-center cursor-pointer hover:bg-slate-900/60 transition-colors select-none" onClick={() => handleSort('infrastructureGapScore')}>
+                <th className="py-4 px-3 text-center cursor-pointer hover:bg-[#FAF6ED]/50 transition-colors select-none" onClick={() => handleSort('infrastructureGapScore')}>
                   <div className="flex items-center justify-center space-x-1">
                     <span>Gap Score</span>
-                    <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" />
+                    <ArrowUpDown className="w-3 h-3 text-[#9A8C7F]" />
                   </div>
                 </th>
-                <th className="py-3.5 px-4 text-left">Top Active Solution</th>
-                <th className="py-3.5 px-5 text-center">Actions</th>
+                <th className="py-4 px-4 text-left">Top Active Solution</th>
+                <th className="py-4 px-5 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-[#E5DEC9]/40">
               {filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-sm text-slate-500 font-medium bg-slate-950/20">
+                  <td colSpan={7} className="py-12 text-center text-sm text-[#9A8C7F] font-bold">
                     No community grievances found matching the filters.
                   </td>
                 </tr>
@@ -168,8 +168,8 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
                   return (
                     <tr 
                       key={item._id} 
-                      className={`hover:bg-slate-950/40 transition-colors cursor-pointer ${
-                        isSelected ? 'bg-teal-950/20 hover:bg-teal-950/30' : ''
+                      className={`hover:bg-[#FAF6ED]/40 transition-colors cursor-pointer ${
+                        isSelected ? 'bg-[#FAF6ED] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.08),inset_-2px_-2px_5px_#FFFFFF]' : ''
                       }`}
                       onClick={() => onSelectGrievance(item)}
                     >
@@ -177,25 +177,25 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
                       <td className="py-4 px-5 max-w-sm">
                         <div className="space-y-1.5">
                           <div className="flex items-center space-x-2">
-                            <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-950 text-slate-400 px-2 py-0.5 border border-slate-800 rounded">
+                            <span className="bg-[#FFFDF9] text-[#9A8C7F] text-[9px] font-black uppercase tracking-wider px-2 py-0.5 border border-[#E5DEC9]/40 rounded-md shadow-[1px_1px_3px_rgba(142,130,114,0.06)]">
                               {item.category}
                             </span>
-                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 border rounded-full ${
-                              item.status === 'pending_review' ? 'bg-amber-950/40 text-amber-400 border-amber-900/30' :
-                              item.status === 'verified' ? 'bg-teal-950/40 text-teal-400 border-teal-900/30' :
-                              item.status === 'matched' ? 'bg-indigo-950/40 text-indigo-400 border-indigo-900/30' :
-                              'bg-slate-900 text-slate-400 border-slate-800'
+                            <span className={`text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 border rounded-full ${
+                              item.status === 'pending_review' ? 'bg-[#FAF6ED] text-amber-600 border border-amber-500/25 shadow-[inset_1px_1px_3px_rgba(217,119,6,0.1)]' :
+                              item.status === 'verified' ? 'bg-[#FAF6ED] text-[#3F6C51] border border-[#3F6C51]/25 shadow-[inset_1px_1px_3px_rgba(63,108,81,0.1)]' :
+                              item.status === 'matched' ? 'bg-[#FAF6ED] text-[#3F6C51] border border-[#3F6C51]/20' :
+                              'bg-[#FAF6ED] text-[#9A8C7F] border border-[#E5DEC9]/50'
                             }`}>
                               {item.status.replace('_', ' ')}
                             </span>
                           </div>
-                          <p className="text-sm font-semibold text-slate-100 line-clamp-2 leading-relaxed">{item.description}</p>
-                          <div className="flex items-center space-x-1 text-slate-500 text-xs">
-                            <MapPin className="w-3.5 h-3.5 text-slate-600" />
-                            <span className="truncate font-medium">{item.location?.address}</span>
+                          <p className="text-sm font-bold text-[#3A2E2B] line-clamp-2 leading-relaxed">{item.description}</p>
+                          <div className="flex items-center space-x-1 text-[#9A8C7F] text-xs">
+                            <MapPin className="w-3.5 h-3.5 text-[#E76F51]" />
+                            <span className="truncate font-bold">{item.location?.address}</span>
                           </div>
                           {item.inputType === 'voice' && item.transcript && (
-                            <p className="text-[11px] text-teal-300 bg-teal-950/30 border border-teal-900/30 rounded p-1.5 font-medium italic">
+                            <p className="text-[11px] text-[#3F6C51] bg-[#3F6C51]/5 border border-[#3F6C51]/15 rounded-xl p-2.5 font-bold italic shadow-[inset_1px_1px_3px_rgba(63,108,81,0.06)]">
                               "Transcribed: {item.transcript}"
                             </p>
                           )}
@@ -204,7 +204,7 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
 
                       {/* Urgency Score Column */}
                       <td className="py-4 px-3 text-center">
-                        <span className={`text-sm font-bold border px-3 py-1 rounded-full ${getUrgencyBadge(item.urgencyScore)}`}>
+                        <span className={`text-xs font-black border px-3 py-1 rounded-full ${getUrgencyBadge(item.urgencyScore)}`}>
                           {item.urgencyScore}
                         </span>
                       </td>
@@ -212,24 +212,24 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
                       {/* Recurrence Count Column */}
                       <td className="py-4 px-3 text-center">
                         <div className="flex flex-col items-center">
-                          <span className="text-sm font-bold text-slate-200">{item.recurrenceCount}</span>
-                          <span className="text-[9px] font-bold uppercase text-slate-500 tracking-wider">Reports</span>
+                          <span className="text-sm font-black text-[#3A2E2B]">{item.recurrenceCount}</span>
+                          <span className="text-[9px] font-black uppercase text-[#9A8C7F] tracking-wider">Reports</span>
                         </div>
                       </td>
 
                       {/* Stress Score Column */}
                       <td className="py-4 px-3 text-center">
                         <div className="flex flex-col items-center">
-                          <span className="text-sm font-bold text-slate-200">{item.stressScore}%</span>
-                          <span className="text-[9px] font-bold uppercase text-slate-500 tracking-wider">distress</span>
+                          <span className="text-sm font-black text-[#3A2E2B]">{item.stressScore}%</span>
+                          <span className="text-[9px] font-black uppercase text-[#9A8C7F] tracking-wider">distress</span>
                         </div>
                       </td>
 
                       {/* Infrastructure Gap Score Column */}
                       <td className="py-4 px-3 text-center">
                         <div className="flex flex-col items-center">
-                          <span className="text-sm font-bold text-slate-200">{item.infrastructureGapScore}%</span>
-                          <span className="text-[9px] font-bold uppercase text-slate-500 tracking-wider">Census deficit</span>
+                          <span className="text-sm font-black text-[#3A2E2B]">{item.infrastructureGapScore}%</span>
+                          <span className="text-[9px] font-black uppercase text-[#9A8C7F] tracking-wider">Census deficit</span>
                         </div>
                       </td>
 
@@ -237,16 +237,16 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
                       <td className="py-4 px-4 max-w-xs text-left">
                         {item.topSolution ? (
                           <div className="space-y-1">
-                            <span className="text-xs font-extrabold text-teal-400 block truncate max-w-[170px]" title={item.topSolution.title}>
+                            <span className="text-xs font-black text-[#3F6C51] block truncate max-w-[170px]" title={item.topSolution.title}>
                               {item.topSolution.title}
                             </span>
-                            <div className="text-[10px] text-slate-400 font-bold">
+                            <div className="text-[10px] text-[#9A8C7F] font-bold">
                               by {item.topSolution.developer?.name || 'Anonymous Dev'}
                             </div>
-                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-slate-500">
+                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-[#9A8C7F]">
                               <span>Support: {item.topSolution.vouchCount || 0}</span>
                               {item.weeklyMomentum && item.weeklyMomentum > 0 ? (
-                                <span className="text-amber-400 bg-amber-950/40 border border-amber-900/30 px-1.5 py-0.2 rounded inline-flex items-center space-x-0.5" title="Vouches gained in last 7 days">
+                                <span className="text-[#E76F51] bg-[#FFFDF9] border border-[#E76F51]/25 px-1.5 py-0.2 rounded inline-flex items-center space-x-0.5" title="Vouches gained in last 7 days">
                                   <span>🔥</span>
                                   <span>+{item.weeklyMomentum} wkly</span>
                                 </span>
@@ -254,7 +254,7 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
                             </div>
                           </div>
                         ) : (
-                          <span className="text-[10px] text-slate-500 font-bold italic">No prototypes listed</span>
+                          <span className="text-[10px] text-[#9A8C7F] font-bold italic">No prototypes listed</span>
                         )}
                       </td>
 
@@ -264,21 +264,21 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
                           {item.status === 'pending_review' ? (
                             <button
                               onClick={() => onVerify(item._id)}
-                              className="text-xs bg-teal-500 hover:bg-teal-450 text-slate-950 font-bold px-3 py-1.5 rounded-lg border border-teal-400/20 shadow-sm flex items-center space-x-1 cursor-pointer transition-all"
+                              className="text-xs bg-[#3F6C51] hover:bg-[#2d4d3a] text-white font-black px-3 py-1.5 rounded-xl border border-white/20 shadow-[3px_3px_6px_rgba(63,108,81,0.2),-3px_-3px_6px_#FFFFFF] flex items-center space-x-1 cursor-pointer transition-all"
                               title="Verify grievance"
                             >
                               <Check className="w-3.5 h-3.5" />
                               <span>Verify</span>
                             </button>
                           ) : (
-                            <span className="text-xs text-slate-400 font-semibold flex items-center space-x-0.5">
-                              <Check className="w-3.5 h-3.5 text-emerald-500" />
+                            <span className="text-xs text-[#9A8C7F] font-bold flex items-center space-x-0.5">
+                              <Check className="w-3.5 h-3.5 text-emerald-600 font-extrabold" />
                               <span>Verified</span>
                             </span>
                           )}
                           <button
                             onClick={() => onSelectGrievance(item)}
-                            className="text-xs text-slate-300 hover:text-teal-400 bg-slate-950 hover:bg-teal-950/40 border border-slate-850 hover:border-teal-900/30 px-3 py-1.5 rounded-lg font-bold flex items-center space-x-1 cursor-pointer transition-all"
+                            className="text-xs text-[#9A8C7F] hover:text-[#3F6C51] bg-[#FFFDF9] hover:shadow-[inset_2px_2px_4px_rgba(142,130,114,0.1)] border border-white/40 shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] px-3 py-1.5 rounded-xl font-black uppercase tracking-wider flex items-center space-x-1 cursor-pointer transition-all"
                           >
                             <Sparkles className="w-3.5 h-3.5" />
                             <span>Match</span>
@@ -296,3 +296,4 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
     </div>
   );
 };
+

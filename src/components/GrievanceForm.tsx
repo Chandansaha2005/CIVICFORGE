@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import axiosClient from '../api/axiosClient';
 import { 
   FileText, 
@@ -7,7 +7,6 @@ import {
   MapPin, 
   Upload, 
   CheckCircle, 
-  Play, 
   Square, 
   Trash2, 
   Loader2 
@@ -213,16 +212,16 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-xl overflow-hidden" id="citizen-grievance-form">
+    <div className="bg-[#FFFDF9] rounded-3xl shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] border border-white/40 overflow-hidden" id="citizen-grievance-form">
       {/* Tab selectors */}
-      <div className="flex border-b border-slate-800 bg-slate-950/50">
+      <div className="flex bg-[#FAF6ED] p-1.5 border-b border-[#E5DEC9]/60">
         <button
           type="button"
           onClick={() => { setActiveTab('text'); setError(null); }}
-          className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-xs font-semibold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+          className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-xs font-black uppercase tracking-wider rounded-xl transition-all cursor-pointer ${
             activeTab === 'text' 
-              ? 'border-teal-500 text-teal-400 bg-slate-900' 
-              : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
+              ? 'bg-[#FFFDF9] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15),inset_-2px_-2px_5px_#FFFFFF] text-[#3F6C51] border border-[#3F6C51]/15' 
+              : 'text-[#9A8C7F] hover:text-[#3A2E2B] border border-transparent'
           }`}
           id="tab-text-btn"
         >
@@ -232,10 +231,10 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
         <button
           type="button"
           onClick={() => { setActiveTab('photo'); setError(null); }}
-          className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-xs font-semibold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+          className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-xs font-black uppercase tracking-wider rounded-xl transition-all cursor-pointer ${
             activeTab === 'photo' 
-              ? 'border-teal-500 text-teal-400 bg-slate-900' 
-              : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
+              ? 'bg-[#FFFDF9] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15),inset_-2px_-2px_5px_#FFFFFF] text-[#3F6C51] border border-[#3F6C51]/15' 
+              : 'text-[#9A8C7F] hover:text-[#3A2E2B] border border-transparent'
           }`}
           id="tab-photo-btn"
         >
@@ -245,10 +244,10 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
         <button
           type="button"
           onClick={() => { setActiveTab('voice'); setError(null); }}
-          className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-xs font-semibold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+          className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-xs font-black uppercase tracking-wider rounded-xl transition-all cursor-pointer ${
             activeTab === 'voice' 
-              ? 'border-teal-500 text-teal-400 bg-slate-900' 
-              : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
+              ? 'bg-[#FFFDF9] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15),inset_-2px_-2px_5px_#FFFFFF] text-[#3F6C51] border border-[#3F6C51]/15' 
+              : 'text-[#9A8C7F] hover:text-[#3A2E2B] border border-transparent'
           }`}
           id="tab-voice-btn"
         >
@@ -260,13 +259,13 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {/* Error and Success alerts */}
         {error && (
-          <div className="bg-rose-950/40 text-rose-300 text-sm px-4 py-3 rounded-xl border border-rose-900/30" id="form-error">
+          <div className="bg-[#E76F51]/10 text-[#E76F51] text-xs px-4 py-3 rounded-xl border border-[#E76F51]/20 font-bold" id="form-error">
             {error}
           </div>
         )}
         {successMsg && (
-          <div className="bg-emerald-950/40 text-emerald-300 text-sm px-4 py-4 rounded-xl border border-emerald-900/30 flex items-start space-x-2.5" id="form-success">
-            <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="bg-[#3F6C51]/10 text-[#3F6C51] text-xs px-4 py-4 rounded-xl border border-[#3F6C51]/20 flex items-start space-x-2.5 font-bold" id="form-success">
+            <CheckCircle className="w-5 h-5 text-[#3F6C51] shrink-0 mt-0.5" />
             <span>{successMsg}</span>
           </div>
         )}
@@ -274,14 +273,14 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
         {/* 1. Location Selection Block */}
         <div className="space-y-3.5">
           <div className="flex justify-between items-center">
-            <label className="text-sm font-semibold text-slate-200 flex items-center space-x-1.5">
-              <MapPin className="w-4 h-4 text-teal-400" />
+            <label className="text-xs font-black uppercase tracking-wider text-[#9A8C7F] flex items-center space-x-1.5">
+              <MapPin className="w-4 h-4 text-[#E76F51]" />
               <span>Problem Location / Geo-Tag</span>
             </label>
             <button
               type="button"
               onClick={detectLocation}
-              className="text-xs text-teal-400 hover:text-teal-300 font-medium flex items-center space-x-1 hover:underline cursor-pointer"
+              className="text-xs text-[#3F6C51] hover:text-[#E76F51] font-bold flex items-center space-x-1 hover:underline cursor-pointer"
             >
               <MapPin className="w-3.5 h-3.5" />
               <span>Use My GPS Location</span>
@@ -290,47 +289,49 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
 
           {!useCustomLocation ? (
             <div>
-              <select
-                value={SECTORS.findIndex(s => s.name === selectedSector.name)}
-                onChange={(e) => setSelectedSector(SECTORS[Number(e.target.value)])}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-200 focus:outline-none focus:border-teal-500"
-                id="location-select"
-              >
-                {SECTORS.map((sector, idx) => (
-                  <option key={sector.name} value={idx}>{sector.name}</option>
-                ))}
-              </select>
-              <p className="text-[11px] text-slate-500 mt-1.5 font-medium italic">
-                Coordinates: {selectedSector.lat}, {selectedSector.lng} • Address: {selectedSector.address}
+              <div className="relative">
+                <select
+                  value={SECTORS.findIndex(s => s.name === selectedSector.name)}
+                  onChange={(e) => setSelectedSector(SECTORS[Number(e.target.value)])}
+                  className="w-full neumorphic-concave px-4 py-3 text-sm font-bold text-[#3A2E2B] border-none focus:outline-none"
+                  id="location-select"
+                >
+                  {SECTORS.map((sector, idx) => (
+                    <option key={sector.name} value={idx}>{sector.name}</option>
+                  ))}
+                </select>
+              </div>
+              <p className="text-[10px] text-[#9A8C7F] mt-2 font-bold italic">
+                Coordinates: {selectedSector.lat}, {selectedSector.lng} • {selectedSector.address}
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-950/40 p-4 border border-slate-850 rounded-xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#FAF6ED]/50 p-4 border border-white/20 rounded-2xl shadow-[inset_1px_1px_3px_rgba(142,130,114,0.08)]">
               <div>
-                <label className="text-[11px] uppercase tracking-wider font-bold text-slate-500">Custom Address / Area Name</label>
+                <label className="text-[9px] uppercase tracking-wider font-black text-[#9A8C7F]">Custom Address / Area Name</label>
                 <input
                   type="text"
                   required
                   value={customAddress}
                   onChange={(e) => setCustomAddress(e.target.value)}
                   placeholder="e.g. Behala Tram Depot, Ward 120"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 mt-1"
+                  className="w-full neumorphic-concave px-3 py-2 text-xs text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium mt-1"
                 />
               </div>
               <div>
-                <label className="text-[11px] uppercase tracking-wider font-bold text-slate-500">Lat, Lng</label>
+                <label className="text-[9px] uppercase tracking-wider font-black text-[#9A8C7F]">Lat, Lng</label>
                 <input
                   type="text"
                   readOnly
                   value={`${customLat}, ${customLng}`}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-slate-400 focus:outline-none mt-1 cursor-not-allowed"
+                  className="w-full bg-[#FAF6ED] border border-transparent rounded-xl px-3 py-2.5 text-xs text-[#9A8C7F] font-medium mt-1 cursor-not-allowed shadow-[inset_1px_1px_2px_rgba(142,130,114,0.1)]"
                 />
               </div>
               <div className="sm:col-span-2 text-right">
                 <button
                   type="button"
                   onClick={() => setUseCustomLocation(false)}
-                  className="text-xs text-slate-500 hover:text-slate-300 font-medium cursor-pointer"
+                  className="text-[10px] text-[#9A8C7F] hover:text-[#3F6C51] font-bold cursor-pointer hover:underline"
                 >
                   Switch back to preset sectors
                 </button>
@@ -344,14 +345,14 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
         {/* TEXT TAB */}
         {activeTab === 'text' && (
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-200">Describe the Infrastructure Problem</label>
+            <label className="text-xs font-black uppercase tracking-wider text-[#9A8C7F]">Describe the Infrastructure Problem</label>
             <textarea
               required
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Provide a clear description. What happened? Where exactly is it? Mention if it is hazardous or blocking traffic so our Gemini model can prioritize it..."
-              className="w-full bg-slate-950 focus:bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-sm text-slate-200 focus:outline-none focus:border-teal-500 transition-all placeholder:text-slate-600"
+              className="w-full neumorphic-concave px-4 py-3.5 text-sm text-[#3A2E2B] focus:outline-none transition-all placeholder-[#9A8C7F]/60 font-medium"
               id="text-grievance-desc"
             />
           </div>
@@ -361,27 +362,27 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
         {activeTab === 'photo' && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-200">Explain the Uploaded Image</label>
+              <label className="text-xs font-black uppercase tracking-wider text-[#9A8C7F]">Explain the Uploaded Image</label>
               <input
                 type="text"
                 required
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Briefly describe what this photo shows (e.g. Clogged sewer in Salt Lake Ward 4)"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-teal-500 placeholder:text-slate-600"
+                className="w-full neumorphic-concave px-4 py-3 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-200">Attach Photo</label>
+              <label className="text-xs font-black uppercase tracking-wider text-[#9A8C7F]">Attach Photo</label>
               
               {photoPreview ? (
-                <div className="relative border border-slate-800 rounded-xl overflow-hidden max-h-64 flex items-center justify-center bg-slate-950 group">
-                  <img src={photoPreview} alt="Preview" className="object-contain max-h-60" referrerPolicy="no-referrer" />
+                <div className="relative border border-[#E5DEC9]/60 rounded-2xl overflow-hidden max-h-64 flex items-center justify-center bg-[#FAF6ED] p-2">
+                  <img src={photoPreview} alt="Preview" className="object-contain max-h-60 rounded-xl" referrerPolicy="no-referrer" />
                   <button
                     type="button"
                     onClick={() => { setPhotoFile(null); setPhotoPreview(null); }}
-                    className="absolute top-3 right-3 bg-slate-900/80 text-white p-2 rounded-full hover:bg-rose-600 transition-colors cursor-pointer"
+                    className="absolute top-4 right-4 bg-[#FFFDF9] shadow-lg text-[#E76F51] p-2 rounded-full hover:scale-110 transition-transform cursor-pointer border border-white"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -391,11 +392,11 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                   onClick={triggerFileSelect}
-                  className="border-2 border-dashed border-slate-800 hover:border-teal-500 rounded-xl p-8 flex flex-col items-center justify-center space-y-2 bg-slate-950/20 hover:bg-teal-950/10 cursor-pointer transition-colors"
+                  className="border-2 border-dashed border-[#E5DEC9]/80 hover:border-[#3F6C51] rounded-2xl p-8 flex flex-col items-center justify-center space-y-2 bg-[#FAF6ED]/30 hover:bg-[#FFFDF9]/80 cursor-pointer transition-all"
                 >
-                  <Upload className="w-8 h-8 text-slate-600" />
-                  <span className="text-sm font-semibold text-slate-300">Drag photo here, or click to browse</span>
-                  <span className="text-xs text-slate-500">Supports PNG, JPG (Max 10MB)</span>
+                  <Upload className="w-8 h-8 text-[#9A8C7F]" />
+                  <span className="text-xs font-bold text-[#3A2E2B]">Drag photo here, or click to browse</span>
+                  <span className="text-[10px] text-[#9A8C7F] font-semibold">Supports PNG, JPG (Max 10MB)</span>
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -412,10 +413,10 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
         {/* VOICE TAB */}
         {activeTab === 'voice' && (
           <div className="space-y-4">
-            <div className="bg-slate-950/40 border border-slate-850 rounded-xl p-6 flex flex-col items-center justify-center space-y-4">
+            <div className="bg-[#FAF6ED]/40 border border-white/40 rounded-2xl p-6 flex flex-col items-center justify-center space-y-4 shadow-[inset_1px_1px_3px_rgba(142,130,114,0.06)]">
               <div className="text-center">
-                <span className="text-sm font-bold text-slate-200">Voice Note Recorder</span>
-                <p className="text-xs text-slate-500 mt-1 max-w-sm">
+                <span className="text-xs font-black uppercase tracking-wider text-[#3A2E2B]">Voice Note Recorder</span>
+                <p className="text-[10px] text-[#9A8C7F] font-bold mt-1 max-w-sm">
                   Record your complaint. Google Gemini will automatically transcribe your voice and classify it under appropriate municipal priority channels!
                 </p>
               </div>
@@ -425,32 +426,32 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
                   <button
                     type="button"
                     onClick={startRecording}
-                    className="flex items-center space-x-2 bg-rose-600 hover:bg-rose-500 text-white font-bold py-2.5 px-5 rounded-full shadow-lg hover:scale-[1.02] cursor-pointer transition-all"
+                    className="flex items-center space-x-2 bg-[#E76F51] hover:brightness-110 text-white font-extrabold text-[11px] uppercase tracking-wider py-3 px-6 rounded-full shadow-[4px_4px_8px_rgba(231,111,81,0.25),-4px_-4px_8px_#FFFFFF] cursor-pointer transition-all"
                     id="record-btn"
                   >
-                    <Mic className="w-4 h-4" />
+                    <Mic className="w-4 h-4 text-white" />
                     <span>Start Recording</span>
                   </button>
                 ) : isRecording ? (
                   <button
                     type="button"
                     onClick={stopRecording}
-                    className="flex items-center space-x-2 bg-slate-900 hover:bg-slate-850 text-white font-bold py-2.5 px-5 rounded-full shadow animate-pulse border border-slate-800 cursor-pointer"
+                    className="flex items-center space-x-2 bg-[#FFFDF9] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15),inset_-2px_-2px_5px_#FFFFFF] border border-[#E76F51]/30 text-[#E76F51] font-black text-[11px] uppercase tracking-wider py-3 px-6 rounded-full animate-pulse cursor-pointer"
                     id="stop-record-btn"
                   >
-                    <Square className="w-4 h-4 text-rose-500 fill-rose-500" />
-                    <span>Recording... Click to Stop</span>
+                    <Square className="w-4 h-4 text-[#E76F51] fill-[#E76F51]" />
+                    <span>Stop Recording</span>
                   </button>
                 ) : (
-                  <div className="flex items-center space-x-3">
-                    <audio src={audioUrl || ''} controls className="h-10 rounded-lg filter invert" />
+                  <div className="flex items-center space-x-3 bg-[#FFFDF9] p-2.5 rounded-xl shadow-[4px_4px_8px_rgba(142,130,114,0.1),-4px_-4px_8px_#FFFFFF] border border-white/40">
+                    <audio src={audioUrl || ''} controls className="h-9 rounded-lg" />
                     <button
                       type="button"
                       onClick={deleteRecording}
-                      className="p-2.5 text-slate-400 hover:text-rose-400 bg-slate-950 hover:bg-rose-950/20 border border-slate-850 rounded-full transition-colors cursor-pointer"
+                      className="p-2.5 text-[#E76F51] bg-[#FFFDF9] shadow-[2px_2px_5px_rgba(142,130,114,0.1),-2px_-2px_5px_#FFFFFF] hover:shadow-[inset_2px_2px_4px_rgba(142,130,114,0.1)] border border-white rounded-full transition-all cursor-pointer"
                       title="Delete recording"
                     >
-                      <Trash2 className="w-4.5 h-4.5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 )}
@@ -464,12 +465,12 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-3.5 px-4 rounded-xl shadow-lg hover:shadow-teal-500/10 hover:scale-[1.01] transition-all flex items-center justify-center space-x-2 disabled:bg-teal-950 disabled:text-slate-500 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full neumorphic-btn-accent py-4 px-4 font-black uppercase tracking-wider text-xs shadow-[6px_6px_12px_rgba(63,108,81,0.25),-6px_-6px_12px_#FFFFFF] flex items-center justify-center space-x-2 disabled:opacity-50"
             id="submit-grievance-btn"
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <Loader2 className="w-5 h-5 animate-spin text-white" />
                 <span>AI Data Fusion Analysis running...</span>
               </>
             ) : (
@@ -481,3 +482,4 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
     </div>
   );
 };
+

@@ -6,16 +6,16 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-/* Global Tinted Light Neumorphic Variables and Overrides */
+/* Global Organic Warm Cream & Forest Green Neumorphic Variables */
 :root {
-  --bg-canvas: #E8EDF3;
-  --bg-card: #EBF0F7;
-  --accent-primary: #4F6D7A;
-  --accent-coral: #E06D53;
-  --text-muted: #7C8C9E;
-  --text-dark: #2C3E50;
+  --bg-canvas: #FAF6ED;
+  --bg-card: #FFFDF9;
+  --accent-primary: #3F6C51;
+  --accent-coral: #E76F51;
+  --text-muted: #9A8C7F;
+  --text-dark: #3A2E2B;
   --shadow-light-x: -14px -14px 28px 0px #FFFFFF;
-  --shadow-dark-x: 14px 14px 28px 0px #C5D0E0;
+  --shadow-dark-x: 14px 14px 28px 0px #E5DEC9;
 }
 
 body {
@@ -41,37 +41,37 @@ body {
 .neumorphic-convex-large {
   background-color: var(--bg-card);
   border-radius: 28px;
-  box-shadow: 14px 14px 28px 0px #C5D0E0, 
+  box-shadow: 14px 14px 28px 0px #E5DEC9, 
               -14px -14px 28px 0px #FFFFFF;
 }
 
 .neumorphic-convex-std {
   background-color: var(--bg-card);
   border-radius: 20px;
-  box-shadow: 8px 8px 16px 0px rgba(100, 116, 139, 0.25), 
+  box-shadow: 8px 8px 16px 0px rgba(142, 130, 114, 0.2), 
               -8px -8px 16px 0px #FFFFFF;
 }
 
 .neumorphic-convex-small {
   background-color: var(--bg-card);
   border-radius: 14px;
-  box-shadow: 4px 4px 8px 0px rgba(100, 116, 139, 0.2), 
+  box-shadow: 4px 4px 8px 0px rgba(142, 130, 114, 0.15), 
               -4px -4px 8px 0px #FFFFFF;
 }
 
 .neumorphic-concave {
-  background-color: #E4EAF1;
+  background-color: #EFEAE0;
   border-radius: 14px;
-  box-shadow: inset 5px 5px 10px 0px rgba(100, 116, 139, 0.25), 
+  box-shadow: inset 5px 5px 10px 0px rgba(142, 130, 114, 0.2), 
               inset -5px -5px 10px 0px #FFFFFF;
   border: none !important;
   outline: none !important;
 }
 
 .neumorphic-concave-large {
-  background-color: #E4EAF1;
+  background-color: #EFEAE0;
   border-radius: 24px;
-  box-shadow: inset 8px 8px 16px 0px rgba(100, 116, 139, 0.25), 
+  box-shadow: inset 8px 8px 16px 0px rgba(142, 130, 114, 0.2), 
               inset -8px -8px 16px 0px #FFFFFF;
   border: none !important;
   outline: none !important;
@@ -146,12 +146,12 @@ body {
   background: var(--bg-canvas);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.2);
+  background: rgba(142, 130, 114, 0.2);
   border-radius: 6px;
   border: 2px solid var(--bg-canvas);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.4);
+  background: rgba(142, 130, 114, 0.4);
 }
 
 /* Map specific styling to avoid clipping and styling bugs */
@@ -163,12 +163,12 @@ body {
   background: var(--bg-card) !important;
   color: var(--text-dark) !important;
   border-radius: 16px !important;
-  box-shadow: 8px 8px 16px 0px rgba(100, 116, 139, 0.2) !important;
+  box-shadow: 8px 8px 16px 0px rgba(142, 130, 114, 0.2) !important;
   border: none !important;
   padding: 4px !important;
 }
 
 .leaflet-popup-tip {
   background: var(--bg-card) !important;
-  box-shadow: 8px 8px 16px 0px rgba(100, 116, 139, 0.2) !important;
+  box-shadow: 8px 8px 16px 0px rgba(142, 130, 114, 0.2) !important;
 }

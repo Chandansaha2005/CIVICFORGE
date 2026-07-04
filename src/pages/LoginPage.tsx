@@ -60,28 +60,25 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-slate-950 text-white flex flex-col justify-center items-center px-4 py-12" id="login-page">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-xl space-y-6 relative">
+    <div className="min-h-[calc(100vh-80px)] bg-[#FAF6ED] text-[#3A2E2B] flex flex-col justify-center items-center px-4 py-12" id="login-page">
+      <div className="w-full max-w-md bg-[#FFFDF9] rounded-3xl p-8 shadow-[14px_14px_28px_0px_#E5DEC9,-14px_-14px_28px_0px_#FFFFFF] border border-white/40 space-y-6 relative">
         
-        {/* Glow accent */}
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-48 bg-teal-500/10 rounded-full blur-2xl -z-10"></div>
-
         <div className="text-center">
-          <h2 className="text-2xl font-black tracking-tight">Sign In</h2>
-          <p className="text-xs text-slate-400 mt-1 font-medium">Access your CivicForge full-stack portal</p>
+          <h2 className="text-2xl font-black tracking-tight text-[#3A2E2B]">Sign In</h2>
+          <p className="text-xs text-[#9A8C7F] mt-1 font-bold uppercase tracking-wider">Access your CivicForge bento portal</p>
         </div>
 
         {error && (
-          <div className="bg-rose-950/40 text-rose-300 text-xs px-4 py-3 rounded-lg border border-rose-900/30 font-semibold" id="login-error">
+          <div className="bg-[#E76F51]/10 text-[#E76F51] text-xs px-4 py-3 rounded-xl border border-[#E76F51]/20 font-bold" id="login-error">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Email Address</label>
+            <label className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Email Address</label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#9A8C7F]">
                 <Mail className="w-4 h-4" />
               </span>
               <input
@@ -90,16 +87,16 @@ export const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@domain.com"
-                className="w-full bg-slate-950 border border-slate-800 focus:border-teal-500 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none transition-all placeholder:text-slate-600"
+                className="w-full neumorphic-concave pl-10 pr-4 py-3 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 id="login-email"
               />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Security Password</label>
+            <label className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Security Password</label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#9A8C7F]">
                 <Lock className="w-4 h-4" />
               </span>
               <input
@@ -108,7 +105,7 @@ export const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-slate-950 border border-slate-800 focus:border-teal-500 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none transition-all placeholder:text-slate-600"
+                className="w-full neumorphic-concave pl-10 pr-4 py-3 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 id="login-password"
               />
             </div>
@@ -117,12 +114,12 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-teal-500/5 transition-all flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-50"
+            className="w-full neumorphic-btn-accent py-3.5 px-4 font-extrabold text-sm uppercase tracking-wider shadow-[4px_4px_8px_rgba(63,108,81,0.25),-4px_-4px_8px_#FFFFFF] flex items-center justify-center space-x-1.5 disabled:opacity-50"
             id="login-submit-btn"
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin text-slate-900" />
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
                 <span>Authenticating...</span>
               </>
             ) : (
@@ -131,63 +128,69 @@ export const LoginPage: React.FC = () => {
           </button>
         </form>
 
-        <div className="text-center">
-          <p className="text-xs text-slate-400">
+        <div className="text-center pt-2">
+          <p className="text-xs text-[#9A8C7F] font-medium">
             Don't have an account?{' '}
-            <Link to="/register" className="text-teal-400 hover:underline font-semibold">
+            <Link to="/register" className="text-[#3F6C51] hover:underline font-bold">
               Register now
             </Link>
           </p>
         </div>
 
         {/* Demo Fast Login Panel */}
-        <div className="border-t border-slate-800/80 pt-5 space-y-3.5">
+        <div className="border-t border-[#E5DEC9]/60 pt-5 space-y-3.5">
           <div className="flex items-center space-x-1.5 justify-center">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Demo Fast Ingress Login</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#E76F51]" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-[#9A8C7F]">Demo Fast Ingress Login</span>
           </div>
 
-          <div className="grid grid-cols-1 gap-2.5 text-xs">
+          <div className="grid grid-cols-1 gap-3 text-xs">
             <button
               onClick={() => handleQuickLogin('mp@civicforge.in')}
-              className="flex items-center justify-between bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/40 p-2.5 rounded-lg transition-all text-left cursor-pointer"
+              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer"
             >
-              <div className="flex items-center space-x-2">
-                <Landmark className="w-4 h-4 text-amber-500" />
+              <div className="flex items-center space-x-2.5">
+                <div className="p-2 bg-[#FAF6ED] rounded-lg shadow-[inset_1px_1px_3px_rgba(142,130,114,0.1),inset_-1px_-1px_3px_#FFFFFF]">
+                  <Landmark className="w-4 h-4 text-[#E76F51]" />
+                </div>
                 <div>
-                  <p className="font-bold text-slate-200">Amit Roy, MP (Kolkata)</p>
-                  <p className="text-[10px] text-slate-500">Evaluator / Priority Matrices</p>
+                  <p className="font-black text-[#3A2E2B]">Amit Roy</p>
+                  <p className="text-[10px] text-[#9A8C7F] font-semibold">Cabinet evaluation & budget</p>
                 </div>
               </div>
-              <span className="text-[10px] font-extrabold uppercase bg-amber-500/10 text-amber-400 px-2 py-0.5 border border-amber-500/20 rounded">MP</span>
+              <span className="text-[9px] font-black uppercase bg-[#E76F51]/10 text-[#E76F51] px-2.5 py-1 rounded-md border border-[#E76F51]/20">MP</span>
             </button>
 
             <button
               onClick={() => handleQuickLogin('citizen1@gmail.com')}
-              className="flex items-center justify-between bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-teal-500/40 p-2.5 rounded-lg transition-all text-left cursor-pointer"
+              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer"
             >
-              <div className="flex items-center space-x-2">
-                <User className="w-4 h-4 text-teal-500" />
+              <div className="flex items-center space-x-2.5">
+                <div className="p-2 bg-[#FAF6ED] rounded-lg shadow-[inset_1px_1px_3px_rgba(142,130,114,0.1),inset_-1px_-1px_3px_#FFFFFF]">
+                  <User className="w-4 h-4 text-[#3F6C51]" />
+                </div>
                 <div>
-                  <p className="font-bold text-slate-200">Vikram Chatterjee</p>
-                  <p className="text-[10px] text-slate-500">Citizen / Lodge Complaints</p>
+                  <p className="font-black text-[#3A2E2B]">Vikram Chatterjee</p>
+                  <p className="text-[10px] text-[#9A8C7F] font-semibold">Citizen lodging demands</p>
                 </div>
               </div>
-              <span className="text-[10px] font-extrabold uppercase bg-teal-500/10 text-teal-400 px-2 py-0.5 border border-teal-500/20 rounded">Citizen</span>
+              <span className="text-[9px] font-black uppercase bg-[#3F6C51]/10 text-[#3F6C51] px-2.5 py-1 rounded-md border border-[#3F6C51]/20">Citizen</span>
             </button>
 
             <button
               onClick={() => handleQuickLogin('dev1@gmail.com')}
-              className="flex items-center justify-between bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/40 p-2.5 rounded-lg transition-all text-left cursor-pointer"
+              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer"
             >
-              <div className="flex items-center space-x-2">
-                <Cpu className="w-4 h-4 text-emerald-500" />
+              <div className="flex items-center space-x-2.5">
+                <div className="p-2 bg-[#FAF6ED] rounded-lg shadow-[inset_1px_1px_3px_rgba(142,130,114,0.1),inset_-1px_-1px_3px_#FFFFFF]">
+                  <Cpu className="w-4 h-4 text-[#3F6C51]" />
+                </div>
                 <div>
-                  <p className="font-bold text-slate-200">TechForge (Arijit)</p>
-                  <p className="text-[10px] text-slate-500">Developer / Post Solutions</p>
+                  <p className="font-black text-[#3A2E2B]">TechForge (Arijit)</p>
+                  <p className="text-[10px] text-[#9A8C7F] font-semibold">Developer building prototypes</p>
                 </div>
               </div>
-              <span className="text-[10px] font-extrabold uppercase bg-emerald-500/10 text-emerald-400 px-2 py-0.5 border border-emerald-500/20 rounded">Dev</span>
+              <span className="text-[9px] font-black uppercase bg-[#3F6C51]/10 text-[#3F6C51] px-2.5 py-1 rounded-md border border-[#3F6C51]/20">Dev</span>
             </button>
           </div>
         </div>

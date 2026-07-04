@@ -10,7 +10,6 @@ import {
   Cpu, 
   FileText, 
   CheckCircle, 
-  AlertCircle, 
   Loader2, 
   Sparkles, 
   ArrowRight,
@@ -206,91 +205,87 @@ export const MPDashboard: React.FC = () => {
     }
   };
 
-  const getRoleIconBadge = (role: string) => {
-    return <Landmark className="w-5 h-5 text-amber-500" />;
-  };
-
   return (
-    <div className="bg-slate-950 min-h-[calc(100vh-64px)] py-8 px-4 sm:px-6 lg:px-8" id="mp-dashboard">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="bg-[#FAF6ED] min-h-[calc(100vh-64px)] py-8 px-4 sm:px-6 lg:px-8 text-[#3A2E2B]" id="mp-dashboard">
+      <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
         
         {/* MP Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0 bg-slate-900 text-white p-6 rounded-2xl shadow-sm border border-slate-800">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0 bg-[#FFFDF9] p-6 rounded-3xl shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] border border-white/40">
           <div>
-            <span className="text-amber-400 text-xs font-extrabold uppercase tracking-widest">MP Constituency Control Panel</span>
-            <h1 className="text-2xl font-black mt-1">Constituency Development & Evaluation Station</h1>
-            <p className="text-slate-400 text-sm mt-1">Harnessing multi-source data fusion and Gemini AI models to prioritize community distress and fund digital prototypes.</p>
+            <span className="text-[#E76F51] text-xs font-black uppercase tracking-widest">MP Constituency Control Panel</span>
+            <h1 className="text-2xl font-black mt-1 text-[#3A2E2B]">Constituency Development & Evaluation Station</h1>
+            <p className="text-[#9A8C7F] text-xs font-bold mt-1">Harnessing multi-source data fusion and Gemini AI models to prioritize community distress and fund digital prototypes.</p>
           </div>
           <div className="flex items-center space-x-6">
-            <div className="text-center bg-slate-800/50 border border-slate-750 px-5 py-3 rounded-xl">
-              <span className="block text-xl font-bold text-amber-400">
+            <div className="text-center bg-[#FAF6ED] border border-white/40 px-5 py-3 rounded-2xl shadow-[inset_1px_1px_3px_rgba(142,130,114,0.08)]">
+              <span className="block text-xl font-black text-[#E76F51]">
                 {grievances.filter(g => g.status === 'verified' || g.status === 'pending_review').length}
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Unresolved RFPs</span>
+              <span className="text-[9px] font-black uppercase tracking-wider text-[#9A8C7F]">Unresolved RFPs</span>
             </div>
-            <div className="text-center bg-slate-800/50 border border-slate-750 px-5 py-3 rounded-xl">
-              <span className="block text-xl font-bold text-teal-400">
+            <div className="text-center bg-[#FAF6ED] border border-white/40 px-5 py-3 rounded-2xl shadow-[inset_1px_1px_3px_rgba(142,130,114,0.08)]">
+              <span className="block text-xl font-black text-emerald-600">
                 {blueprints.filter(b => b.status === 'approved').length}
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Funded initiatives</span>
+              <span className="text-[9px] font-black uppercase tracking-wider text-[#9A8C7F]">Funded initiatives</span>
             </div>
           </div>
         </div>
 
         {/* Tab Selection Row */}
-        <div className="flex flex-wrap border-b border-slate-800 gap-1" id="mp-dashboard-tabs">
+        <div className="flex flex-wrap border-b border-[#E5DEC9]/60 gap-1" id="mp-dashboard-tabs">
           <button
             onClick={() => setActiveTab('heatmap')}
-            className={`flex items-center space-x-2 py-3 px-5 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+            className={`flex items-center space-x-2 py-3 px-5 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
               activeTab === 'heatmap' 
-                ? 'border-teal-500 text-teal-400 bg-slate-900 rounded-t-xl' 
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
+                ? 'border-[#3F6C51] text-[#3F6C51] bg-[#FFFDF9] rounded-t-2xl shadow-sm' 
+                : 'border-transparent text-[#9A8C7F] hover:text-[#3F6C51] hover:bg-[#FFFDF9]/40'
             }`}
             id="tab-heatmap-btn"
           >
-            <Map className="w-4 h-4" />
+            <Map className="w-4 h-4 text-[#3F6C51]" />
             <span>Geo-Distress Heatmap</span>
           </button>
 
           <button
             onClick={() => setActiveTab('priority')}
-            className={`flex items-center space-x-2 py-3 px-5 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+            className={`flex items-center space-x-2 py-3 px-5 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
               activeTab === 'priority' 
-                ? 'border-teal-500 text-teal-400 bg-slate-900 rounded-t-xl' 
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
+                ? 'border-[#3F6C51] text-[#3F6C51] bg-[#FFFDF9] rounded-t-2xl shadow-sm' 
+                : 'border-transparent text-[#9A8C7F] hover:text-[#3F6C51] hover:bg-[#FFFDF9]/40'
             }`}
             id="tab-priority-btn"
           >
-            <TableProperties className="w-4 h-4" />
+            <TableProperties className="w-4 h-4 text-[#3F6C51]" />
             <span>Priority Matrix</span>
           </button>
 
           <button
             onClick={() => setActiveTab('matchmaker')}
-            className={`flex items-center space-x-2 py-3 px-5 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer relative ${
+            className={`flex items-center space-x-2 py-3 px-5 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer relative ${
               activeTab === 'matchmaker' 
-                ? 'border-teal-500 text-teal-400 bg-slate-900 rounded-t-xl' 
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
+                ? 'border-[#3F6C51] text-[#3F6C51] bg-[#FFFDF9] rounded-t-2xl shadow-sm' 
+                : 'border-transparent text-[#9A8C7F] hover:text-[#3F6C51] hover:bg-[#FFFDF9]/40'
             }`}
             id="tab-matchmaker-btn"
           >
-            <Cpu className="w-4 h-4" />
+            <Cpu className="w-4 h-4 text-[#3F6C51]" />
             <span>Solution Matchmaker</span>
             {selectedGrievance && (
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></span>
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#E76F51] rounded-full animate-ping"></span>
             )}
           </button>
 
           <button
             onClick={() => setActiveTab('blueprints')}
-            className={`flex items-center space-x-2 py-3 px-5 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+            className={`flex items-center space-x-2 py-3 px-5 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
               activeTab === 'blueprints' 
-                ? 'border-teal-500 text-teal-400 bg-slate-900 rounded-t-xl' 
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'
+                ? 'border-[#3F6C51] text-[#3F6C51] bg-[#FFFDF9] rounded-t-2xl shadow-sm' 
+                : 'border-transparent text-[#9A8C7F] hover:text-[#3F6C51] hover:bg-[#FFFDF9]/40'
             }`}
             id="tab-blueprints-btn"
           >
-            <FileText className="w-4 h-4" />
+            <FileText className="w-4 h-4 text-[#3F6C51]" />
             <span>Project Proposals ({blueprints.length})</span>
           </button>
         </div>
@@ -300,23 +295,23 @@ export const MPDashboard: React.FC = () => {
 
           {/* 1. HEATMAP VIEW */}
           {activeTab === 'heatmap' && (
-            <div className="bg-slate-900 p-6 border border-slate-800 rounded-3xl shadow-xl">
+            <div className="bg-[#FFFDF9] p-6 border border-white/40 rounded-3xl shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF]">
               <HeatmapView />
             </div>
           )}
 
           {/* 2. PRIORITY MATRIX VIEW */}
           {activeTab === 'priority' && (
-            <div className="bg-slate-900 p-6 border border-slate-800 rounded-3xl shadow-xl space-y-6">
+            <div className="bg-[#FFFDF9] p-6 border border-white/40 rounded-3xl shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] space-y-6">
               <div>
-                <h3 className="text-base font-extrabold text-slate-100">Dynamic Priority Matrix Queue</h3>
-                <p className="text-xs text-slate-400 font-medium">Verified citizen demands compiled and ranked via compound score weights (40% Recurrence, 30% Citizen Distress, 30% Infrastructure Deficits).</p>
+                <h3 className="text-base font-black text-[#3A2E2B]">Dynamic Priority Matrix Queue</h3>
+                <p className="text-xs text-[#9A8C7F] font-bold">Verified citizen demands compiled and ranked via compound score weights (40% Recurrence, 30% Citizen Distress, 30% Infrastructure Deficits).</p>
               </div>
 
               {loadingGeneral ? (
                 <div className="py-20 text-center">
-                  <Loader2 className="w-8 h-8 text-teal-400 animate-spin mx-auto" />
-                  <p className="text-slate-400 font-semibold text-xs mt-3 uppercase tracking-wider">Compiling demographic matrices...</p>
+                  <Loader2 className="w-8 h-8 text-[#3F6C51] animate-spin mx-auto" />
+                  <p className="text-[#9A8C7F] font-black text-xs mt-3 uppercase tracking-wider">Compiling demographic matrices...</p>
                 </div>
               ) : (
                 <PriorityMatrixTable 
@@ -324,7 +319,7 @@ export const MPDashboard: React.FC = () => {
                   selectedGrievanceId={selectedGrievance?._id}
                   onSelectGrievance={(g) => {
                     setSelectedGrievance(g);
-                    toast.success(`Selected cluster: "${g.description.substring(0, 30)}..."! Please switch to Matchmaker tab to view prototype suggested matches!`);
+                    toast.success(`Selected cluster: "${g.description.substring(0, 30)}..."! Switch to Matchmaker tab to view suggested matches.`);
                   }}
                   onVerify={handleVerifyGrievance}
                 />
@@ -337,75 +332,75 @@ export const MPDashboard: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               
               {/* Selected Grievance details */}
-              <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-5">
-                <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">
-                  <ShieldCheck className="w-5 h-5 text-teal-400" />
-                  <h3 className="text-base font-extrabold text-slate-100">Selected Community RFP</h3>
+              <div className="lg:col-span-5 bg-[#FFFDF9] border border-white/40 rounded-3xl p-6 shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] space-y-5">
+                <div className="flex items-center space-x-2 border-b border-[#E5DEC9]/60 pb-3">
+                  <ShieldCheck className="w-5 h-5 text-[#3F6C51]" />
+                  <h3 className="text-base font-black text-[#3A2E2B]">Selected Community RFP</h3>
                 </div>
 
                 {selectedGrievance ? (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-black uppercase tracking-widest bg-teal-950/40 text-teal-400 px-2.5 py-1 border border-teal-900/30 rounded-full">
+                      <span className="text-[10px] font-black uppercase tracking-widest bg-[#FAF6ED] text-[#9A8C7F] px-2.5 py-1 border border-[#E5DEC9]/60 rounded-md shadow-sm">
                         {selectedGrievance.category}
                       </span>
-                      <span className="text-xs font-bold text-slate-400">AI Priority: {selectedGrievance.urgencyScore}/100</span>
+                      <span className="text-xs font-bold text-[#9A8C7F]">AI Priority: {selectedGrievance.urgencyScore}/100</span>
                     </div>
 
                     <div className="space-y-2">
-                      <p className="text-slate-200 text-sm font-semibold leading-relaxed">{selectedGrievance.description}</p>
-                      <p className="text-xs text-slate-500 font-medium italic">Located near: {selectedGrievance.location?.address}</p>
+                       <p className="text-[#3A2E2B] text-sm font-bold leading-relaxed">{selectedGrievance.description}</p>
+                      <p className="text-xs text-[#9A8C7F] font-bold italic">Located near: {selectedGrievance.location?.address}</p>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 bg-slate-950/50 p-3 rounded-xl border border-slate-805 text-center">
+                    <div className="grid grid-cols-3 gap-2 bg-[#FAF6ED] p-3 rounded-2xl border border-[#E5DEC9]/60 text-center shadow-[inset_1px_1px_3px_rgba(142,130,114,0.08)]">
                       <div>
-                        <span className="block text-xs font-black text-slate-200">{selectedGrievance.recurrenceCount}</span>
-                        <span className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Reports</span>
+                        <span className="block text-xs font-black text-[#3A2E2B]">{selectedGrievance.recurrenceCount}</span>
+                        <span className="text-[9px] uppercase font-black text-[#9A8C7F] tracking-wider">Reports</span>
                       </div>
                       <div>
-                        <span className="block text-xs font-black text-slate-200">{selectedGrievance.stressScore}%</span>
-                        <span className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Distress</span>
+                        <span className="block text-xs font-black text-[#3A2E2B]">{selectedGrievance.stressScore}%</span>
+                        <span className="text-[9px] uppercase font-black text-[#9A8C7F] tracking-wider">Distress</span>
                       </div>
                       <div>
-                        <span className="block text-xs font-black text-slate-200">{selectedGrievance.infrastructureGapScore}%</span>
-                        <span className="text-[9px] uppercase font-bold text-slate-500 tracking-wider">Deficit</span>
+                        <span className="block text-xs font-black text-[#3A2E2B]">{selectedGrievance.infrastructureGapScore}%</span>
+                        <span className="text-[9px] uppercase font-black text-[#9A8C7F] tracking-wider">Deficit</span>
                       </div>
                     </div>
 
                     {selectedGrievance.inputType === 'voice' && selectedGrievance.transcript && (
-                      <div className="p-3 bg-teal-950/20 border border-teal-900/30 rounded-lg text-xs text-teal-300 italic">
+                      <div className="p-3 bg-[#FAF6ED] border border-[#E5DEC9]/60 rounded-2xl text-xs text-[#3F6C51] italic shadow-[inset_1px_1px_2px_rgba(142,130,114,0.06)]">
                         "Transcribed: {selectedGrievance.transcript}"
                       </div>
                     )}
 
-                    <div className="pt-2 border-t border-slate-800">
+                    <div className="pt-2 border-t border-[#E5DEC9]/60">
                       <button
                         onClick={handleGenerateProposal}
                         disabled={generatingProposal}
-                        className="w-full bg-gradient-to-tr from-teal-500 to-cyan-500 text-slate-950 font-black py-3 px-4 rounded-xl shadow-md hover:shadow-lg hover:brightness-105 transition-all flex items-center justify-center space-x-1.5 cursor-pointer text-xs uppercase tracking-wider"
+                        className="w-full bg-[#3F6C51] hover:bg-[#2d4d3a] text-white font-black py-3 px-4 rounded-2xl shadow-[3px_3px_6px_rgba(63,108,81,0.25),-3px_-3px_6px_#FFFFFF] flex items-center justify-center space-x-1.5 cursor-pointer text-xs uppercase tracking-wider"
                         id="generate-proposal-btn"
                       >
                         {generatingProposal ? (
                           <>
-                            <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+                            <Loader2 className="w-4 h-4 animate-spin text-white" />
                             <span>Compiling Gemini Proposal...</span>
                           </>
                         ) : (
                           <>
-                            <Sparkles className="w-4 h-4 text-slate-950" />
+                            <Sparkles className="w-4 h-4 text-white" />
                             <span>AI-Draft Project Proposal</span>
                           </>
                         )}
                       </button>
-                      <p className="text-[10px] text-slate-500 text-center mt-2 font-medium">Triggers Gemini to compile a budget proposal using the selected developer tool.</p>
+                      <p className="text-[9px] text-[#9A8C7F] text-center mt-2 font-black">Triggers Gemini to compile a budget proposal using the selected developer tool.</p>
                     </div>
                   </div>
                 ) : (
                   <div className="py-12 text-center space-y-3.5">
-                    <p className="text-slate-400 text-sm font-semibold">No community grievance has been selected.</p>
+                    <p className="text-[#9A8C7F] text-sm font-bold">No community grievance has been selected.</p>
                     <button
                       onClick={() => setActiveTab('priority')}
-                      className="bg-slate-950 hover:bg-slate-900 text-slate-300 font-bold px-4 py-2 rounded-lg text-xs flex items-center space-x-1.5 mx-auto cursor-pointer border border-slate-800"
+                      className="bg-[#FAF6ED] hover:bg-[#FFFDF9] text-[#3F6C51] hover:text-[#2d4d3a] font-black px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1.5 mx-auto cursor-pointer border border-[#E5DEC9]/60 shadow-sm"
                     >
                       <span>Select from Priority Matrix</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -417,27 +412,27 @@ export const MPDashboard: React.FC = () => {
               {/* Matched Developer Prototypes */}
               <div className="lg:col-span-7 space-y-4">
                 <div className="flex items-center space-x-2 px-1">
-                  <Cpu className="w-5 h-5 text-teal-400" />
-                  <h3 className="text-lg font-extrabold text-slate-100">Category Matched Developer Prototypes</h3>
+                  <Cpu className="w-5 h-5 text-[#3F6C51]" />
+                  <h3 className="text-lg font-black text-[#3A2E2B]">Category Matched Developer Prototypes</h3>
                 </div>
 
                 {!selectedGrievance ? (
-                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center shadow-xl">
-                    <p className="text-slate-400 text-sm font-semibold">Select a community RFP on the left to display matching open-source solutions.</p>
+                  <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-12 text-center shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF]">
+                    <p className="text-[#9A8C7F] text-sm font-bold">Select a community RFP on the left to display matching open-source solutions.</p>
                   </div>
                 ) : loadingMatches ? (
-                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center shadow-xl">
-                    <Loader2 className="w-6 h-6 border-2 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                    <p className="text-slate-400 text-xs font-semibold mt-3.5 uppercase tracking-wider">Querying category matching algorithms...</p>
+                  <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-12 text-center shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF]">
+                    <Loader2 className="w-6 h-6 border-2 border-[#3F6C51] border-t-transparent rounded-full animate-spin mx-auto" />
+                    <p className="text-[#9A8C7F] text-xs font-black mt-3.5 uppercase tracking-wider">Querying category matching algorithms...</p>
                   </div>
                 ) : matchedSolutions.length === 0 ? (
-                  <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center shadow-xl space-y-2">
-                    <p className="text-slate-300 text-sm font-semibold">No developer prototypes registered for "{selectedGrievance.category}" issues yet.</p>
-                    <p className="text-slate-450 text-xs">You can still generate a standard project proposal draft using standard AI contractors!</p>
+                  <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-12 text-center shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] space-y-3">
+                    <p className="text-[#3A2E2B] text-sm font-black">No developer prototypes registered for "{selectedGrievance.category}" issues yet.</p>
+                    <p className="text-[#9A8C7F] text-xs font-bold">You can still generate a standard project proposal draft using standard AI contractors!</p>
                     <button
                       onClick={handleGenerateProposal}
                       disabled={generatingProposal}
-                      className="mt-4 bg-teal-500 hover:bg-teal-450 text-slate-950 font-bold px-4 py-2.5 rounded-lg text-xs flex items-center space-x-1.5 mx-auto shadow cursor-pointer border border-teal-400/20"
+                      className="mt-4 bg-[#FAF6ED] hover:bg-[#FFFDF9] border border-[#E5DEC9]/60 text-[#3F6C51] hover:text-[#2d4d3a] shadow-sm font-black px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1.5 mx-auto cursor-pointer"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
                       <span>Draft proposal without prototype</span>
@@ -463,90 +458,90 @@ export const MPDashboard: React.FC = () => {
 
           {/* 4. BLUEPRINT REVIEW VIEW */}
           {activeTab === 'blueprints' && (
-            <div className="space-y-6">
+            <div className="space-y-6 animate-fade-in">
               <div>
-                <h3 className="text-base font-extrabold text-slate-100">Funding-Ready Project Proposals</h3>
-                <p className="text-xs text-slate-450 font-medium">Review and authorize executive project briefs drafted by Google Gemini based on live community demand and developer prototype tools.</p>
+                <h3 className="text-base font-black text-[#3A2E2B]">Funding-Ready Project Proposals</h3>
+                <p className="text-xs text-[#9A8C7F] font-bold">Review and authorize executive project briefs drafted by Google Gemini based on live community demand and developer prototype tools.</p>
               </div>
 
               {loadingBlueprints ? (
-                <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center shadow-xl">
-                  <Loader2 className="w-8 h-8 text-teal-400 animate-spin mx-auto" />
-                  <p className="text-slate-400 text-xs font-semibold mt-3.5 uppercase tracking-wider">Syncing proposal catalogs...</p>
+                <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-12 text-center shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF]">
+                  <Loader2 className="w-8 h-8 text-[#3F6C51] animate-spin mx-auto" />
+                  <p className="text-[#9A8C7F] text-xs font-black mt-3.5 uppercase tracking-wider">Syncing proposal catalogs...</p>
                 </div>
               ) : blueprints.length === 0 ? (
-                <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center shadow-xl">
-                  <p className="text-slate-350 text-sm font-semibold">No project proposal drafts have been generated yet.</p>
-                  <p className="text-slate-500 text-xs mt-1">Select a community RFP in the Priority Matrix and draft a proposal inside the Matchmaker tab!</p>
+                <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-12 text-center shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF]">
+                  <p className="text-[#9A8C7F] text-sm font-bold">No project proposal drafts have been generated yet.</p>
+                  <p className="text-[#9A8C7F] text-xs font-bold mt-1">Select a community RFP in the Priority Matrix and draft a proposal inside the Matchmaker tab!</p>
                 </div>
               ) : (
                 <div className="space-y-6" id="proposals-catalog-list">
                   {blueprints.map((b) => (
-                    <div key={b._id} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4 hover:border-slate-700 transition-all">
+                    <div key={b._id} className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-6 shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] space-y-4 hover:bg-[#FAF6ED]/50 transition-all duration-300">
                       
                       {/* Blueprint Header */}
                       <div className="flex justify-between items-start">
                         <div className="space-y-1">
                           <div className="flex items-center space-x-2">
-                            <span className="text-[10px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-550 px-2 py-0.5 border border-amber-500/20 rounded">
+                            <span className="text-[10px] font-black uppercase tracking-widest bg-[#FAF6ED] text-[#9A8C7F] border border-[#E5DEC9]/60 px-2 py-0.5 rounded shadow-sm">
                               Gemini Proposal
                             </span>
-                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 border rounded-full ${
+                            <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 border rounded-full ${
                               b.status === 'approved' 
-                                ? 'bg-emerald-950/40 text-emerald-400 border-emerald-900/30' 
-                                : 'bg-amber-950/40 text-amber-400 border-amber-900/30'
+                                ? 'bg-[#FAF6ED] text-emerald-600 border-emerald-500/20 shadow-[inset_1px_1px_3px_rgba(16,185,129,0.1)]' 
+                                : 'bg-[#FAF6ED] text-amber-600 border-amber-500/20 shadow-[inset_1px_1px_3px_rgba(217,119,6,0.1)]'
                             }`}>
                               {b.status === 'approved' ? 'Funded & Approved' : 'Draft Proposal'}
                             </span>
                           </div>
-                          <h4 className="text-lg font-extrabold text-slate-100 leading-snug">{b.generatedTitle}</h4>
+                          <h4 className="text-lg font-black text-[#3A2E2B] leading-snug">{b.generatedTitle}</h4>
                         </div>
 
                         {/* Estimated Budget Banner */}
-                        <div className="flex items-center space-x-1.5 bg-slate-950 text-slate-200 font-bold px-3 py-2 rounded-xl text-xs border border-slate-850 shrink-0">
-                          <IndianRupee className="w-3.5 h-3.5 text-amber-400" />
+                        <div className="flex items-center space-x-1.5 bg-[#FAF6ED] border border-[#E5DEC9]/60 text-[#3A2E2B] font-bold p-2 rounded-2xl text-xs shadow-sm shrink-0">
+                          <IndianRupee className="w-3.5 h-3.5 text-[#E76F51]" />
                           <span>Budget: {b.estimatedBudget}</span>
                         </div>
                       </div>
 
                       {/* Matched items indicator */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-950/50 p-3 rounded-xl border border-slate-850 text-xs">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-[#FAF6ED] p-3 rounded-2xl border border-[#E5DEC9]/60 text-xs shadow-[inset_1px_1px_2px_rgba(142,130,114,0.06)]">
                         <div>
-                          <span className="font-extrabold text-slate-500 uppercase text-[9px] block">Community RFP Cluster</span>
-                          <span className="text-slate-300 font-bold truncate block">
+                          <span className="font-black text-[#9A8C7F] uppercase text-[9px] block">Community RFP Cluster</span>
+                          <span className="text-[#3A2E2B] font-bold truncate block">
                             {b.grievanceCluster && b.grievanceCluster.length > 0 
                               ? `"${b.grievanceCluster[0].description.substring(0, 50)}..." (${b.grievanceCluster.length} grievance)`
                               : 'Standard cluster'}
                           </span>
                         </div>
                         <div>
-                          <span className="font-extrabold text-slate-500 uppercase text-[9px] block">Digital Solution Partner</span>
-                          <span className="text-slate-300 font-bold truncate block">
+                          <span className="font-black text-[#9A8C7F] uppercase text-[9px] block">Digital Solution Partner</span>
+                          <span className="text-[#3A2E2B] font-bold truncate block">
                             {b.matchedSolution ? b.matchedSolution.title : 'General Public Contractor'}
                           </span>
                         </div>
                       </div>
 
                       {/* Proposal Document Body (preserves text formatting) */}
-                      <div className="whitespace-pre-wrap leading-relaxed text-xs font-medium font-mono bg-slate-950 text-emerald-400 p-5 rounded-xl border border-slate-850 max-h-96 overflow-y-auto">
+                      <div className="whitespace-pre-wrap leading-relaxed text-xs font-bold font-mono bg-[#FAF6ED] text-[#3F6C51] p-5 rounded-2xl border border-[#E5DEC9]/60 max-h-96 overflow-y-auto shadow-[inset_1px_1px_3px_rgba(142,130,114,0.08)]">
                         {b.generatedSummary}
                       </div>
 
                       {/* Approval Actions */}
-                      <div className="flex justify-between items-center border-t border-slate-800/60 pt-4">
-                        <span className="text-[10px] text-slate-500 font-bold">Generated on {new Date(b.createdAt).toLocaleDateString()}</span>
+                      <div className="flex justify-between items-center border-t border-[#E5DEC9]/65 pt-4">
+                        <span className="text-[10px] text-[#9A8C7F] font-bold">Generated on {new Date(b.createdAt).toLocaleDateString()}</span>
                         
                         {b.status === 'draft' ? (
                           <button
                             onClick={() => handleApproveProposal(b._id)}
-                            className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all text-xs flex items-center space-x-1.5 cursor-pointer"
+                            className="bg-[#FFFDF9] hover:bg-[#FAF6ED] border border-white/50 text-[#3F6C51] hover:text-[#2d4d3a] text-xs font-black uppercase tracking-wider px-5 py-2.5 rounded-xl transition-all shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] cursor-pointer flex items-center space-x-1.5"
                           >
-                            <Check className="w-4 h-4 text-white" />
+                            <Check className="w-4 h-4 text-[#3F6C51]" />
                             <span>Verify & Approve Funding</span>
                           </button>
                         ) : (
-                          <div className="flex items-center space-x-1.5 text-emerald-400 font-extrabold text-xs">
-                            <CheckCircle className="w-4 h-4 text-emerald-400 fill-emerald-950/20" />
+                          <div className="flex items-center space-x-1.5 text-emerald-600 font-black text-xs">
+                            <CheckCircle className="w-4 h-4 text-emerald-600" />
                             <span>Authorized & Funded</span>
                           </div>
                         )}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { VouchButton } from './VouchButton';
-import { ExternalLink, Code, FileText, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Code } from 'lucide-react';
 
 interface Solution {
   _id: string;
@@ -42,70 +42,72 @@ export const SolutionCard: React.FC<SolutionCardProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'deployed':
-        return 'bg-emerald-950/40 text-emerald-400 border-emerald-900/30';
+        return 'bg-[#FAF6ED] text-emerald-600 border border-emerald-500/25 shadow-[inset_1px_1px_3px_rgba(16,185,129,0.1)]';
       case 'matched':
-        return 'bg-indigo-950/40 text-indigo-400 border-indigo-900/30';
+        return 'bg-[#FAF6ED] text-[#3F6C51] border border-[#3F6C51]/25 shadow-[inset_1px_1px_3px_rgba(63,108,81,0.1)]';
       case 'under_review':
-        return 'bg-amber-950/40 text-amber-400 border-amber-900/30';
+        return 'bg-[#FAF6ED] text-[#E76F51] border border-[#E76F51]/25 shadow-[inset_1px_1px_3px_rgba(231,111,81,0.1)]';
       default:
-        return 'bg-slate-950 text-slate-400 border-slate-800';
+        return 'bg-[#FAF6ED] text-[#9A8C7F] border border-[#E5DEC9]/50';
     }
   };
 
   return (
     <div 
       onClick={onSelect}
-      className={`bg-slate-900 border rounded-2xl p-5 shadow-lg space-y-4 transition-all hover:scale-[1.01] hover:border-slate-700 cursor-pointer ${
+      className={`bg-[#FFFDF9] rounded-3xl p-5 shadow-[6px_6px_12px_0px_#E5DEC9,-6px_-6px_12px_0px_#FFFFFF] border border-white/40 space-y-4 transition-all hover:scale-[1.01] hover:bg-[#FAF6ED] cursor-pointer ${
         isSelected 
-          ? 'ring-2 ring-teal-500 border-transparent bg-teal-950/20' 
-          : 'border-slate-800 hover:shadow-slate-950/50'
+          ? 'ring-2 ring-[#3F6C51] border-transparent shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15)] bg-[#FAF6ED]' 
+          : ''
       }`}
       id={`solution-card-${solution._id}`}
     >
       {/* Header and Category Tag */}
       <div className="flex justify-between items-start space-x-2">
-        <div className="space-y-1">
-          <span className="text-[10px] font-extrabold uppercase tracking-widest bg-slate-950 text-slate-400 px-2.5 py-0.5 border border-slate-800 rounded">
-            {solution.targetCategory}
-          </span>
-          <h4 className="text-base font-bold text-slate-100 line-clamp-1">{solution.title}</h4>
-          <p className="text-[11px] font-semibold text-slate-400">
-            By <span className="text-teal-400 font-bold">{solution.developer?.name || 'Seeded Developer'}</span>
+        <div className="space-y-1 flex-1">
+          <div className="inline-block">
+            <span className="text-[9px] font-black uppercase tracking-wider bg-[#FAF6ED] text-[#9A8C7F] px-2.5 py-1 rounded-md border border-[#E5DEC9]/60 shadow-[inset_1px_1px_3px_rgba(142,130,114,0.08)]">
+              {solution.targetCategory}
+            </span>
+          </div>
+          <h4 className="text-base font-black text-[#3A2E2B] line-clamp-1 mt-1">{solution.title}</h4>
+          <p className="text-[10px] font-bold text-[#9A8C7F]">
+            By <span className="text-[#3F6C51] font-black">{solution.developer?.name || 'Seeded Developer'}</span>
           </p>
         </div>
-        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 border rounded-full ${getStatusColor(solution.status)}`}>
+        <span className={`text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md ${getStatusColor(solution.status)}`}>
           {solution.status.replace('_', ' ')}
         </span>
       </div>
 
       {/* Description */}
-      <p className="text-slate-400 text-sm line-clamp-3 leading-relaxed">{solution.description}</p>
+      <p className="text-[#9A8C7F] text-xs font-medium line-clamp-3 leading-relaxed">{solution.description}</p>
 
       {/* Tech Stack Badges */}
       {solution.techStack && solution.techStack.length > 0 && (
         <div className="flex flex-wrap gap-1.5 pt-1">
           {solution.techStack.map((tech) => (
-            <span key={tech} className="bg-slate-950 text-slate-400 text-[10px] font-semibold px-2 py-0.5 border border-slate-800 rounded">
+            <span key={tech} className="bg-[#FAF6ED] text-[#9A8C7F] text-[9px] font-extrabold px-2 py-0.5 border border-white/40 shadow-[2px_2px_4px_rgba(142,130,114,0.06)] rounded-md">
               {tech}
             </span>
           ))}
         </div>
       )}
 
-      <div className="h-px bg-slate-800 my-2"></div>
+      <div className="h-px bg-[#E5DEC9]/60 my-2"></div>
 
       {/* Footer and Interactive Buttons */}
       <div className="flex justify-between items-center pt-1" onClick={(e) => e.stopPropagation()}>
         {/* Repo & Demo Links */}
-        <div className="flex items-center space-x-3 text-xs font-semibold text-slate-400">
+        <div className="flex items-center space-x-3 text-xs font-bold text-[#9A8C7F]">
           {solution.repoUrl && (
             <a 
               href={solution.repoUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-teal-400 flex items-center space-x-1 hover:underline"
+              className="hover:text-[#3F6C51] flex items-center space-x-1 hover:underline transition-colors"
             >
-              <Code className="w-3.5 h-3.5" />
+              <Code className="w-3.5 h-3.5 text-[#3F6C51]" />
               <span>Repo</span>
             </a>
           )}
@@ -114,9 +116,9 @@ export const SolutionCard: React.FC<SolutionCardProps> = ({
               href={solution.demoUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-teal-400 flex items-center space-x-1 hover:underline"
+              className="hover:text-[#3F6C51] flex items-center space-x-1 hover:underline transition-colors"
             >
-              <ExternalLink className="w-3.5 h-3.5" />
+              <ExternalLink className="w-3.5 h-3.5 text-[#3F6C51]" />
               <span>Demo</span>
             </a>
           )}
@@ -133,3 +135,4 @@ export const SolutionCard: React.FC<SolutionCardProps> = ({
     </div>
   );
 };
+
