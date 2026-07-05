@@ -17,13 +17,41 @@ export const RegisterPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const PASSWORD_REGEX = /^\d{6}$/;
+  const PHONE_REGEX = /^\d{10}$/;
+
+  const validateEmail = (value: string) => EMAIL_REGEX.test(value.trim());
+  const validatePassword = (value: string) => PASSWORD_REGEX.test(value.trim());
+  const validatePhone = (value: string) => PHONE_REGEX.test(value.trim());
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedPassword = password.trim();
+    const normalizedPhone = phone.trim();
+
+    if (!validateEmail(normalizedEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    if (!validatePassword(normalizedPassword)) {
+      setError('Password must be exactly 6 numeric digits.');
+      return;
+    }
+
+    if (!validatePhone(normalizedPhone)) {
+      setError('Phone number must be exactly 10 numeric digits.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      await register({ name, email, password, role, phone, region });
+      await register({ name, email: normalizedEmail, password: normalizedPassword, role, phone: normalizedPhone, region });
       toast.success('Registration successful! Welcome to CivicForge.');
       
       if (role === 'citizen') navigate('/citizen/dashboard');
@@ -103,7 +131,11 @@ export const RegisterPage: React.FC = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="123456"
+                  maxLength={6}
+                  inputMode="numeric"
+                  pattern="\d{6}"
+                  title="Exactly 6 numeric digits"
                   className="w-full neumorphic-concave pl-10 pr-4 py-2.5 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 />
               </div>
@@ -161,7 +193,11 @@ export const RegisterPage: React.FC = () => {
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+91 98300 00000"
+                  placeholder="9830012345"
+                  maxLength={10}
+                  inputMode="numeric"
+                  pattern="\d{10}"
+                  title="Exactly 10 numeric digits"
                   className="w-full neumorphic-concave pl-10 pr-4 py-2.5 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 />
               </div>
