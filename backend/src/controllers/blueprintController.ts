@@ -31,7 +31,7 @@ export async function generateBlueprint(req: AuthenticatedRequest, res: Response
     const { title, summary, estimatedBudget } = await aiGenerateBlueprint(grievances, solution);
 
     // 4. Create ProjectBlueprint draft
-    const newBlueprint = await ProjectBlueprint.create({
+    const blueprintDoc = new ProjectBlueprint({
       mp: req.user.id,
       grievanceCluster: grievanceIds,
       matchedSolution: solutionId || null,
@@ -41,6 +41,7 @@ export async function generateBlueprint(req: AuthenticatedRequest, res: Response
       generatedByAI: true,
       status: 'draft'
     });
+    const newBlueprint = await blueprintDoc.save();
 
     // 5. Update statuses of grievances and solutions to keep states synchronized
     await Grievance.updateMany({ _id: { $in: grievanceIds } }, { status: 'matched' });

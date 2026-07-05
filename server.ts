@@ -1,20 +1,20 @@
 import path from 'path';
 import dotenv from 'dotenv';
 import express from 'express';
-// Load environment variables before initializing everything
-dotenv.config();
-
-import app from './backend/src/app';
-import { connectDB } from './backend/src/config/db';
 import { createServer as createViteServer } from 'vite';
+
+// Load environment variables before initializing app modules.
+dotenv.config();
 
 const PORT = 3000;
 
 async function bootstrap() {
-  // 1. Connect to Database (real MongoDB or local JSON fallback)
+  const { connectDB } = await import('./backend/src/config/db');
   await connectDB();
 
-  // 2. Setup Vite as middleware in development or serve static build in production
+  const { default: app } = await import('./backend/src/app');
+
+  // Setup Vite as middleware in development or serve static build in production
   if (process.env.NODE_ENV !== 'production') {
     console.log('Starting development server with Vite middleware...');
     const vite = await createViteServer({
@@ -26,14 +26,14 @@ async function bootstrap() {
     console.log('Starting production server...');
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    
+
     // Fallback for SPA routing
     app.get('*', (req: any, res: any) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  // 3. Start listening on Port 3000
+  // Start listening on Port 3000
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`===================================================`);
     console.log(` CivicForge Full-Stack App is LIVE!`);

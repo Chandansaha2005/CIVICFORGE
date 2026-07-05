@@ -25,11 +25,12 @@ export async function createComment(req: AuthenticatedRequest, res: Response, ne
       return res.status(404).json({ message: 'Solution not found' });
     }
 
-    const newComment = await Comment.create({
+    const commentDoc = new Comment({
       solution: id,
       user: req.user.id,
       text: text.trim()
     });
+    const newComment = await commentDoc.save();
 
     // Increment comment count
     solution.commentCount = (solution.commentCount || 0) + 1;
