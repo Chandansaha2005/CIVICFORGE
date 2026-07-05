@@ -1,6 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const LOCAL_DB_PATH = path.join(process.cwd(), 'local_database.json');
 
@@ -355,7 +358,77 @@ export function getModelAdapter(modelName: string, schema: mongoose.Schema) {
       return mongoose.model(modelName, schema);
     }
   } else {
-    // Return MockModel
-    return new MockModel(modelName) as any;
+    // Create a singleton MockModel instance for this model
+    const mockModelInstance = new MockModel(modelName);
+
+    // Return a class with both static methods (for queries) and constructor (for creation)
+    class ModelConstructor {
+      _id: string | undefined;
+      createdAt: string | undefined;
+      [key: string]: any;
+
+      constructor(data?: any) {
+        if (data) {
+          Object.assign(this, data);
+          this._id = data._id || generateObjectId();
+          this.createdAt = data.createdAt || new Date().toISOString();
+        }
+      }
+
+      async save() {
+        const db = readLocalDB();
+        const collectionKey = modelName.toLowerCase() + 's';
+        const coll = db[collectionKey] || [];
+        
+        const idx = coll.findIndex((i: any) => i._id === this._id);
+        if (idx !== -1) {
+          coll[idx] = { ...this };
+        } else {
+          coll.push({ ...this });
+        }
+        db[collectionKey] = coll;
+        writeLocalDB(db);
+        return this;
+      }
+
+      // Static methods that delegate to the MockModel instance
+      static find(query: any = {}) {
+        return mockModelInstance.find(query);
+      }
+
+      static findOne(query: any = {}) {
+        return mockModelInstance.findOne(query);
+      }
+
+      static findById(id: string) {
+        return mockModelInstance.findById(id);
+      }
+
+      static async create(data: any) {
+        return mockModelInstance.create(data);
+      }
+
+      static async findByIdAndUpdate(id: string, update: any, options: any = {}) {
+        return mockModelInstance.findByIdAndUpdate(id, update, options);
+      }
+
+      static async updateOne(query: any, update: any) {
+        return mockModelInstance.updateOne(query, update);
+      }
+
+      static async updateMany(query: any, update: any) {
+        return mockModelInstance.updateMany(query, update);
+      }
+
+      static async countDocuments(query: any = {}) {
+        return mockModelInstance.countDocuments(query);
+      }
+
+      static async deleteMany(query: any = {}) {
+        return mockModelInstance.deleteMany(query);
+      }
+    }
+
+    return ModelConstructor as any;
   }
 }

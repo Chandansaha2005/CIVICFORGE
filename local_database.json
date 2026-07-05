@@ -19,6 +19,46 @@
       "role": "developer",
       "phone": "1234567890",
       "region": "behala"
+    },
+    {
+      "_id": "pbf4msjmzifojiswzj5kr",
+      "createdAt": "2026-07-05T17:15:42.035Z",
+      "name": "Satyam Mondal",
+      "email": "sumita@gmail.com",
+      "password": "$2b$10$Ovi0EJ/Vkn813ZQQEsXCEePtjVBkuAiklr4fKwDO9POSPr3R1RJg2",
+      "role": "developer",
+      "phone": "8583804030",
+      "region": "behala"
+    },
+    {
+      "name": "Mora Maity",
+      "email": "mora@gmail.com",
+      "password": "$2b$10$psjHBlZ25mevbkWLATW/zueD9PHm8Uo3kgJn8pgX4pw1n08mTNNxC",
+      "role": "citizen",
+      "phone": "9583136241",
+      "region": "Kestopur",
+      "_id": "962x36qayd95ck1naxpypt",
+      "createdAt": "2026-07-05T18:40:08.483Z"
+    },
+    {
+      "name": "Satyam Mondal",
+      "email": "smondal@gmail.com",
+      "password": "$2b$10$249Y9Nd3.sw2saxMj.A4SuGWCRmQIgK0MN3bwgKVPm4o5E.v4bnSe",
+      "role": "developer",
+      "phone": "8583804030",
+      "region": "Behala",
+      "_id": "9iz4l29m6jeearh0kz19f",
+      "createdAt": "2026-07-05T18:45:29.483Z"
+    },
+    {
+      "name": "Satyam Mondal",
+      "email": "Satyam@gmail.com",
+      "password": "$2b$10$qgt4QFWTHjH1flHdTplfcuro8xUctWW2VlItu5dDmERd8rKrvNOiC",
+      "role": "developer",
+      "phone": "8583804030",
+      "region": "Kestopur",
+      "_id": "63rdff7e147d0hp9tp1i5e",
+      "createdAt": "2026-07-05T18:51:40.672Z"
     }
   ],
   "grievances": [

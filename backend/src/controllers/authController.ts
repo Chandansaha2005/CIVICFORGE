@@ -29,7 +29,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    const newUser = await User.create({
+    const newUser = new User({
       name,
       email,
       password: hashedPassword,
@@ -37,6 +37,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
       phone,
       region: region || 'Kolkata'
     });
+    await newUser.save();
 
     // Create token
     const token = jwt.sign(

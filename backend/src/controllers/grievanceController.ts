@@ -54,7 +54,7 @@ export async function createGrievance(req: AuthenticatedRequest, res: Response, 
     // Create the grievance (initial recurrenceCount of 1)
     const initialUrgency = computeUrgencyScore(1, stressScore, gapScore);
 
-    const newGrievance = await Grievance.create({
+    const grievanceDoc = new Grievance({
       citizen: req.user.id,
       category,
       description,
@@ -68,6 +68,7 @@ export async function createGrievance(req: AuthenticatedRequest, res: Response, 
       urgencyScore: initialUrgency,
       status: 'pending_review'
     });
+    const newGrievance = await grievanceDoc.save();
 
     // Recompute cluster-based recurrence counts and update urgency scores for nearby issues within 2km
     const { count } = await updateClusterMetrics(category, latitude, longitude);

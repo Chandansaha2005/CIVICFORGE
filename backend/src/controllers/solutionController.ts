@@ -13,7 +13,7 @@ export async function createSolution(req: AuthenticatedRequest, res: Response, n
       return res.status(400).json({ message: 'Missing required solution fields: title, description, targetCategory.' });
     }
 
-    const newSolution = await Solution.create({
+    const solutionDoc = new Solution({
       developer: req.user.id,
       title,
       description,
@@ -25,6 +25,7 @@ export async function createSolution(req: AuthenticatedRequest, res: Response, n
       vouchCount: 0,
       status: 'submitted'
     });
+    const newSolution = await solutionDoc.save();
 
     return res.status(201).json({
       success: true,
@@ -94,11 +95,12 @@ export async function vouchForSolution(req: AuthenticatedRequest, res: Response,
     }
 
     // Create vouch
-    await Vouch.create({
+    const vouchDoc = new Vouch({
       solution: id,
       user: req.user.id,
       comment: comment || 'Verified and vouched!'
     });
+    await vouchDoc.save();
 
     // Increment vouchCount on solution
     solution.vouchCount = (solution.vouchCount || 0) + 1;
