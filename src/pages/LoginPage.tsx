@@ -13,13 +13,33 @@ export const LoginPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const PASSWORD_REGEX = /^\d{6}$/;
+
+  const validateEmail = (value: string) => EMAIL_REGEX.test(value.trim());
+  const validatePassword = (value: string) => PASSWORD_REGEX.test(value.trim());
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedPassword = password.trim();
+
+    if (!validateEmail(normalizedEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    if (!validatePassword(normalizedPassword)) {
+      setError('Password must be exactly 6 numeric digits.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const response = await login(email, password);
+      const response = await login(normalizedEmail, normalizedPassword);
       toast.success(`Welcome back, ${response.user.name}!`);
       
       // Route based on role
@@ -39,12 +59,12 @@ export const LoginPage: React.FC = () => {
   // Quick Login Helper
   const handleQuickLogin = async (demoEmail: string) => {
     setEmail(demoEmail);
-    setPassword('Test@1234');
+    setPassword('123456');
     setError(null);
     setIsSubmitting(true);
 
     try {
-      const response = await login(demoEmail, 'Test@1234');
+      const response = await login(demoEmail, '123456');
       toast.success(`Logged in as demo ${response.user.role}: ${response.user.name}`);
       
       if (response.user.role === 'citizen') navigate('/citizen/dashboard');
@@ -104,7 +124,11 @@ export const LoginPage: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="123456"
+                maxLength={6}
+                inputMode="numeric"
+                pattern="\d{6}"
+                title="Exactly 6 numeric digits"
                 className="w-full neumorphic-concave pl-10 pr-4 py-3 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 id="login-password"
               />

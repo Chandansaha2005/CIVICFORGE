@@ -7,9 +7,32 @@ import { AuthenticatedRequest } from '../middleware/auth';
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-super-secret-jwt-key';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
+// Basic input validators
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SIX_DIGIT_NUMERIC = /^\d{6}$/; // exactly 6 numeric digits
+const PHONE_REGEX = /^\d{10}$/; // basic 10-digit phone number (digits only)
+
+function validateEmail(email: string) {
+  return EMAIL_REGEX.test(email);
+}
+
+function validatePassword(pwd: string) {
+  return SIX_DIGIT_NUMERIC.test(pwd);
+}
+
+function validatePhone(phone?: string) {
+  if (!phone) return true; // optional
+  return PHONE_REGEX.test(phone);
+}
 export async function register(req: Request, res: Response, next: NextFunction) {
   try {
-    const { name, email, password, role, phone, region } = req.body;
+    let { name, email, password, role, phone, region } = req.body;
+
+    // Basic sanitization
+    name = (name || '').trim();
+    email = (email || '').trim().toLowerCase();
+    password = (password || '').toString().trim();
+    phone = phone ? String(phone).trim() : undefined;
 
     if (!name || !email || !password || !role) {
       return res.status(400).json({ message: 'Missing required fields: name, email, password, role.' });
@@ -17,6 +40,19 @@ export async function register(req: Request, res: Response, next: NextFunction) 
 
     if (!['citizen', 'developer', 'mp'].includes(role)) {
       return res.status(400).json({ message: 'Invalid role selection.' });
+    }
+
+    // Validate formats
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: 'Invalid email format.' });
+    }
+
+    if (!validatePassword(password)) {
+      return res.status(400).json({ message: 'Password must be exactly 6 numeric digits.' });
+    }
+
+    if (!validatePhone(phone)) {
+      return res.status(400).json({ message: 'Phone number must be a 10-digit numeric value.' });
     }
 
     // Check if user already exists
@@ -73,10 +109,18 @@ export async function register(req: Request, res: Response, next: NextFunction) 
 
 export async function login(req: Request, res: Response, next: NextFunction) {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+
+    email = (email || '').trim().toLowerCase();
+    password = (password || '').toString().trim();
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required.' });
+    }
+
+    // Basic format validation
+    if (!validateEmail(email) || !validatePassword(password)) {
+      return res.status(400).json({ message: 'Invalid email or password format.' });
     }
 
     // Find user
