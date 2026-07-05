@@ -19,6 +19,16 @@
       "role": "developer",
       "phone": "1234567890",
       "region": "behala"
+    },
+    {
+      "_id": "55rebyyz07xzypmzv09",
+      "createdAt": "2026-07-05T17:28:37.074Z",
+      "name": "chandu",
+      "email": "chandu@gmail.com",
+      "password": "$2b$10$a1DeypUKLHOQQaqFhEF0B.ObSTBks6X1Hf8l0CcRDoo0lpXlGmiLe",
+      "role": "citizen",
+      "phone": "2345678990",
+      "region": "behala"
     }
   ],
   "grievances": [
@@ -60,6 +70,26 @@
       "recurrenceCount": 1,
       "infrastructureGapScore": 33,
       "urgencyScore": 35,
+      "status": "pending_review"
+    },
+    {
+      "_id": "rs4eivm931pzj230s6cm9",
+      "createdAt": "2026-07-05T18:32:44.434Z",
+      "citizen": "lsgu6r8neu9q3l8fp0h2",
+      "category": "road",
+      "description": "Roads are so dirty. Full of Garbage.",
+      "inputType": "text",
+      "mediaUrl": null,
+      "transcript": null,
+      "location": {
+        "lat": 22.4981,
+        "lng": 88.3184,
+        "address": "Roy Bahadur Road, Behala, Kolkata, WB"
+      },
+      "stressScore": 40,
+      "recurrenceCount": 1,
+      "infrastructureGapScore": 48,
+      "urgencyScore": 30,
       "status": "pending_review"
     }
   ],
