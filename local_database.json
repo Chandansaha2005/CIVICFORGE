@@ -21,44 +21,14 @@
       "region": "behala"
     },
     {
-      "_id": "pbf4msjmzifojiswzj5kr",
-      "createdAt": "2026-07-05T17:15:42.035Z",
-      "name": "Satyam Mondal",
-      "email": "sumita@gmail.com",
-      "password": "$2b$10$Ovi0EJ/Vkn813ZQQEsXCEePtjVBkuAiklr4fKwDO9POSPr3R1RJg2",
-      "role": "developer",
-      "phone": "8583804030",
-      "region": "behala"
-    },
-    {
-      "name": "Mora Maity",
-      "email": "mora@gmail.com",
-      "password": "$2b$10$psjHBlZ25mevbkWLATW/zueD9PHm8Uo3kgJn8pgX4pw1n08mTNNxC",
+      "_id": "55rebyyz07xzypmzv09",
+      "createdAt": "2026-07-05T17:28:37.074Z",
+      "name": "chandu",
+      "email": "chandu@gmail.com",
+      "password": "$2b$10$a1DeypUKLHOQQaqFhEF0B.ObSTBks6X1Hf8l0CcRDoo0lpXlGmiLe",
       "role": "citizen",
-      "phone": "9583136241",
-      "region": "Kestopur",
-      "_id": "962x36qayd95ck1naxpypt",
-      "createdAt": "2026-07-05T18:40:08.483Z"
-    },
-    {
-      "name": "Satyam Mondal",
-      "email": "smondal@gmail.com",
-      "password": "$2b$10$249Y9Nd3.sw2saxMj.A4SuGWCRmQIgK0MN3bwgKVPm4o5E.v4bnSe",
-      "role": "developer",
-      "phone": "8583804030",
-      "region": "Behala",
-      "_id": "9iz4l29m6jeearh0kz19f",
-      "createdAt": "2026-07-05T18:45:29.483Z"
-    },
-    {
-      "name": "Satyam Mondal",
-      "email": "Satyam@gmail.com",
-      "password": "$2b$10$qgt4QFWTHjH1flHdTplfcuro8xUctWW2VlItu5dDmERd8rKrvNOiC",
-      "role": "developer",
-      "phone": "8583804030",
-      "region": "Kestopur",
-      "_id": "63rdff7e147d0hp9tp1i5e",
-      "createdAt": "2026-07-05T18:51:40.672Z"
+      "phone": "2345678990",
+      "region": "behala"
     }
   ],
   "grievances": [
@@ -100,6 +70,26 @@
       "recurrenceCount": 1,
       "infrastructureGapScore": 33,
       "urgencyScore": 35,
+      "status": "pending_review"
+    },
+    {
+      "_id": "rs4eivm931pzj230s6cm9",
+      "createdAt": "2026-07-05T18:32:44.434Z",
+      "citizen": "lsgu6r8neu9q3l8fp0h2",
+      "category": "road",
+      "description": "Roads are so dirty. Full of Garbage.",
+      "inputType": "text",
+      "mediaUrl": null,
+      "transcript": null,
+      "location": {
+        "lat": 22.4981,
+        "lng": 88.3184,
+        "address": "Roy Bahadur Road, Behala, Kolkata, WB"
+      },
+      "stressScore": 40,
+      "recurrenceCount": 1,
+      "infrastructureGapScore": 48,
+      "urgencyScore": 30,
       "status": "pending_review"
     }
   ],
