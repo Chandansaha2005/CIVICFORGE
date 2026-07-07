@@ -342,6 +342,7 @@ export const MPDashboard: React.FC = () => {
                     toast.success(`Selected cluster: "${g.description.substring(0, 30)}..."! Switch to Matchmaker tab to view suggested matches.`);
                   }}
                   onVerify={handleVerifyGrievance}
+                  onRefresh={fetchGrievances}
                 />
               )}
             </div>
