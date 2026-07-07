@@ -30,7 +30,7 @@ async function seed() {
     await ProjectBlueprint.deleteMany({});
 
     // 2. Hash default password
-    const hashedPassword = await bcrypt.hash('Test@1234', 10);
+    const hashedPassword = await bcrypt.hash('123456', 10);
 
     // 3. Seed Users
     console.log('Seeding MP, Citizen, and Developer users...');
@@ -555,13 +555,13 @@ This initiative deploys the **RoadScan AI Pavement Defect Mapper** on 15 municip
     console.log('=====================================================================');
     console.log(`Role: Member of Parliament (MP)`);
     console.log(`  - Email:    mp@civicforge.in`);
-    console.log(`  - Password: Test@1234`);
+    console.log(`  - Password: 123456`);
     console.log(`\nRole: Citizen (5 Users seeded)`);
     console.log(`  - Emails:   citizen1@gmail.com, citizen2@gmail.com, citizen3@gmail.com...`);
-    console.log(`  - Password: Test@1234`);
+    console.log(`  - Password: 123456`);
     console.log(`\nRole: Developer (5 Users seeded)`);
     console.log(`  - Emails:   dev1@gmail.com, dev2@gmail.com, dev3@gmail.com...`);
-    console.log(`  - Password: Test@1234`);
+    console.log(`  - Password: 123456`);
     console.log('=====================================================================\n');
 
   } catch (error) {

@@ -94,9 +94,9 @@ export const LoginPage: React.FC = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Email Address</label>
+            <label htmlFor="login-email" className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Email Address</label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#9A8C7F]">
                 <Mail className="w-4 h-4" />
@@ -107,6 +107,7 @@ export const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@domain.com"
+                autoComplete="email"
                 className="w-full neumorphic-concave pl-10 pr-4 py-3 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 id="login-email"
               />
@@ -114,7 +115,7 @@ export const LoginPage: React.FC = () => {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Security Password</label>
+            <label htmlFor="login-password" className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Security Password</label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#9A8C7F]">
                 <Lock className="w-4 h-4" />
@@ -129,6 +130,7 @@ export const LoginPage: React.FC = () => {
                 inputMode="numeric"
                 pattern="\d{6}"
                 title="Exactly 6 numeric digits"
+                autoComplete="current-password"
                 className="w-full neumorphic-concave pl-10 pr-4 py-3 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 id="login-password"
               />
@@ -171,7 +173,8 @@ export const LoginPage: React.FC = () => {
           <div className="grid grid-cols-1 gap-3 text-xs">
             <button
               onClick={() => handleQuickLogin('mp@civicforge.in')}
-              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer"
+              disabled={isSubmitting}
+              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="flex items-center space-x-2.5">
                 <div className="p-2 bg-[#FAF6ED] rounded-lg shadow-[inset_1px_1px_3px_rgba(142,130,114,0.1),inset_-1px_-1px_3px_#FFFFFF]">
@@ -187,7 +190,8 @@ export const LoginPage: React.FC = () => {
 
             <button
               onClick={() => handleQuickLogin('citizen1@gmail.com')}
-              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer"
+              disabled={isSubmitting}
+              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="flex items-center space-x-2.5">
                 <div className="p-2 bg-[#FAF6ED] rounded-lg shadow-[inset_1px_1px_3px_rgba(142,130,114,0.1),inset_-1px_-1px_3px_#FFFFFF]">
@@ -203,7 +207,8 @@ export const LoginPage: React.FC = () => {
 
             <button
               onClick={() => handleQuickLogin('dev1@gmail.com')}
-              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer"
+              disabled={isSubmitting}
+              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="flex items-center space-x-2.5">
                 <div className="p-2 bg-[#FAF6ED] rounded-lg shadow-[inset_1px_1px_3px_rgba(142,130,114,0.1),inset_-1px_-1px_3px_#FFFFFF]">

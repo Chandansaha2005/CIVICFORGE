@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 import { 
-  Shield, 
   LogOut, 
   User, 
   Landmark, 
@@ -11,19 +11,93 @@ import {
   PlusCircle, 
   Layers, 
   AlertTriangle, 
-  Trophy,
-  LogIn,
-  UserPlus
+  Trophy
 } from 'lucide-react';
+
+interface NavItemProps {
+  to: string;
+  label: string;
+  icon: React.ReactNode;
+  active: boolean;
+  activeColor?: string;
+  hoverColor?: string;
+}
+
+const NavItem: React.FC<NavItemProps> = ({
+  to,
+  label,
+  icon,
+  active,
+  activeColor = 'text-[#3F6C51]',
+  hoverColor = 'hover:text-[#3A2E2B]'
+}) => (
+  <Link
+    to={to}
+    title={label}
+    aria-label={label}
+    className={`group flex h-10 items-center overflow-hidden rounded-xl px-2.5 transition-all duration-300 ease-out ${
+      active
+        ? `bg-[#FAF6ED] shadow-[inset_3px_3px_6px_rgba(142,130,114,0.15),inset_-3px_-3px_6px_#FFFFFF] ${activeColor}`
+        : `text-[#9A8C7F] ${hoverColor} hover:bg-[#FAF6ED]/40`
+    }`}
+  >
+    <span className="shrink-0">{icon}</span>
+    <span className="max-w-0 overflow-hidden whitespace-nowrap text-[10px] font-black uppercase tracking-wider opacity-0 transition-all duration-300 ease-out group-hover:ml-2 group-hover:max-w-36 group-hover:opacity-100 group-focus-visible:ml-2 group-focus-visible:max-w-36 group-focus-visible:opacity-100">
+      {label}
+    </span>
+  </Link>
+);
+
+const MobileNavItem: React.FC<NavItemProps> = ({
+  to,
+  label,
+  icon,
+  active,
+  activeColor = 'text-[#3F6C51]'
+}) => (
+  <Link
+    to={to}
+    title={label}
+    aria-label={label}
+    className={`p-2.5 rounded-lg transition-all ${
+      active
+        ? `bg-[#FAF6ED] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15)] ${activeColor}`
+        : 'text-[#9A8C7F]'
+    }`}
+  >
+    {icon}
+  </Link>
+);
 
 export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
   const handleLogout = async () => {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+    toast.loading('Logging out...', {
+      id: 'logout-status',
+      position: 'bottom-right',
+      style: {
+        background: '#FFFDF9',
+        border: '1px solid rgba(231, 111, 81, 0.35)',
+        color: '#E76F51',
+        fontWeight: 800
+      },
+      iconTheme: {
+        primary: '#E76F51',
+        secondary: '#FFFFFF'
+      }
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
     await logout();
     navigate('/login');
+    toast.dismiss('logout-status');
   };
 
   const getRoleIcon = (role: string) => {
@@ -34,17 +108,6 @@ export const Navbar: React.FC = () => {
         return <Cpu className="w-4 h-4 text-[#3F6C51]" />;
       default:
         return <User className="w-4 h-4 text-[#3F6C51]" />;
-    }
-  };
-
-  const getRoleBadge = (role: string) => {
-    switch (role) {
-      case 'mp':
-        return 'bg-[#E76F51]/10 text-[#E76F51] border-[#E76F51]/20';
-      case 'developer':
-        return 'bg-[#3F6C51]/10 text-[#3F6C51] border-[#3F6C51]/20';
-      default:
-        return 'bg-[#3F6C51]/10 text-[#3F6C51] border-[#3F6C51]/20';
     }
   };
 
@@ -70,86 +133,58 @@ export const Navbar: React.FC = () => {
 
             {/* Icon-based Desktop Navigation */}
             {user && (
-              <div className="hidden md:flex items-center space-x-3.5 border-l border-[#E5DEC9]/60 pl-4">
+              <div className="hidden lg:flex items-center space-x-3.5 border-l border-[#E5DEC9]/60 pl-4">
                 {user.role === 'citizen' && (
-                  <Link 
-                    to="/citizen/dashboard" 
-                    title="Lodge Issue" 
-                    className={`p-2.5 rounded-xl transition-all ${
-                      isActive('/citizen/dashboard')
-                        ? 'bg-[#FAF6ED] shadow-[inset_3px_3px_6px_rgba(142,130,114,0.15),inset_-3px_-3px_6px_#FFFFFF] text-[#3F6C51]'
-                        : 'text-[#9A8C7F] hover:text-[#3A2E2B] hover:bg-[#FAF6ED]/40'
-                    }`}
-                  >
-                    <PlusCircle className="w-5 h-5" />
-                  </Link>
+                  <NavItem
+                    to="/citizen/dashboard"
+                    label="Lodge Issue"
+                    icon={<PlusCircle className="w-5 h-5" />}
+                    active={isActive('/citizen/dashboard')}
+                  />
                 )}
                 {user.role === 'developer' && (
-                  <Link 
-                    to="/developer/dashboard" 
-                    title="Developer Workspace" 
-                    className={`p-2.5 rounded-xl transition-all ${
-                      isActive('/developer/dashboard')
-                        ? 'bg-[#FAF6ED] shadow-[inset_3px_3px_6px_rgba(142,130,114,0.15),inset_-3px_-3px_6px_#FFFFFF] text-[#3F6C51]'
-                        : 'text-[#9A8C7F] hover:text-[#3A2E2B] hover:bg-[#FAF6ED]/40'
-                    }`}
-                  >
-                    <Cpu className="w-5 h-5" />
-                  </Link>
+                  <NavItem
+                    to="/developer/dashboard"
+                    label="Workspace"
+                    icon={<Cpu className="w-5 h-5" />}
+                    active={isActive('/developer/dashboard')}
+                  />
                 )}
                 {user.role === 'mp' && (
-                  <Link 
-                    to="/mp/dashboard" 
-                    title="Cabinet Evaluation Room" 
-                    className={`p-2.5 rounded-xl transition-all ${
-                      isActive('/mp/dashboard')
-                        ? 'bg-[#FAF6ED] shadow-[inset_3px_3px_6px_rgba(142,130,114,0.15),inset_-3px_-3px_6px_#FFFFFF] text-[#3F6C51]'
-                        : 'text-[#9A8C7F] hover:text-[#3A2E2B] hover:bg-[#FAF6ED]/40'
-                    }`}
-                  >
-                    <Landmark className="w-5 h-5" />
-                  </Link>
+                  <NavItem
+                    to="/mp/dashboard"
+                    label="Evaluation Room"
+                    icon={<Landmark className="w-5 h-5" />}
+                    active={isActive('/mp/dashboard')}
+                  />
                 )}
 
                 {(user.role === 'citizen' || user.role === 'developer') && (
-                  <Link 
-                    to="/feed/solutions" 
-                    title="Community Solutions Feed" 
-                    className={`p-2.5 rounded-xl transition-all ${
-                      isActive('/feed/solutions')
-                        ? 'bg-[#FAF6ED] shadow-[inset_3px_3px_6px_rgba(142,130,114,0.15),inset_-3px_-3px_6px_#FFFFFF] text-[#3F6C51]'
-                        : 'text-[#9A8C7F] hover:text-[#3A2E2B] hover:bg-[#FAF6ED]/40'
-                    }`}
-                  >
-                    <Layers className="w-5 h-5" />
-                  </Link>
+                  <NavItem
+                    to="/feed/solutions"
+                    label="Solutions Feed"
+                    icon={<Layers className="w-5 h-5" />}
+                    active={isActive('/feed/solutions')}
+                  />
                 )}
 
                 {user.role === 'developer' && (
-                  <Link 
-                    to="/feed/problems" 
-                    title="Browse Civic Demands" 
-                    className={`p-2.5 rounded-xl transition-all ${
-                      isActive('/feed/problems')
-                        ? 'bg-[#FAF6ED] shadow-[inset_3px_3px_6px_rgba(142,130,114,0.15),inset_-3px_-3px_6px_#FFFFFF] text-[#E76F51]'
-                        : 'text-[#9A8C7F] hover:text-[#E76F51] hover:bg-[#FAF6ED]/40'
-                    }`}
-                  >
-                    <AlertTriangle className="w-5 h-5" />
-                  </Link>
+                  <NavItem
+                    to="/feed/problems"
+                    label="Civic Demands"
+                    icon={<AlertTriangle className="w-5 h-5" />}
+                    active={isActive('/feed/problems')}
+                    activeColor="text-[#E76F51]"
+                    hoverColor="hover:text-[#E76F51]"
+                  />
                 )}
 
-                <Link 
-                  to="/leaderboard" 
-                  title="Developer Leaderboard" 
-                  className={`p-2.5 rounded-xl transition-all ${
-                    isActive('/leaderboard')
-                      ? 'bg-[#FAF6ED] shadow-[inset_3px_3px_6px_rgba(142,130,114,0.15),inset_-3px_-3px_6px_#FFFFFF] text-[#3F6C51]'
-                      : 'text-[#9A8C7F] hover:text-[#3A2E2B] hover:bg-[#FAF6ED]/40'
-                  }`}
-                >
-                  <Trophy className="w-5 h-5" />
-                </Link>
+                <NavItem
+                  to="/leaderboard"
+                  label="Leaderboard"
+                  icon={<Trophy className="w-5 h-5" />}
+                  active={isActive('/leaderboard')}
+                />
               </div>
             )}
           </div>
@@ -174,9 +209,11 @@ export const Navbar: React.FC = () => {
               {/* Logout Button */}
               <button
                 onClick={handleLogout}
-                className="neumorphic-btn p-2.5 text-[#9A8C7F] hover:text-[#E76F51] flex items-center justify-center rounded-xl"
+                disabled={isLoggingOut}
+                className="flex items-center justify-center rounded-xl bg-[#FFFDF9] p-2.5 text-[#9A8C7F] shadow-[4px_4px_8px_0px_rgba(100,116,139,0.18),-4px_-4px_8px_0px_#FFFFFF] transition-all duration-200 hover:text-[#E76F51] active:translate-y-0.5 active:text-[#E76F51] active:shadow-[inset_4px_4px_8px_rgba(100,116,139,0.22),inset_-4px_-4px_8px_#FFFFFF] disabled:cursor-wait disabled:opacity-70"
                 id="navbar-logout-btn"
                 title="Sign Out"
+                aria-label="Sign Out"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -202,80 +239,57 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Sub-Nav Row */}
       {user && (
-        <div className="md:hidden max-w-7xl mx-auto mt-2.5 bg-[#FFFDF9] p-2 rounded-xl flex items-center justify-around text-center overflow-x-auto whitespace-nowrap gap-2 scrollbar-none shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF]">
+        <div className="lg:hidden max-w-7xl mx-auto mt-2.5 bg-[#FFFDF9] p-2 rounded-xl flex items-center justify-around text-center overflow-x-auto whitespace-nowrap gap-2 scrollbar-none shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF]">
           {user.role === 'citizen' && (
-            <Link 
-              to="/citizen/dashboard" 
-              className={`p-2.5 rounded-lg transition-all ${
-                isActive('/citizen/dashboard')
-                  ? 'bg-[#FAF6ED] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15)] text-[#3F6C51]'
-                  : 'text-[#9A8C7F]'
-              }`}
-            >
-              <PlusCircle className="w-4.5 h-4.5" />
-            </Link>
+            <MobileNavItem
+              to="/citizen/dashboard"
+              label="Lodge Issue"
+              icon={<PlusCircle className="w-4.5 h-4.5" />}
+              active={isActive('/citizen/dashboard')}
+            />
           )}
           {user.role === 'developer' && (
-            <Link 
-              to="/developer/dashboard" 
-              className={`p-2.5 rounded-lg transition-all ${
-                isActive('/developer/dashboard')
-                  ? 'bg-[#FAF6ED] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15)] text-[#3F6C51]'
-                  : 'text-[#9A8C7F]'
-              }`}
-            >
-              <Cpu className="w-4.5 h-4.5" />
-            </Link>
+            <MobileNavItem
+              to="/developer/dashboard"
+              label="Developer Workspace"
+              icon={<Cpu className="w-4.5 h-4.5" />}
+              active={isActive('/developer/dashboard')}
+            />
           )}
           {user.role === 'mp' && (
-            <Link 
-              to="/mp/dashboard" 
-              className={`p-2.5 rounded-lg transition-all ${
-                isActive('/mp/dashboard')
-                  ? 'bg-[#FAF6ED] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15)] text-[#3F6C51]'
-                  : 'text-[#9A8C7F]'
-              }`}
-            >
-              <Landmark className="w-4.5 h-4.5" />
-            </Link>
+            <MobileNavItem
+              to="/mp/dashboard"
+              label="Cabinet Evaluation Room"
+              icon={<Landmark className="w-4.5 h-4.5" />}
+              active={isActive('/mp/dashboard')}
+            />
           )}
 
           {(user.role === 'citizen' || user.role === 'developer') && (
-            <Link 
-              to="/feed/solutions" 
-              className={`p-2.5 rounded-lg transition-all ${
-                isActive('/feed/solutions')
-                  ? 'bg-[#FAF6ED] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15)] text-[#3F6C51]'
-                  : 'text-[#9A8C7F]'
-              }`}
-            >
-              <Layers className="w-4.5 h-4.5" />
-            </Link>
+            <MobileNavItem
+              to="/feed/solutions"
+              label="Community Solutions Feed"
+              icon={<Layers className="w-4.5 h-4.5" />}
+              active={isActive('/feed/solutions')}
+            />
           )}
 
           {user.role === 'developer' && (
-            <Link 
-              to="/feed/problems" 
-              className={`p-2.5 rounded-lg transition-all ${
-                isActive('/feed/problems')
-                  ? 'bg-[#FAF6ED] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15)] text-[#E76F51]'
-                  : 'text-[#9A8C7F]'
-              }`}
-            >
-              <AlertTriangle className="w-4.5 h-4.5" />
-            </Link>
+            <MobileNavItem
+              to="/feed/problems"
+              label="Browse Civic Demands"
+              icon={<AlertTriangle className="w-4.5 h-4.5" />}
+              active={isActive('/feed/problems')}
+              activeColor="text-[#E76F51]"
+            />
           )}
 
-          <Link 
-            to="/leaderboard" 
-            className={`p-2.5 rounded-lg transition-all ${
-              isActive('/leaderboard')
-                ? 'bg-[#FAF6ED] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.15)] text-[#3F6C51]'
-                : 'text-[#9A8C7F]'
-            }`}
-          >
-            <Trophy className="w-4.5 h-4.5" />
-          </Link>
+          <MobileNavItem
+            to="/leaderboard"
+            label="Developer Leaderboard"
+            icon={<Trophy className="w-4.5 h-4.5" />}
+            active={isActive('/leaderboard')}
+          />
         </div>
       )}
     </nav>

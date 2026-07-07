@@ -29,9 +29,16 @@ export const RegisterPage: React.FC = () => {
     e.preventDefault();
     setError(null);
 
+    const normalizedName = name.trim().replace(/\s+/g, ' ');
     const normalizedEmail = email.trim().toLowerCase();
     const normalizedPassword = password.trim();
     const normalizedPhone = phone.trim();
+    const normalizedRegion = region.trim();
+
+    if (normalizedName.length < 2) {
+      setError('Please enter your full name.');
+      return;
+    }
 
     if (!validateEmail(normalizedEmail)) {
       setError('Please enter a valid email address.');
@@ -48,10 +55,15 @@ export const RegisterPage: React.FC = () => {
       return;
     }
 
+    if (!normalizedRegion) {
+      setError('Please enter your region, ward, or constituency.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      await register({ name, email: normalizedEmail, password: normalizedPassword, role, phone: normalizedPhone, region });
+      await register({ name: normalizedName, email: normalizedEmail, password: normalizedPassword, role, phone: normalizedPhone, region: normalizedRegion });
       toast.success('Registration successful! Welcome to CivicForge.');
       
       if (role === 'citizen') navigate('/citizen/dashboard');
@@ -81,11 +93,11 @@ export const RegisterPage: React.FC = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Full Name */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Full Name</label>
+              <label htmlFor="register-name" className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Full Name</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#9A8C7F]">
                   <User className="w-4 h-4" />
@@ -96,6 +108,8 @@ export const RegisterPage: React.FC = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Priyan Sen"
+                  autoComplete="name"
+                  id="register-name"
                   className="w-full neumorphic-concave pl-10 pr-4 py-2.5 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 />
               </div>
@@ -103,7 +117,7 @@ export const RegisterPage: React.FC = () => {
 
             {/* Email Address */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Email Address</label>
+              <label htmlFor="register-email" className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Email Address</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#9A8C7F]">
                   <Mail className="w-4 h-4" />
@@ -114,6 +128,8 @@ export const RegisterPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@domain.com"
+                  autoComplete="email"
+                  id="register-email"
                   className="w-full neumorphic-concave pl-10 pr-4 py-2.5 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 />
               </div>
@@ -121,7 +137,7 @@ export const RegisterPage: React.FC = () => {
 
             {/* Password */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Password</label>
+              <label htmlFor="register-password" className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Password</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#9A8C7F]">
                   <Lock className="w-4 h-4" />
@@ -136,6 +152,8 @@ export const RegisterPage: React.FC = () => {
                   inputMode="numeric"
                   pattern="\d{6}"
                   title="Exactly 6 numeric digits"
+                  autoComplete="new-password"
+                  id="register-password"
                   className="w-full neumorphic-concave pl-10 pr-4 py-2.5 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 />
               </div>
@@ -183,7 +201,7 @@ export const RegisterPage: React.FC = () => {
 
             {/* Phone Number */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Phone Contact</label>
+              <label htmlFor="register-phone" className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Phone Contact</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#9A8C7F]">
                   <Phone className="w-4 h-4" />
@@ -198,6 +216,8 @@ export const RegisterPage: React.FC = () => {
                   inputMode="numeric"
                   pattern="\d{10}"
                   title="Exactly 10 numeric digits"
+                  autoComplete="tel"
+                  id="register-phone"
                   className="w-full neumorphic-concave pl-10 pr-4 py-2.5 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 />
               </div>
@@ -205,7 +225,7 @@ export const RegisterPage: React.FC = () => {
 
             {/* Region/Constituency */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Region / Ward / Constituency</label>
+              <label htmlFor="register-region" className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Region / Ward / Constituency</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#9A8C7F]">
                   <Map className="w-4 h-4" />
@@ -216,6 +236,8 @@ export const RegisterPage: React.FC = () => {
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
                   placeholder="e.g. Behala South, Ward 118"
+                  autoComplete="address-level2"
+                  id="register-region"
                   className="w-full neumorphic-concave pl-10 pr-4 py-2.5 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
                 />
               </div>
