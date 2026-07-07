@@ -89,11 +89,12 @@ export async function getProblemsFeed(req: AuthenticatedRequest, res: Response, 
     const sort = req.query.sort;
     if (sort === 'newest') {
       grievances.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    } else {
-      // default: urgencyScore DESC
+    } else if (sort === 'urgency') {
       grievances.sort((a: any, b: any) => (b.urgencyScore || 0) - (a.urgencyScore || 0));
+    } else {
+      // default: ai-priority DESC
+      grievances.sort((a: any, b: any) => (b.aiPriorityScore || 0) - (a.aiPriorityScore || 0));
     }
-
     const paginated = grievances.slice(startIndex, endIndex);
     const hasMore = grievances.length > endIndex;
 

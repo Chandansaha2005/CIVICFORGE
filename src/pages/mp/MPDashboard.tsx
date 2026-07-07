@@ -31,6 +31,8 @@ interface Grievance {
   recurrenceCount: number;
   infrastructureGapScore: number;
   urgencyScore: number;
+  aiPriorityScore: number;
+  aiPriorityExplanation: string;
   status: string;
   citizen?: { name: string; email: string };
   createdAt: string;
@@ -217,6 +219,22 @@ export const MPDashboard: React.FC = () => {
             <p className="text-[#9A8C7F] text-xs font-bold mt-1">Harnessing multi-source data fusion and Gemini AI models to prioritize community distress and fund digital prototypes.</p>
           </div>
           <div className="flex items-center space-x-6">
+            <button 
+              onClick={async () => {
+                const toastId = toast.loading('Triggering background AI Prioritization...');
+                try {
+                  await axiosClient.post('/api/priority-matrix/prioritize-all');
+                  toast.success('AI Daemon launched! Scores will update shortly.', { id: toastId });
+                  setTimeout(fetchGrievances, 3000);
+                } catch (e) {
+                  toast.error('Failed to trigger AI sync.', { id: toastId });
+                }
+              }}
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-[#FAF6ED] text-[#E76F51] border border-[#E76F51]/30 hover:bg-[#FFFDF9] rounded-xl shadow-sm text-xs font-black uppercase transition-colors"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>AI Force Sync</span>
+            </button>
             <div className="text-center bg-[#FAF6ED] border border-white/40 px-5 py-3 rounded-2xl shadow-[inset_1px_1px_3px_rgba(142,130,114,0.08)]">
               <span className="block text-xl font-black text-[#E76F51]">
                 {grievances.filter(g => g.status === 'verified' || g.status === 'pending_review').length}
@@ -231,6 +249,8 @@ export const MPDashboard: React.FC = () => {
             </div>
           </div>
         </div>
+
+        
 
         {/* Tab Selection Row */}
         <div className="flex flex-wrap border-b border-[#E5DEC9]/60 gap-1" id="mp-dashboard-tabs">

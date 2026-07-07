@@ -101,6 +101,62 @@ export async function categorizeAndScoreText(description: string): Promise<{ cat
   }
 }
 
+// ... (keep existing imports and functions)
+
+export async function evaluatePriorityAndSuitability(grievance: any, solutions: any[]): Promise<any> {
+  const client = getGeminiClient();
+  if (!client) return null;
+
+  const solutionsText = solutions.map(s => 
+    `ID: ${s._id} | Title: ${s.title} | Tech: ${s.techStack.join(', ')} | Desc: ${s.description}`
+  ).join('\n');
+
+  try {
+    const response = await client.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: `You are a civic triage AI. Analyze this community problem and the available developer solutions.
+      
+      PROBLEM:
+      Description: ${grievance.description}
+      Category: ${grievance.category}
+      Recurrence Count: ${grievance.recurrenceCount}
+      
+      AVAILABLE SOLUTIONS:
+      ${solutionsText || 'No solutions available for this category yet.'}
+      
+      Calculate a priority score (0-100) based strictly on human distress and safety. Write a 1-2 sentence explanation. 
+      Then, score how well each available solution addresses this specific problem (0-100) with a brief explanation.`,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            aiPriorityScore: { type: Type.INTEGER },
+            aiPriorityExplanation: { type: Type.STRING },
+            solutionSuitability: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  solutionId: { type: Type.STRING },
+                  score: { type: Type.INTEGER },
+                  explanation: { type: Type.STRING }
+                }
+              }
+            }
+          },
+          required: ['aiPriorityScore', 'aiPriorityExplanation']
+        }
+      }
+    });
+
+    return JSON.parse(response.text || '{}');
+  } catch (error) {
+    console.error('Gemini API Priority Evaluation Error:', error);
+    return null;
+  }
+}
+
 export async function generateBlueprint(
   grievances: any[], 
   solution: any

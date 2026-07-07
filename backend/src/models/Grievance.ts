@@ -26,6 +26,11 @@ const GrievanceSchema = new mongoose.Schema({
     enum: ['pending_review', 'verified', 'matched', 'resolved'], 
     default: 'pending_review' 
   },
+  // AI Prioritization Fields
+  aiPriorityScore: { type: Number, default: 0 },
+  aiPriorityExplanation: { type: String, default: null },
+  aiLastEvaluatedAt: { type: Date, default: null },
+  
   createdAt: { type: Date, default: Date.now }
 });
 
