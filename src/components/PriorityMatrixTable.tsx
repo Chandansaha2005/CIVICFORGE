@@ -3,7 +3,8 @@ import {
   ArrowUpDown, 
   MapPin, 
   Sparkles, 
-  Check 
+  Check,
+  RefreshCw 
 } from 'lucide-react';
 
 interface Grievance {
@@ -40,10 +41,11 @@ interface PriorityMatrixTableProps {
   onSelectGrievance: (grievance: Grievance) => void;
   selectedGrievanceId?: string;
   onVerify: (id: string) => Promise<void>;
+  onRefresh?: () => void; // Added refresh prop
 }
 
 export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({ 
-  data, onSelectGrievance, selectedGrievanceId, onVerify 
+  data, onSelectGrievance, selectedGrievanceId, onVerify, onRefresh 
 }) => {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -51,11 +53,19 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
   // Set default sort to aiPriorityScore
   const [sortField, setSortField] = useState<'aiPriorityScore' | 'recurrenceCount' | 'stressScore' | 'infrastructureGapScore'>('aiPriorityScore');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // ... [Keep handleSort and filtering logic]
   const handleSort = (field: any) => {
     if (sortField === field) setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     else { setSortField(field); setSortOrder('desc'); }
+  };
+
+  const handleRefresh = async () => {
+    if (onRefresh) {
+      setIsRefreshing(true);
+      await onRefresh();
+      setTimeout(() => setIsRefreshing(false), 500); // Visual feedback delay
+    }
   };
 
   const getAIBadge = (score: number) => {
@@ -65,8 +75,21 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
   };
 
   const filteredData = data
-    .filter(item => { /* ... existing filter logic ... */ return true; })
+    .filter(item => { 
+      const matchCat = categoryFilter ? item.category === categoryFilter : true;
+      const matchStatus = statusFilter ? item.status === statusFilter : true;
+      const matchSearch = searchQuery 
+        ? item.description.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          item.location.address.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+      return matchCat && matchStatus && matchSearch;
+    })
     .sort((a, b) => {
+      // 1. Force 'resolved' items to the absolute bottom
+      if (a.status === 'resolved' && b.status !== 'resolved') return 1;
+      if (a.status !== 'resolved' && b.status === 'resolved') return -1;
+
+      // 2. Normal sorting for everything else
       const valA = a[sortField] || 0;
       const valB = b[sortField] || 0;
       return sortOrder === 'asc' ? valA - valB : valB - valA;
@@ -75,19 +98,28 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
   return (
     <div className="space-y-4" id="priority-matrix-table-container">
       {/* 1. Filters & Search Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <input
-          type="text"
-          placeholder="Search by keywords or address..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
-        />
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex-1 flex gap-2">
+          <input
+            type="text"
+            placeholder="Search by keywords or address..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
+          />
+          <button 
+            onClick={handleRefresh}
+            className="bg-[#FFFDF9] hover:bg-[#FAF6ED] border border-white/50 text-[#3F6C51] hover:text-[#2d4d3a] px-4 py-2.5 rounded-xl transition-all shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] flex items-center justify-center shrink-0 cursor-pointer"
+            title="Refresh Matrix"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
 
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] font-bold focus:outline-none"
+          className="neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] font-bold focus:outline-none sm:w-48"
         >
           <option value="">All Categories</option>
           <option value="water">Water</option>
@@ -102,7 +134,7 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] font-bold focus:outline-none"
+          className="neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] font-bold focus:outline-none sm:w-48"
         >
           <option value="">All Statuses</option>
           <option value="pending_review">Pending Review</option>
@@ -158,28 +190,17 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
               ) : (
                 filteredData.map((item) => {
                   const isSelected = selectedGrievanceId === item._id;
+                  const isResolved = item.status === 'resolved';
+
                   return (
                     <tr 
                       key={item._id} 
-                      className={`hover:bg-[#FAF6ED]/40 transition-colors cursor-pointer ${
-                        isSelected ? 'bg-[#FAF6ED] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.08),inset_-2px_-2px_5px_#FFFFFF]' : ''
-                      }`}
+                      className={`transition-all duration-300 cursor-pointer 
+                        ${isResolved ? 'opacity-40 grayscale hover:opacity-75 bg-transparent' : 'hover:bg-[#FAF6ED]/40'} 
+                        ${isSelected && !isResolved ? 'bg-[#FAF6ED] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.08),inset_-2px_-2px_5px_#FFFFFF]' : ''}
+                      `}
                       onClick={() => onSelectGrievance(item)}
                     >
-                      {/* AI Priority Score Column */}
-                      <td className="py-4 px-3 text-center">
-                        <div className="flex flex-col items-center space-y-1 relative group">
-                          <span className={`text-sm font-black border px-3 py-1 rounded-full ${getAIBadge(item.aiPriorityScore)} flex items-center gap-1`}>
-                            {item.aiPriorityScore || 0}
-                          </span>
-                          {item.aiPriorityExplanation && (
-                            <div className="absolute top-8 w-48 p-2 bg-[#3A2E2B] text-white text-[10px] rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
-                              {item.aiPriorityExplanation}
-                            </div>
-                          )}
-                        </div>
-                      </td>
-
                       {/* Location & Details Column */}
                       <td className="py-4 px-5 max-w-sm">
                         <div className="space-y-1.5">
@@ -188,20 +209,23 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
                               {item.category}
                             </span>
                             <span className={`text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 border rounded-full ${
-                              item.status === 'pending_review' ? 'bg-[#FAF6ED] text-amber-600 border border-amber-500/25 shadow-[inset_1px_1px_3px_rgba(217,119,6,0.1)]' :
-                              item.status === 'verified' ? 'bg-[#FAF6ED] text-[#3F6C51] border border-[#3F6C51]/25 shadow-[inset_1px_1px_3px_rgba(63,108,81,0.1)]' :
-                              item.status === 'matched' ? 'bg-[#FAF6ED] text-[#3F6C51] border border-[#3F6C51]/20' :
-                              'bg-[#FAF6ED] text-[#9A8C7F] border border-[#E5DEC9]/50'
+                              item.status === 'pending_review' ? 'bg-[#FAF6ED] text-amber-600 border-amber-500/25 shadow-[inset_1px_1px_3px_rgba(217,119,6,0.1)]' :
+                              item.status === 'verified' ? 'bg-[#FAF6ED] text-[#3F6C51] border-[#3F6C51]/25 shadow-[inset_1px_1px_3px_rgba(63,108,81,0.1)]' :
+                              item.status === 'matched' ? 'bg-[#FAF6ED] text-[#3F6C51] border-[#3F6C51]/20' :
+                              item.status === 'resolved' ? 'bg-emerald-100 text-emerald-700 border-emerald-500/30' :
+                              'bg-[#FAF6ED] text-[#9A8C7F] border-[#E5DEC9]/50'
                             }`}>
                               {item.status.replace('_', ' ')}
                             </span>
                           </div>
-                          <p className="text-sm font-bold text-[#3A2E2B] line-clamp-2 leading-relaxed">{item.description}</p>
+                          <p className={`text-sm font-bold text-[#3A2E2B] line-clamp-2 leading-relaxed ${isResolved ? 'line-through decoration-[#9A8C7F]/50' : ''}`}>
+                            {item.description}
+                          </p>
                           <div className="flex items-center space-x-1 text-[#9A8C7F] text-xs">
                             <MapPin className="w-3.5 h-3.5 text-[#E76F51]" />
                             <span className="truncate font-bold">{item.location?.address}</span>
                           </div>
-                          {item.inputType === 'voice' && item.transcript && (
+                          {item.inputType === 'voice' && item.transcript && !isResolved && (
                             <p className="text-[11px] text-[#3F6C51] bg-[#3F6C51]/5 border border-[#3F6C51]/15 rounded-xl p-2.5 font-bold italic shadow-[inset_1px_1px_3px_rgba(63,108,81,0.06)]">
                               "Transcribed: {item.transcript}"
                             </p>
@@ -209,11 +233,18 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
                         </div>
                       </td>
 
-                      {/* Urgency Score Column */}
+                      {/* AI Priority Score Column */}
                       <td className="py-4 px-3 text-center">
-                        <span className={`text-xs font-black border px-3 py-1 rounded-full ${getAIBadge(item.urgencyScore)}`}>
-                          {item.urgencyScore}
-                        </span>
+                        <div className="flex flex-col items-center space-y-1 relative group">
+                          <span className={`text-sm font-black border px-3 py-1 rounded-full ${getAIBadge(item.aiPriorityScore)} flex items-center gap-1`}>
+                            {item.aiPriorityScore || 0}
+                          </span>
+                          {item.aiPriorityExplanation && !isResolved && (
+                            <div className="absolute top-8 w-48 p-2 bg-[#3A2E2B] text-white text-[10px] rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+                              {item.aiPriorityExplanation}
+                            </div>
+                          )}
+                        </div>
                       </td>
 
                       {/* Recurrence Count Column */}
@@ -250,7 +281,9 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
                                 <span className="text-[9px] font-black bg-emerald-100 text-emerald-700 px-1 rounded" title="AI Match Score">{item.topSolution?.aiMatchScore ?? 0}%</span>
                               )}
                             </div>
-                            {/* ... Keep the rest of solution cell */}
+                            <div className="text-[10px] text-[#9A8C7F] font-bold">
+                              by {item.topSolution.developer?.name || 'Anonymous Dev'}
+                            </div>
                           </div>
                         ) : (
                           <span className="text-[10px] text-[#9A8C7F] font-bold italic">No prototypes listed</span>
@@ -260,28 +293,37 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
                       {/* Actions Column */}
                       <td className="py-4 px-5 text-center" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-center space-x-2">
-                          {item.status === 'pending_review' ? (
-                            <button
-                              onClick={() => onVerify(item._id)}
-                              className="text-xs bg-[#3F6C51] hover:bg-[#2d4d3a] text-white font-black px-3 py-1.5 rounded-xl border border-white/20 shadow-[3px_3px_6px_rgba(63,108,81,0.2),-3px_-3px_6px_#FFFFFF] flex items-center space-x-1 cursor-pointer transition-all"
-                              title="Verify grievance"
-                            >
-                              <Check className="w-3.5 h-3.5" />
-                              <span>Verify</span>
-                            </button>
-                          ) : (
-                            <span className="text-xs text-[#9A8C7F] font-bold flex items-center space-x-0.5">
-                              <Check className="w-3.5 h-3.5 text-emerald-600 font-extrabold" />
-                              <span>Verified</span>
+                          {isResolved ? (
+                            <span className="text-xs text-emerald-600 font-bold flex items-center space-x-0.5">
+                              <Check className="w-3.5 h-3.5 font-extrabold" />
+                              <span>Completed</span>
                             </span>
+                          ) : (
+                            <>
+                              {item.status === 'pending_review' ? (
+                                <button
+                                  onClick={() => onVerify(item._id)}
+                                  className="text-xs bg-[#3F6C51] hover:bg-[#2d4d3a] text-white font-black px-3 py-1.5 rounded-xl border border-white/20 shadow-[3px_3px_6px_rgba(63,108,81,0.2),-3px_-3px_6px_#FFFFFF] flex items-center space-x-1 cursor-pointer transition-all"
+                                  title="Verify grievance"
+                                >
+                                  <Check className="w-3.5 h-3.5" />
+                                  <span>Verify</span>
+                                </button>
+                              ) : (
+                                <span className="text-xs text-[#9A8C7F] font-bold flex items-center space-x-0.5">
+                                  <Check className="w-3.5 h-3.5 text-emerald-600 font-extrabold" />
+                                  <span>Verified</span>
+                                </span>
+                              )}
+                              <button
+                                onClick={() => onSelectGrievance(item)}
+                                className="text-xs text-[#9A8C7F] hover:text-[#3F6C51] bg-[#FFFDF9] hover:shadow-[inset_2px_2px_4px_rgba(142,130,114,0.1)] border border-white/40 shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] px-3 py-1.5 rounded-xl font-black uppercase tracking-wider flex items-center space-x-1 cursor-pointer transition-all"
+                              >
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span>Match</span>
+                              </button>
+                            </>
                           )}
-                          <button
-                            onClick={() => onSelectGrievance(item)}
-                            className="text-xs text-[#9A8C7F] hover:text-[#3F6C51] bg-[#FFFDF9] hover:shadow-[inset_2px_2px_4px_rgba(142,130,114,0.1)] border border-white/40 shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] px-3 py-1.5 rounded-xl font-black uppercase tracking-wider flex items-center space-x-1 cursor-pointer transition-all"
-                          >
-                            <Sparkles className="w-3.5 h-3.5" />
-                            <span>Match</span>
-                          </button>
                         </div>
                       </td>
                     </tr>
@@ -295,4 +337,3 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
     </div>
   );
 };
-
