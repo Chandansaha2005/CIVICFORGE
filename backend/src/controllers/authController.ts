@@ -33,6 +33,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
     email = (email || '').trim().toLowerCase();
     password = (password || '').toString().trim();
     phone = phone ? String(phone).trim() : undefined;
+    region = region ? String(region).trim() : undefined;
 
     if (!name || !email || !password || !role) {
       return res.status(400).json({ message: 'Missing required fields: name, email, password, role.' });

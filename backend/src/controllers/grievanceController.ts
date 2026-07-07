@@ -7,6 +7,7 @@ import { categorizeAndScoreText } from '../services/geminiService';
 import { getInfrastructureGap } from '../services/dataFusionService';
 import { computeUrgencyScore, updateClusterMetrics } from '../services/scoringService';
 import { uploadToCloud } from '../utils/uploadAdapter';
+import { runAIPrioritizationTask } from '../services/aiPrioritizer';
 
 export async function createGrievance(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
@@ -66,9 +67,12 @@ export async function createGrievance(req: AuthenticatedRequest, res: Response, 
       recurrenceCount: 1,
       infrastructureGapScore: gapScore,
       urgencyScore: initialUrgency,
-      status: 'pending_review'
+      status: 'pending_review',
+      aiLastEvaluatedAt: null
     });
     const newGrievance = await grievanceDoc.save();
+
+    runAIPrioritizationTask(); // Trigger AI prioritization after new grievance creation
 
     // Recompute cluster-based recurrence counts and update urgency scores for nearby issues within 2km
     const { count } = await updateClusterMetrics(category, latitude, longitude);
@@ -149,7 +153,11 @@ export async function verifyGrievance(req: AuthenticatedRequest, res: Response, 
     }
 
     grievance.status = 'verified';
+    grievance.aiLastEvaluatedAt = null;
     await grievance.save();
+
+    runAIPrioritizationTask();
+
 
     return res.json({
       success: true,

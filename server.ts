@@ -6,13 +6,16 @@ import { createServer as createViteServer } from 'vite';
 // Load environment variables before initializing app modules.
 dotenv.config();
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 async function bootstrap() {
   const { connectDB } = await import('./backend/src/config/db');
   await connectDB();
 
   const { default: app } = await import('./backend/src/app');
+
+  const { startAIPrioritizer } = await import('./backend/src/services/aiPrioritizer');
+  startAIPrioritizer();
 
   // Setup Vite as middleware in development or serve static build in production
   if (process.env.NODE_ENV !== 'production') {

@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import { 
   ShieldAlert, 
+  Sparkles,
   MapPin, 
   Calendar, 
   Cpu, 
@@ -29,6 +30,8 @@ interface Problem {
   recurrenceCount: number;
   infrastructureGapScore: number;
   urgencyScore: number;
+  aiPriorityScore: number;
+  aiPriorityExplanation: string;
   status: string;
   createdAt: string;
 }
@@ -43,7 +46,7 @@ export const ProblemFeed: React.FC = () => {
 
   // Filters and Sorting
   const [category, setCategory] = useState('');
-  const [sort, setSort] = useState<'urgency' | 'newest'>('urgency');
+  const [sort, setSort] = useState<'ai-priority' | 'urgency' | 'newest'>('ai-priority');
 
   // Modal Solution Form States
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -229,11 +232,12 @@ export const ProblemFeed: React.FC = () => {
             <div className="relative">
               <select
                 value={sort}
-                onChange={(e) => setSort(e.target.value as 'urgency' | 'newest')}
+                onChange={(e) => setSort(e.target.value as any)}
                 className="w-full neumorphic-concave px-4 py-2.5 text-xs font-bold text-[#3A2E2B] focus:outline-none focus:border-[#3F6C51] appearance-none cursor-pointer pr-8"
               >
-                <option value="urgency">Sort by Urgency Score (High to Low)</option>
-                <option value="newest">Sort by Submission Date (Newest First)</option>
+                <option value="ai-priority">Sort by AI Human-Need Priority (Default)</option>
+                <option value="urgency">Sort by Spatial Urgency Score</option>
+                <option value="newest">Sort by Submission Date</option>
               </select>
               <div className="absolute right-3.5 top-3.5 pointer-events-none text-[#9A8C7F] text-xs">▼</div>
             </div>
@@ -260,8 +264,14 @@ export const ProblemFeed: React.FC = () => {
                 className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-6 shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] space-y-4 hover:bg-[#FAF6ED]/50 transition-all duration-300 relative overflow-hidden"
               >
                 {/* Score badge in top corner */}
-                <div className={`absolute top-0 right-0 border-b border-l border-[#E5DEC9]/60 rounded-bl-2xl px-4 py-2 text-xs font-black tracking-tight ${getUrgencyBadgeColor(prob.urgencyScore)}`}>
-                  Urgency Score: {prob.urgencyScore}/100
+                <div className="absolute top-0 right-0 flex items-center border-b border-l border-[#E5DEC9]/60 rounded-bl-2xl overflow-hidden text-xs font-black tracking-tight">
+                  <div className="bg-[#FAF6ED] px-3 py-2 text-[#9A8C7F] border-r border-[#E5DEC9]/60">
+                    Spatial: {prob.urgencyScore}
+                  </div>
+                  <div className="bg-[#E76F51]/10 px-3 py-2 text-[#E76F51] flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    AI Priority: {prob.aiPriorityScore || 'N/A'}
+                  </div>
                 </div>
 
                 {/* Top line info */}
@@ -274,6 +284,13 @@ export const ProblemFeed: React.FC = () => {
                     <span>{new Date(prob.createdAt).toLocaleDateString()}</span>
                   </span>
                 </div>
+
+                {prob.aiPriorityExplanation && (
+                  <div className="bg-[#E76F51]/5 border border-[#E76F51]/20 p-2.5 rounded-xl mb-2 flex items-start gap-2">
+                    <Sparkles className="w-4 h-4 text-[#E76F51] shrink-0 mt-0.5" />
+                    <p className="text-[11px] font-bold text-[#E76F51] leading-relaxed">{prob.aiPriorityExplanation}</p>
+                  </div>
+                )}                
 
                 {/* Description & Transcript */}
                 <div className="space-y-2 pt-1.5">
@@ -323,7 +340,7 @@ export const ProblemFeed: React.FC = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
                   <div className="flex items-center space-x-1.5 text-xs font-black text-[#9A8C7F]">
                     <MapPin className="w-4 h-4 text-[#E76F51] shrink-0" />
-                    <span className="truncate max-w-[280px] sm:max-w-md">{prob.location?.address}</span>
+                    <span className="truncate max-w-70 sm:max-w-md">{prob.location?.address}</span>
                   </div>
 
                   <button

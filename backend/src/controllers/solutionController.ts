@@ -2,6 +2,8 @@ import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth';
 import { Solution } from '../models/Solution';
 import { Vouch } from '../models/Vouch';
+import { Grievance } from '../models/Grievance';
+import { runAIPrioritizationTask } from '../services/aiPrioritizer';
 
 export async function createSolution(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
@@ -27,6 +29,24 @@ export async function createSolution(req: AuthenticatedRequest, res: Response, n
     });
     const newSolution = await solutionDoc.save();
 
+    await Grievance.updateMany(
+      {
+        category: targetCategory, 
+        status: {
+          $in: [
+            'pending_review',
+            'verified'
+          ]
+        }
+      }, {
+        $set: {
+          aiLastEvaluatedAt: null
+        }
+      }
+    );
+
+    runAIPrioritizationTask();
+    
     return res.status(201).json({
       success: true,
       solution: newSolution

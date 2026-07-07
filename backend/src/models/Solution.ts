@@ -22,6 +22,13 @@ const SolutionSchema = new mongoose.Schema({
     enum: ['submitted', 'under_review', 'matched', 'deployed'], 
     default: 'submitted' 
   },
+  // AI Suitability Tracking
+  aiSuitability: [{
+    grievanceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Grievance' },
+    score: { type: Number },
+    explanation: { type: String }
+  }],
+  
   createdAt: { type: Date, default: Date.now }
 });
 

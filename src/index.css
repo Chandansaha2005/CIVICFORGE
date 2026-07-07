@@ -172,3 +172,28 @@ body {
   background: var(--bg-card) !important;
   box-shadow: 8px 8px 16px 0px rgba(142, 130, 114, 0.2) !important;
 }
+
+/* Custom Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
+}
+
+/* Scrollbar-none utility for hiding scrollbars while keeping scroll behavior */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
