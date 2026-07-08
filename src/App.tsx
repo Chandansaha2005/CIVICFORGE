@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+// 1. Swapped HashRouter to MemoryRouter to completely hide URL paths
+import { MemoryRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Navbar } from './components/Navbar';
@@ -14,7 +15,7 @@ import { DeveloperLeaderboard } from './pages/developer/DeveloperLeaderboard';
 import { MPDashboard } from './pages/mp/MPDashboard';
 import { Toaster } from 'react-hot-toast';
 
-// 1. New Component to handle dynamic theme injection
+// New Component to handle dynamic theme injection
 const ThemeWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
 
