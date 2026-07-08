@@ -26,15 +26,8 @@ export const LoginPage: React.FC = () => {
     const normalizedEmail = email.trim().toLowerCase();
     const normalizedPassword = password.trim();
 
-    if (!validateEmail(normalizedEmail)) {
-      setError('Please enter a valid email address.');
-      return;
-    }
-
-    if (!validatePassword(normalizedPassword)) {
-      setError('Password must be exactly 6 numeric digits.');
-      return;
-    }
+    if (!validateEmail(normalizedEmail)) { setError('Please enter a valid email address.'); return; }
+    if (!validatePassword(normalizedPassword)) { setError('Password must be exactly 6 numeric digits.'); return; }
 
     setIsSubmitting(true);
 
@@ -42,13 +35,11 @@ export const LoginPage: React.FC = () => {
       const response = await login(normalizedEmail, normalizedPassword);
       toast.success(`Welcome back, ${response.user.name}!`);
       
-      // Route based on role
       if (response.user.role === 'citizen') navigate('/citizen/dashboard');
       else if (response.user.role === 'developer') navigate('/developer/dashboard');
       else if (response.user.role === 'mp') navigate('/mp/dashboard');
       else navigate('/');
     } catch (err: any) {
-      console.error(err);
       setError(err.message || 'Incorrect email or password.');
       toast.error('Authentication failed.');
     } finally {
@@ -56,7 +47,6 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  // Quick Login Helper
   const handleQuickLogin = async (demoEmail: string) => {
     setEmail(demoEmail);
     setPassword('123456');
@@ -71,7 +61,6 @@ export const LoginPage: React.FC = () => {
       else if (response.user.role === 'developer') navigate('/developer/dashboard');
       else if (response.user.role === 'mp') navigate('/mp/dashboard');
     } catch (err: any) {
-      console.error(err);
       setError(err.message || 'Seeded user login failed. Please verify seed script status.');
       toast.error('Quick Login Failed');
     } finally {
@@ -80,25 +69,25 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-[#FAF6ED] text-[#3A2E2B] flex flex-col justify-center items-center px-4 py-12" id="login-page">
-      <div className="w-full max-w-md bg-[#FFFDF9] rounded-3xl p-8 shadow-[14px_14px_28px_0px_#E5DEC9,-14px_-14px_28px_0px_#FFFFFF] border border-white/40 space-y-6 relative">
+    <div className="min-h-[calc(100vh-80px)] theme-bg-canvas theme-text-main flex flex-col justify-center items-center px-4 py-12 transition-colors duration-500" id="login-page">
+      <div className="w-full max-w-md neumorphic-convex rounded-4xl p-8 space-y-6 relative transition-all duration-500">
         
         <div className="text-center">
-          <h2 className="text-2xl font-black tracking-tight text-[#3A2E2B]">Sign In</h2>
-          <p className="text-xs text-[#9A8C7F] mt-1 font-bold uppercase tracking-wider">Access your CivicForge bento portal</p>
+          <h2 className="text-2xl font-black tracking-tight theme-text-main">Sign In</h2>
+          <p className="text-xs theme-text-muted mt-1 font-bold uppercase tracking-wider">Access your CivicForge bento portal</p>
         </div>
 
         {error && (
-          <div className="bg-[#E76F51]/10 text-[#E76F51] text-xs px-4 py-3 rounded-xl border border-[#E76F51]/20 font-bold" id="login-error">
+          <div className="bg-red-500/10 text-red-500 text-xs px-4 py-3 rounded-xl border border-red-500/20 font-bold" id="login-error">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-          <div className="space-y-1.5">
-            <label htmlFor="login-email" className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Email Address</label>
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+          <div className="space-y-2">
+            <label htmlFor="login-email" className="text-[10px] font-black uppercase tracking-wider theme-text-muted">Email Address</label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#9A8C7F]">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 theme-text-muted">
                 <Mail className="w-4 h-4" />
               </span>
               <input
@@ -108,16 +97,16 @@ export const LoginPage: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@domain.com"
                 autoComplete="email"
-                className="w-full neumorphic-concave pl-10 pr-4 py-3 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
+                className="w-full neumorphic-concave pl-10 pr-4 py-3 text-sm text-(--text-main) placeholder:text-(--text-muted) placeholder:opacity-60 font-medium focus:ring-1 focus:ring-(--accent-primary) transition-all"
                 id="login-email"
               />
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label htmlFor="login-password" className="text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">Security Password</label>
+          <div className="space-y-2">
+            <label htmlFor="login-password" className="text-[10px] font-black uppercase tracking-wider theme-text-muted">Security Password</label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#9A8C7F]">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 theme-text-muted">
                 <Lock className="w-4 h-4" />
               </span>
               <input
@@ -129,9 +118,8 @@ export const LoginPage: React.FC = () => {
                 maxLength={6}
                 inputMode="numeric"
                 pattern="\d{6}"
-                title="Exactly 6 numeric digits"
                 autoComplete="current-password"
-                className="w-full neumorphic-concave pl-10 pr-4 py-3 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
+                className="w-full neumorphic-concave pl-10 pr-4 py-3 text-sm text-(--text-main) placeholder:text-(--text-muted) placeholder:opacity-60 font-medium focus:ring-1 focus:ring-(--accent-primary) transition-all"
                 id="login-password"
               />
             </div>
@@ -140,86 +128,86 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full neumorphic-btn-accent py-3.5 px-4 font-extrabold text-sm uppercase tracking-wider shadow-[4px_4px_8px_rgba(63,108,81,0.25),-4px_-4px_8px_#FFFFFF] flex items-center justify-center space-x-1.5 disabled:opacity-50"
+            className="w-full neumorphic-btn-accent rounded-2xl py-4 px-4 font-black text-xs uppercase tracking-widest flex items-center justify-center space-x-2 mt-6 disabled:opacity-50"
             id="login-submit-btn"
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin text-white" />
+                <Loader2 className="w-5 h-5 animate-spin" />
                 <span>Authenticating...</span>
               </>
             ) : (
-              <span>Sign In</span>
+              <span>Sign In Securely</span>
             )}
           </button>
         </form>
 
-        <div className="text-center pt-2">
-          <p className="text-xs text-[#9A8C7F] font-medium">
+        <div className="text-center pt-3 border-t border-black/5 dark:border-white/5 mt-6">
+          <p className="text-xs theme-text-muted font-bold">
             Don't have an account?{' '}
-            <Link to="/register" className="text-[#3F6C51] hover:underline font-bold">
+            <Link to="/register" className="text-(--accent-primary) hover:underline font-black">
               Register now
             </Link>
           </p>
         </div>
 
         {/* Demo Fast Login Panel */}
-        <div className="border-t border-[#E5DEC9]/60 pt-5 space-y-3.5">
-          <div className="flex items-center space-x-1.5 justify-center">
-            <Sparkles className="w-3.5 h-3.5 text-[#E76F51]" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#9A8C7F]">Demo Fast Ingress Login</span>
+        <div className="border-t border-black/10 dark:border-white/10 pt-5 space-y-4 mt-6">
+          <div className="flex items-center space-x-2 justify-center">
+            <Sparkles className="w-4 h-4 text-amber-500" />
+            <span className="text-[10px] font-black uppercase tracking-widest theme-text-muted">Demo Fast Ingress Login</span>
           </div>
 
           <div className="grid grid-cols-1 gap-3 text-xs">
             <button
               onClick={() => handleQuickLogin('mp@civicforge.in')}
               disabled={isSubmitting}
-              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-between neumorphic-convex p-3.5 rounded-2xl transition-all text-left cursor-pointer hover:brightness-105 disabled:opacity-50"
             >
-              <div className="flex items-center space-x-2.5">
-                <div className="p-2 bg-[#FAF6ED] rounded-lg shadow-[inset_1px_1px_3px_rgba(142,130,114,0.1),inset_-1px_-1px_3px_#FFFFFF]">
-                  <Landmark className="w-4 h-4 text-[#E76F51]" />
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 neumorphic-concave rounded-xl">
+                  <Landmark className="w-4 h-4 text-red-500" />
                 </div>
                 <div>
-                  <p className="font-black text-[#3A2E2B]">Amit Roy</p>
-                  <p className="text-[10px] text-[#9A8C7F] font-semibold">Cabinet evaluation & budget</p>
+                  <p className="font-black theme-text-main text-sm">Amit Roy</p>
+                  <p className="text-[10px] theme-text-muted font-bold mt-0.5">Cabinet evaluation & budget</p>
                 </div>
               </div>
-              <span className="text-[9px] font-black uppercase bg-[#E76F51]/10 text-[#E76F51] px-2.5 py-1 rounded-md border border-[#E76F51]/20">MP</span>
+              <span className="text-[9px] font-black uppercase bg-red-500/10 text-red-500 px-3 py-1 rounded-md border border-red-500/20">MP</span>
             </button>
 
             <button
               onClick={() => handleQuickLogin('citizen1@gmail.com')}
               disabled={isSubmitting}
-              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-between neumorphic-convex p-3.5 rounded-2xl transition-all text-left cursor-pointer hover:brightness-105 disabled:opacity-50"
             >
-              <div className="flex items-center space-x-2.5">
-                <div className="p-2 bg-[#FAF6ED] rounded-lg shadow-[inset_1px_1px_3px_rgba(142,130,114,0.1),inset_-1px_-1px_3px_#FFFFFF]">
-                  <User className="w-4 h-4 text-[#3F6C51]" />
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 neumorphic-concave rounded-xl">
+                  <User className="w-4 h-4 text-blue-500" />
                 </div>
                 <div>
-                  <p className="font-black text-[#3A2E2B]">Vikram Chatterjee</p>
-                  <p className="text-[10px] text-[#9A8C7F] font-semibold">Citizen lodging demands</p>
+                  <p className="font-black theme-text-main text-sm">Vikram Chatterjee</p>
+                  <p className="text-[10px] theme-text-muted font-bold mt-0.5">Citizen lodging demands</p>
                 </div>
               </div>
-              <span className="text-[9px] font-black uppercase bg-[#3F6C51]/10 text-[#3F6C51] px-2.5 py-1 rounded-md border border-[#3F6C51]/20">Citizen</span>
+              <span className="text-[9px] font-black uppercase bg-blue-500/10 text-blue-500 px-3 py-1 rounded-md border border-blue-500/20">Citizen</span>
             </button>
 
             <button
               onClick={() => handleQuickLogin('dev1@gmail.com')}
               disabled={isSubmitting}
-              className="flex items-center justify-between bg-[#FFFDF9] p-3 rounded-xl shadow-[4px_4px_8px_0px_rgba(142,130,114,0.1),-4px_-4px_8px_0px_#FFFFFF] hover:shadow-[inset_2px_2px_5px_rgba(142,130,114,0.1),inset_-2px_-2px_5px_#FFFFFF] border border-white/40 transition-all text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-between neumorphic-convex p-3.5 rounded-2xl transition-all text-left cursor-pointer hover:brightness-105 disabled:opacity-50"
             >
-              <div className="flex items-center space-x-2.5">
-                <div className="p-2 bg-[#FAF6ED] rounded-lg shadow-[inset_1px_1px_3px_rgba(142,130,114,0.1),inset_-1px_-1px_3px_#FFFFFF]">
-                  <Cpu className="w-4 h-4 text-[#3F6C51]" />
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 neumorphic-concave rounded-xl">
+                  <Cpu className="w-4 h-4 text-emerald-500" />
                 </div>
                 <div>
-                  <p className="font-black text-[#3A2E2B]">TechForge (Arijit)</p>
-                  <p className="text-[10px] text-[#9A8C7F] font-semibold">Developer building prototypes</p>
+                  <p className="font-black theme-text-main text-sm">TechForge (Arijit)</p>
+                  <p className="text-[10px] theme-text-muted font-bold mt-0.5">Developer building prototypes</p>
                 </div>
               </div>
-              <span className="text-[9px] font-black uppercase bg-[#3F6C51]/10 text-[#3F6C51] px-2.5 py-1 rounded-md border border-[#3F6C51]/20">Dev</span>
+              <span className="text-[9px] font-black uppercase bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-md border border-emerald-500/20">Dev</span>
             </button>
           </div>
         </div>
