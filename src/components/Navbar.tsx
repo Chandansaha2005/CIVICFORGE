@@ -6,12 +6,12 @@ import {
   LogOut, 
   User, 
   Landmark, 
-  Cpu, 
-  Hammer, 
+  Cpu,  
   PlusCircle, 
   Layers, 
   AlertTriangle, 
-  Trophy
+  Trophy,
+  Hammer,
 } from 'lucide-react';
 
 interface NavItemProps {
@@ -145,7 +145,8 @@ export const Navbar: React.FC = () => {
                   <span className="text-xs font-black theme-text-main">{user.name}</span>
                 </div>
 
-                <div className="flex items-center space-x-1 px-3 py-1.5 neumorphic-concave rounded-xl">
+                {/* Raised Role Pill */}
+                <div className="flex items-center space-x-1 px-3 py-1.5 neumorphic-convex rounded-xl">
                   {getRoleIcon(user.role)}
                   <span className="text-[9px] font-black uppercase tracking-wider theme-text-main ml-1">
                     {user.role}
@@ -165,11 +166,20 @@ export const Navbar: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center space-x-3.5">
-                <Link to="/login" className="text-xs font-bold uppercase tracking-wider theme-text-muted hover:theme-text-main px-3.5 py-2 transition-colors">
+              <div className="flex items-center space-x-4">
+                {/* INSET/CONCAVE SIGN IN */}
+                <Link 
+                  to="/login" 
+                  className="text-[10px] font-black uppercase tracking-wider text-(--text-muted) hover:text-(--text-main) px-4 py-2.5 rounded-xl neumorphic-concave transition-all"
+                >
                   Sign In
                 </Link>
-                <Link to="/register" className="neumorphic-btn-accent text-xs font-extrabold uppercase tracking-wider px-5 py-2.5">
+                
+                {/* RAISED/CONVEX GET STARTED */}
+                <Link 
+                  to="/register" 
+                  className="text-[10px] font-black uppercase tracking-wider text-emerald bg-(--accent-primary) px-5 py-2.5 rounded-xl neumorphic-concave hover:brightness-20 transition-all"
+                >
                   Get Started
                 </Link>
               </div>
