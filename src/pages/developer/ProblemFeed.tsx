@@ -2,18 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axiosClient from '../../api/axiosClient';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-hot-toast';
-import { 
-  ShieldAlert, 
-  Sparkles,
-  MapPin, 
-  Calendar, 
-  Cpu, 
-  Volume2, 
-  X,
-  Plus,
-  ListFilter
-} from 'lucide-react';
-
+import { ShieldAlert, Sparkles, MapPin, Calendar, Cpu, Volume2, X, Plus, ListFilter } from 'lucide-react';
 interface Problem {
   _id: string;
   category: string;
@@ -179,174 +168,115 @@ export const ProblemFeed: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#FAF6ED] min-h-[calc(100vh-64px)] py-8 px-4 sm:px-6 lg:px-8 text-[#3A2E2B]" id="problems-feed-page">
+    <div className="theme-bg-canvas min-h-[calc(100vh-64px)] py-8 px-4 sm:px-6 lg:px-8 pb-32" id="problems-feed-page">
       <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
         
         {/* Header Hero */}
-        <div className="bg-[#FFFDF9] p-6 rounded-3xl border border-white/40 shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] relative overflow-hidden">
-          <div className="absolute right-0 top-0 transform translate-x-12 -translate-y-12 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="neumorphic-convex p-6 rounded-[28px] relative overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <div className="flex items-center space-x-2">
-                <Cpu className="w-4 h-4 text-[#3F6C51]" />
-                <span className="text-[#3F6C51] text-xs font-black uppercase tracking-widest">Developer Marketplace</span>
+                <Cpu className="w-4 h-4 theme-accent" />
+                <span className="theme-accent text-xs font-black uppercase tracking-widest">Developer Marketplace</span>
               </div>
-              <h1 className="text-2xl font-black mt-1 text-[#3A2E2B] uppercase tracking-tight">Civic Problems & Demands Feed</h1>
-              <p className="text-[#9A8C7F] text-xs font-bold mt-1">
-                Browse verified and pending citizen complaints ranked by spatial urgency. Build and register targeted solution prototypes.
-              </p>
+              <h1 className="text-2xl font-black mt-1 theme-text-main uppercase tracking-tight">Civic Demands Feed</h1>
+              <p className="theme-text-muted text-xs font-bold mt-1">Browse verified citizen complaints and register targeted solution prototypes.</p>
             </div>
-            <div className="flex items-center space-x-3 bg-[#FAF6ED] border border-white/40 p-3 rounded-2xl shadow-[inset_1px_1px_3px_rgba(142,130,114,0.08)]">
+            <div className="flex items-center space-x-3 neumorphic-concave p-3 rounded-[20px]">
               <div className="text-center px-4">
-                <span className="block text-lg font-black text-emerald-600">{problems.length}</span>
-                <span className="text-[9px] font-black uppercase tracking-wider text-[#9A8C7F]">Listed</span>
+                <span className="block text-lg font-black theme-accent">{problems.length}</span>
+                <span className="text-[9px] font-black uppercase tracking-wider theme-text-muted">Listed</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filter and Sort Controllers */}
-        <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-4 flex flex-col sm:flex-row sm:items-center gap-4 shadow-[6px_6px_12px_0px_#E5DEC9,-6px_-6px_12px_0px_#FFFFFF]">
-          <div className="flex items-center space-x-2 shrink-0 text-[#9A8C7F]">
-            <ListFilter className="w-4 h-4 text-[#3F6C51]" />
+        <div className="neumorphic-convex rounded-3xl p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex items-center space-x-2 shrink-0 theme-text-muted">
+            <ListFilter className="w-4 h-4 theme-accent" />
             <span className="text-xs font-black uppercase tracking-wider">Refine Queue</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-            {/* Category selection */}
-            <div className="relative">
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full neumorphic-concave px-4 py-2.5 text-xs font-bold text-[#3A2E2B] focus:outline-none focus:border-[#3F6C51] appearance-none cursor-pointer pr-8"
-              >
-                <option value="">All Problem Categories</option>
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat.toUpperCase()}</option>
-                ))}
-              </select>
-              <div className="absolute right-3.5 top-3.5 pointer-events-none text-[#9A8C7F] text-xs">▼</div>
-            </div>
-
-            {/* Sort Toggle */}
-            <div className="relative">
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value as any)}
-                className="w-full neumorphic-concave px-4 py-2.5 text-xs font-bold text-[#3A2E2B] focus:outline-none focus:border-[#3F6C51] appearance-none cursor-pointer pr-8"
-              >
-                <option value="ai-priority">Sort by AI Human-Need Priority (Default)</option>
-                <option value="urgency">Sort by Spatial Urgency Score</option>
-                <option value="newest">Sort by Submission Date</option>
-              </select>
-              <div className="absolute right-3.5 top-3.5 pointer-events-none text-[#9A8C7F] text-xs">▼</div>
-            </div>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full neumorphic-concave px-4 py-2.5 text-xs font-bold theme-text-main focus:outline-none"
+            >
+              <option value="">All Problem Categories</option>
+              {categories.map(cat => <option key={cat} value={cat}>{cat.toUpperCase()}</option>)}
+            </select>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as any)}
+              className="w-full neumorphic-concave px-4 py-2.5 text-xs font-bold theme-text-main focus:outline-none"
+            >
+              <option value="ai-priority">Sort by AI Priority (Default)</option>
+              <option value="urgency">Sort by Urgency Score</option>
+              <option value="newest">Sort by Submission Date</option>
+            </select>
           </div>
         </div>
 
         {/* Problems Queue */}
         {loading ? (
-          <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-16 text-center shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF]">
-            <div className="w-8 h-8 border-3 border-[#3F6C51] border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p className="text-[#9A8C7F] font-black text-xs mt-3.5 uppercase tracking-wider">Loading verified civic demands...</p>
+          <div className="neumorphic-convex rounded-[28px] p-16 text-center">
+            <div className="w-8 h-8 border-3 border-current theme-accent border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="theme-text-muted font-black text-xs mt-3.5 uppercase tracking-wider">Loading demands...</p>
           </div>
         ) : problems.length === 0 ? (
-          <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-16 text-center shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] space-y-3">
-            <ShieldAlert className="w-10 h-10 text-[#9A8C7F] mx-auto" />
-            <p className="text-[#3A2E2B] text-sm font-black">No active community problems matched your search.</p>
-            <p className="text-[#9A8C7F] text-xs font-bold">All citizen complaints have been matched or cleared for this category.</p>
+          <div className="neumorphic-convex rounded-[28px] p-16 text-center space-y-3">
+            <ShieldAlert className="w-10 h-10 theme-text-muted mx-auto" />
+            <p className="theme-text-main text-sm font-black">No active community problems matched your search.</p>
           </div>
         ) : (
           <div className="space-y-6" id="problems-feed-container">
             {problems.map((prob) => (
-              <div 
-                key={prob._id} 
-                className="bg-[#FFFDF9] border border-white/40 rounded-3xl p-6 shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] space-y-4 hover:bg-[#FAF6ED]/50 transition-all duration-300 relative overflow-hidden"
-              >
+              <div key={prob._id} className="neumorphic-convex rounded-[28px] p-6 space-y-4 hover:brightness-110 transition-all duration-300 relative overflow-hidden">
+                
                 {/* Score badge in top corner */}
-                <div className="absolute top-0 right-0 flex items-center border-b border-l border-[#E5DEC9]/60 rounded-bl-2xl overflow-hidden text-xs font-black tracking-tight">
-                  <div className="bg-[#FAF6ED] px-3 py-2 text-[#9A8C7F] border-r border-[#E5DEC9]/60">
-                    Spatial: {prob.urgencyScore}
-                  </div>
-                  <div className="bg-[#E76F51]/10 px-3 py-2 text-[#E76F51] flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    AI Priority: {prob.aiPriorityScore || 'N/A'}
+                <div className="absolute top-0 right-0 flex items-center neumorphic-concave rounded-bl-[20px] text-xs font-black tracking-tight">
+                  <div className="px-3 py-2 theme-text-muted border-r border-black/10 dark:border-white/10">Spatial: {prob.urgencyScore}</div>
+                  <div className="px-3 py-2 theme-accent flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5" /> AI Priority: {prob.aiPriorityScore || 'N/A'}
                   </div>
                 </div>
 
-                {/* Top line info */}
                 <div className="flex items-center space-x-3 text-xs">
-                  <span className="text-[10px] font-black uppercase tracking-widest bg-[#FAF6ED] text-[#9A8C7F] px-2 py-0.5 border border-[#E5DEC9]/60 rounded-md">
+                  <span className="text-[10px] font-black uppercase tracking-widest neumorphic-concave theme-text-muted px-2.5 py-1 rounded-md">
                     {prob.category}
                   </span>
-                  <span className="text-[10px] text-[#9A8C7F] flex items-center space-x-1 font-bold">
-                    <Calendar className="w-3.5 h-3.5 text-[#3F6C51]" />
+                  <span className="text-[10px] theme-text-muted flex items-center space-x-1 font-bold">
+                    <Calendar className="w-3.5 h-3.5 theme-accent" />
                     <span>{new Date(prob.createdAt).toLocaleDateString()}</span>
                   </span>
                 </div>
 
                 {prob.aiPriorityExplanation && (
-                  <div className="bg-[#E76F51]/5 border border-[#E76F51]/20 p-2.5 rounded-xl mb-2 flex items-start gap-2">
-                    <Sparkles className="w-4 h-4 text-[#E76F51] shrink-0 mt-0.5" />
-                    <p className="text-[11px] font-bold text-[#E76F51] leading-relaxed">{prob.aiPriorityExplanation}</p>
+                  <div className="neumorphic-concave p-3 rounded-2xl mb-2 flex items-start gap-2">
+                    <Sparkles className="w-4 h-4 theme-accent shrink-0 mt-0.5" />
+                    <p className="text-[11px] font-bold theme-accent leading-relaxed">{prob.aiPriorityExplanation}</p>
                   </div>
                 )}                
 
-                {/* Description & Transcript */}
                 <div className="space-y-2 pt-1.5">
-                  <p className="text-[#3A2E2B] text-sm font-bold leading-relaxed pr-24 sm:pr-0">
-                    {prob.description}
-                  </p>
-
-                  {/* Attachment voice audio */}
-                  {prob.inputType === 'voice' && prob.mediaUrl && (
-                    <div className="bg-[#FAF6ED] border border-[#E5DEC9]/60 p-3.5 rounded-2xl space-y-2 max-w-md shadow-[inset_1px_1px_3px_rgba(142,130,114,0.06)]">
-                      <div className="flex items-center space-x-2 text-[#3F6C51] font-black text-xs">
-                        <Volume2 className="w-4 h-4" />
-                        <span>Voice Recording</span>
-                      </div>
-                      <audio controls src={prob.mediaUrl} className="w-full h-8" />
-                      {prob.transcript && (
-                        <p className="text-xs text-[#9A8C7F] italic font-bold">"Transcribed: {prob.transcript}"</p>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Attachment image */}
-                  {prob.inputType === 'photo' && prob.mediaUrl && (
-                    <div className="border border-[#E5DEC9]/60 rounded-2xl overflow-hidden max-h-56 bg-[#FAF6ED]/40 inline-flex items-center p-1 shadow-[inset_1px_1px_2px_rgba(142,130,114,0.06)]">
-                      <img src={prob.mediaUrl} alt="Complaint Media" className="object-cover max-h-52 rounded-xl" referrerPolicy="no-referrer" />
-                    </div>
-                  )}
+                  <p className="theme-text-main text-sm font-bold leading-relaxed pr-24 sm:pr-0">{prob.description}</p>
                 </div>
 
                 {/* Scoring metrics breakdown grid */}
-                <div className="grid grid-cols-3 gap-2.5 bg-[#FAF6ED] p-3.5 rounded-2xl border border-[#E5DEC9]/60 text-center shadow-[inset_1px_1px_3px_rgba(142,130,114,0.08)]">
-                  <div>
-                    <span className="block text-xs font-black text-[#E76F51]">{prob.stressScore}/100</span>
-                    <span className="text-[9px] font-black uppercase tracking-wider text-[#9A8C7F]">Citizen Stress</span>
-                  </div>
-                  <div>
-                    <span className="block text-xs font-black text-amber-600">×{prob.recurrenceCount}</span>
-                    <span className="text-[9px] font-black uppercase tracking-wider text-[#9A8C7F]">Cluster Size</span>
-                  </div>
-                  <div>
-                    <span className="block text-xs font-black text-[#3F6C51]">{prob.infrastructureGapScore}/100</span>
-                    <span className="text-[9px] font-black uppercase tracking-wider text-[#9A8C7F]">Infrastructure Gap</span>
-                  </div>
+                <div className="grid grid-cols-3 gap-2.5 neumorphic-concave p-3.5 rounded-[20px] text-center">
+                  <div><span className="block text-xs font-black text-red-500">{prob.stressScore}/100</span><span className="text-[9px] font-black uppercase tracking-wider theme-text-muted">Stress</span></div>
+                  <div><span className="block text-xs font-black text-amber-500">×{prob.recurrenceCount}</span><span className="text-[9px] font-black uppercase tracking-wider theme-text-muted">Cluster</span></div>
+                  <div><span className="block text-xs font-black theme-accent">{prob.infrastructureGapScore}/100</span><span className="text-[9px] font-black uppercase tracking-wider theme-text-muted">Gap</span></div>
                 </div>
 
-                {/* Footer and Submit Button */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
-                  <div className="flex items-center space-x-1.5 text-xs font-black text-[#9A8C7F]">
-                    <MapPin className="w-4 h-4 text-[#E76F51] shrink-0" />
+                  <div className="flex items-center space-x-1.5 text-xs font-black theme-text-muted">
+                    <MapPin className="w-4 h-4 theme-accent shrink-0" />
                     <span className="truncate max-w-70 sm:max-w-md">{prob.location?.address}</span>
                   </div>
-
-                  <button
-                    onClick={() => openSubmitModal(prob)}
-                    className="bg-[#FFFDF9] hover:bg-[#FAF6ED] border border-white/50 text-[#3F6C51] hover:text-[#2d4d3a] text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-xl transition-all shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] hover:shadow-inner cursor-pointer flex items-center justify-center space-x-1.5"
-                  >
+                  <button onClick={() => openSubmitModal(prob)} className="neumorphic-btn-accent text-xs font-black uppercase tracking-wider px-5 py-2.5 rounded-[14px] flex items-center justify-center space-x-1.5">
                     <Plus className="w-4 h-4 shrink-0" strokeWidth={2.5} />
                     <span>Submit Solution</span>
                   </button>

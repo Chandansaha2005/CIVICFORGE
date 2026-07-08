@@ -1,38 +1,13 @@
 import React, { useState } from 'react';
-import { 
-  ArrowUpDown, 
-  MapPin, 
-  Sparkles, 
-  Check,
-  RefreshCw 
-} from 'lucide-react';
+import { ArrowUpDown, MapPin, Sparkles, Check, RefreshCw } from 'lucide-react';
 
 interface Grievance {
-  _id: string;
-  category: string;
-  description: string;
-  inputType: string;
-  mediaUrl: string;
-  transcript: string;
-  location: { lat: number; lng: number; address: string };
-  stressScore: number;
-  recurrenceCount: number;
-  infrastructureGapScore: number;
-  urgencyScore: number;
-  aiPriorityScore: number;
-  aiPriorityExplanation: string;
-  status: string;
-  citizen?: { name: string; email: string };
-  createdAt: string;
-  topSolution?: { 
-    _id: string; 
-    title: string; 
-    developer?: { 
-      name: string 
-    }; 
-    vouchCount: number; 
-    aiMatchScore?: number; 
-  } | null;
+  _id: string; category: string; description: string; inputType: string; mediaUrl: string;
+  transcript: string; location: { lat: number; lng: number; address: string };
+  stressScore: number; recurrenceCount: number; infrastructureGapScore: number;
+  urgencyScore: number; aiPriorityScore: number; aiPriorityExplanation: string;
+  status: string; citizen?: { name: string; email: string }; createdAt: string;
+  topSolution?: { _id: string; title: string; developer?: { name: string }; vouchCount: number; aiMatchScore?: number; } | null;
   weeklyMomentum?: number;
 }
 
@@ -41,7 +16,7 @@ interface PriorityMatrixTableProps {
   onSelectGrievance: (grievance: Grievance) => void;
   selectedGrievanceId?: string;
   onVerify: (id: string) => Promise<void>;
-  onRefresh?: () => void; // Added refresh prop
+  onRefresh?: () => void;
 }
 
 export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({ 
@@ -50,7 +25,6 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  // Set default sort to aiPriorityScore
   const [sortField, setSortField] = useState<'aiPriorityScore' | 'recurrenceCount' | 'stressScore' | 'infrastructureGapScore'>('aiPriorityScore');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -64,14 +38,14 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
     if (onRefresh) {
       setIsRefreshing(true);
       await onRefresh();
-      setTimeout(() => setIsRefreshing(false), 500); // Visual feedback delay
+      setTimeout(() => setIsRefreshing(false), 500);
     }
   };
 
   const getAIBadge = (score: number) => {
-    if (score >= 80) return 'bg-[#FAF6ED] text-[#E76F51] border-[#E76F51]/30 shadow-[inset_1px_1px_3px_rgba(231,111,81,0.1)]';
-    if (score >= 50) return 'bg-[#FAF6ED] text-amber-600 border-amber-500/30 shadow-[inset_1px_1px_3px_rgba(217,119,6,0.1)]';
-    return 'bg-[#FAF6ED] text-emerald-600 border-emerald-500/30 shadow-[inset_1px_1px_3px_rgba(16,185,129,0.1)]';
+    if (score >= 80) return 'bg-red-500/20 text-red-400 border border-red-500/30';
+    if (score >= 50) return 'bg-amber-500/20 text-amber-500 border border-amber-500/30';
+    return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
   };
 
   const filteredData = data
@@ -85,56 +59,50 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
       return matchCat && matchStatus && matchSearch;
     })
     .sort((a, b) => {
-      // 1. Force 'resolved' items to the absolute bottom
       if (a.status === 'resolved' && b.status !== 'resolved') return 1;
       if (a.status !== 'resolved' && b.status === 'resolved') return -1;
-
-      // 2. Normal sorting for everything else
       const valA = a[sortField] || 0;
       const valB = b[sortField] || 0;
       return sortOrder === 'asc' ? valA - valB : valB - valA;
     });
 
   return (
-    <div className="space-y-4" id="priority-matrix-table-container">
+    <div className="space-y-6">
       {/* 1. Filters & Search Grid */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="flex-1 flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1 flex gap-3">
           <input
             type="text"
             placeholder="Search by keywords or address..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] placeholder-[#9A8C7F]/60 font-medium"
+            className="w-full neumorphic-concave px-5 py-3 text-sm theme-text-main placeholder-opacity-50 font-medium rounded-2xl"
           />
           <button 
             onClick={handleRefresh}
-            className="bg-[#FFFDF9] hover:bg-[#FAF6ED] border border-white/50 text-[#3F6C51] hover:text-[#2d4d3a] px-4 py-2.5 rounded-xl transition-all shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] flex items-center justify-center shrink-0 cursor-pointer"
+            className="neumorphic-convex theme-text-muted hover:theme-text-main hover:brightness-110 px-5 py-3 rounded-2xl transition-all flex items-center justify-center shrink-0"
             title="Refresh Matrix"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
           </button>
         </div>
 
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] font-bold focus:outline-none sm:w-48"
+          className="neumorphic-concave px-5 py-3 text-sm theme-text-main font-bold focus:outline-none sm:w-56 rounded-2xl"
         >
           <option value="">All Categories</option>
           <option value="water">Water</option>
           <option value="road">Roads / Potholes</option>
           <option value="electricity">Electricity</option>
           <option value="sanitation">Sanitation / Waste</option>
-          <option value="health">Health Clinics</option>
-          <option value="education">Education</option>
-          <option value="other">Other</option>
         </select>
 
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="neumorphic-concave px-4 py-2.5 text-sm text-[#3A2E2B] font-bold focus:outline-none sm:w-48"
+          className="neumorphic-concave px-5 py-3 text-sm theme-text-main font-bold focus:outline-none sm:w-56 rounded-2xl"
         >
           <option value="">All Statuses</option>
           <option value="pending_review">Pending Review</option>
@@ -145,46 +113,46 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
       </div>
 
       {/* 2. Priority Ranked Table */}
-      <div className="bg-[#FFFDF9] rounded-3xl shadow-[10px_10px_20px_0px_#E5DEC9,-10px_-10px_20px_0px_#FFFFFF] border border-white/40 overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="neumorphic-convex rounded-[28px] overflow-hidden">
+        <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse" id="priority-table">
             <thead>
-              <tr className="bg-[#FAF6ED] border-b border-[#E5DEC9]/60 text-[10px] font-black uppercase tracking-wider text-[#9A8C7F]">
-                <th className="py-4 px-5">Location & Issue Details</th>
-                <th className="py-4 px-3 text-center cursor-pointer hover:bg-[#FAF6ED]/50 transition-colors select-none" onClick={() => handleSort('aiPriorityScore')}>
-                  <div className="flex items-center justify-center space-x-1 text-[#E76F51]">
-                    <Sparkles className="w-3 h-3" />
-                    <span>AI Priority</span>
-                    <ArrowUpDown className="w-3 h-3" />
+              <tr className="bg-black/20 dark:bg-white/5 border-b border-black/10 dark:border-white/10 text-[10px] font-black uppercase tracking-widest theme-text-muted">
+                <th className="py-5 px-6">Issue Diagnostics</th>
+                <th className="py-5 px-4 text-center cursor-pointer hover:brightness-125 transition-colors select-none" onClick={() => handleSort('aiPriorityScore')}>
+                  <div className="flex items-center justify-center space-x-1.5 theme-accent">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>AI Engine</span>
+                    <ArrowUpDown className="w-3.5 h-3.5" />
                   </div>
                 </th>
-                <th className="py-4 px-3 text-center cursor-pointer hover:bg-[#FAF6ED]/50 transition-colors select-none" onClick={() => handleSort('recurrenceCount')}>
-                  <div className="flex items-center justify-center space-x-1">
-                    <span>Recurrence</span>
-                    <ArrowUpDown className="w-3 h-3 text-[#9A8C7F]" />
+                <th className="py-5 px-4 text-center cursor-pointer hover:brightness-125 transition-colors select-none" onClick={() => handleSort('recurrenceCount')}>
+                  <div className="flex items-center justify-center space-x-1.5">
+                    <span>Cluster Size</span>
+                    <ArrowUpDown className="w-3.5 h-3.5 opacity-70" />
                   </div>
                 </th>
-                <th className="py-4 px-3 text-center cursor-pointer hover:bg-[#FAF6ED]/50 transition-colors select-none" onClick={() => handleSort('stressScore')}>
-                  <div className="flex items-center justify-center space-x-1">
-                    <span>Stress</span>
-                    <ArrowUpDown className="w-3 h-3 text-[#9A8C7F]" />
+                <th className="py-5 px-4 text-center cursor-pointer hover:brightness-125 transition-colors select-none" onClick={() => handleSort('stressScore')}>
+                  <div className="flex items-center justify-center space-x-1.5">
+                    <span>Distress</span>
+                    <ArrowUpDown className="w-3.5 h-3.5 opacity-70" />
                   </div>
                 </th>
-                <th className="py-4 px-3 text-center cursor-pointer hover:bg-[#FAF6ED]/50 transition-colors select-none" onClick={() => handleSort('infrastructureGapScore')}>
-                  <div className="flex items-center justify-center space-x-1">
-                    <span>Gap Score</span>
-                    <ArrowUpDown className="w-3 h-3 text-[#9A8C7F]" />
+                <th className="py-5 px-4 text-center cursor-pointer hover:brightness-125 transition-colors select-none" onClick={() => handleSort('infrastructureGapScore')}>
+                  <div className="flex items-center justify-center space-x-1.5">
+                    <span>Data Deficit</span>
+                    <ArrowUpDown className="w-3.5 h-3.5 opacity-70" />
                   </div>
                 </th>
-                <th className="py-4 px-4 text-left">Top AI Matched Solution</th>
-                <th className="py-4 px-5 text-center">Actions</th>
+                <th className="py-5 px-5 text-left">Matched Solution Vector</th>
+                <th className="py-5 px-6 text-center">Protocol</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E5DEC9]/40">
+            <tbody className="divide-y divide-black/5 dark:divide-white/5">
               {filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-sm text-[#9A8C7F] font-bold">
-                    No community grievances found matching the filters.
+                  <td colSpan={7} className="py-16 text-center text-sm theme-text-muted font-bold">
+                    No community grievances found matching matrix parameters.
                   </td>
                 </tr>
               ) : (
@@ -196,131 +164,109 @@ export const PriorityMatrixTable: React.FC<PriorityMatrixTableProps> = ({
                     <tr 
                       key={item._id} 
                       className={`transition-all duration-300 cursor-pointer 
-                        ${isResolved ? 'opacity-40 grayscale hover:opacity-75 bg-transparent' : 'hover:bg-[#FAF6ED]/40'} 
-                        ${isSelected && !isResolved ? 'bg-[#FAF6ED] shadow-[inset_2px_2px_5px_rgba(142,130,114,0.08),inset_-2px_-2px_5px_#FFFFFF]' : ''}
+                        ${isResolved ? 'opacity-40 grayscale hover:opacity-75' : 'hover:bg-black/5 dark:hover:bg-white/5'} 
+                        ${isSelected && !isResolved ? 'bg-theme-accent/10 border-l-4 border-theme-accent' : ''}
                       `}
                       onClick={() => onSelectGrievance(item)}
                     >
-                      {/* Location & Details Column */}
-                      <td className="py-4 px-5 max-w-sm">
-                        <div className="space-y-1.5">
+                      <td className="py-5 px-6 max-w-sm">
+                        <div className="space-y-2">
                           <div className="flex items-center space-x-2">
-                            <span className="bg-[#FFFDF9] text-[#9A8C7F] text-[9px] font-black uppercase tracking-wider px-2 py-0.5 border border-[#E5DEC9]/40 rounded-md shadow-[1px_1px_3px_rgba(142,130,114,0.06)]">
+                            <span className="neumorphic-concave theme-text-muted text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md">
                               {item.category}
                             </span>
-                            <span className={`text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 border rounded-full ${
-                              item.status === 'pending_review' ? 'bg-[#FAF6ED] text-amber-600 border-amber-500/25 shadow-[inset_1px_1px_3px_rgba(217,119,6,0.1)]' :
-                              item.status === 'verified' ? 'bg-[#FAF6ED] text-[#3F6C51] border-[#3F6C51]/25 shadow-[inset_1px_1px_3px_rgba(63,108,81,0.1)]' :
-                              item.status === 'matched' ? 'bg-[#FAF6ED] text-[#3F6C51] border-[#3F6C51]/20' :
-                              item.status === 'resolved' ? 'bg-emerald-100 text-emerald-700 border-emerald-500/30' :
-                              'bg-[#FAF6ED] text-[#9A8C7F] border-[#E5DEC9]/50'
+                            <span className={`text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${
+                              item.status === 'pending_review' ? 'bg-amber-500/20 text-amber-500' :
+                              item.status === 'verified' ? 'bg-blue-500/20 text-blue-400' :
+                              item.status === 'matched' ? 'bg-indigo-500/20 text-indigo-400' :
+                              item.status === 'resolved' ? 'bg-emerald-500/20 text-emerald-500' :
+                              'neumorphic-concave theme-text-muted'
                             }`}>
                               {item.status.replace('_', ' ')}
                             </span>
                           </div>
-                          <p className={`text-sm font-bold text-[#3A2E2B] line-clamp-2 leading-relaxed ${isResolved ? 'line-through decoration-[#9A8C7F]/50' : ''}`}>
+                          <p className={`text-sm font-bold theme-text-main line-clamp-2 leading-relaxed ${isResolved ? 'line-through opacity-50' : ''}`}>
                             {item.description}
                           </p>
-                          <div className="flex items-center space-x-1 text-[#9A8C7F] text-xs">
-                            <MapPin className="w-3.5 h-3.5 text-[#E76F51]" />
+                          <div className="flex items-center space-x-1.5 theme-text-muted text-xs">
+                            <MapPin className="w-3.5 h-3.5 theme-accent" />
                             <span className="truncate font-bold">{item.location?.address}</span>
                           </div>
-                          {item.inputType === 'voice' && item.transcript && !isResolved && (
-                            <p className="text-[11px] text-[#3F6C51] bg-[#3F6C51]/5 border border-[#3F6C51]/15 rounded-xl p-2.5 font-bold italic shadow-[inset_1px_1px_3px_rgba(63,108,81,0.06)]">
-                              "Transcribed: {item.transcript}"
-                            </p>
-                          )}
                         </div>
                       </td>
 
-                      {/* AI Priority Score Column */}
-                      <td className="py-4 px-3 text-center">
+                      <td className="py-5 px-4 text-center">
                         <div className="flex flex-col items-center space-y-1 relative group">
-                          <span className={`text-sm font-black border px-3 py-1 rounded-full ${getAIBadge(item.aiPriorityScore)} flex items-center gap-1`}>
+                          <span className={`text-sm font-black px-3.5 py-1.5 rounded-full ${getAIBadge(item.aiPriorityScore)} flex items-center gap-1.5`}>
                             {item.aiPriorityScore || 0}
                           </span>
                           {item.aiPriorityExplanation && !isResolved && (
-                            <div className="absolute top-8 w-48 p-2 bg-[#3A2E2B] text-white text-[10px] rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+                            <div className="absolute top-10 w-56 p-3 bg-black/90 text-white text-[10px] rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none text-left border border-white/10">
                               {item.aiPriorityExplanation}
                             </div>
                           )}
                         </div>
                       </td>
 
-                      {/* Recurrence Count Column */}
-                      <td className="py-4 px-3 text-center">
-                        <div className="flex flex-col items-center">
-                          <span className="text-sm font-black text-[#3A2E2B]">{item.recurrenceCount}</span>
-                          <span className="text-[9px] font-black uppercase text-[#9A8C7F] tracking-wider">Reports</span>
-                        </div>
+                      <td className="py-5 px-4 text-center">
+                        <span className="text-sm font-black theme-text-main">{item.recurrenceCount}</span>
                       </td>
 
-                      {/* Stress Score Column */}
-                      <td className="py-4 px-3 text-center">
-                        <div className="flex flex-col items-center">
-                          <span className="text-sm font-black text-[#3A2E2B]">{item.stressScore}%</span>
-                          <span className="text-[9px] font-black uppercase text-[#9A8C7F] tracking-wider">distress</span>
-                        </div>
+                      <td className="py-5 px-4 text-center">
+                        <span className="text-sm font-black theme-text-main">{item.stressScore}%</span>
                       </td>
 
-                      {/* Infrastructure Gap Score Column */}
-                      <td className="py-4 px-3 text-center">
-                        <div className="flex flex-col items-center">
-                          <span className="text-sm font-black text-[#3A2E2B]">{item.infrastructureGapScore}%</span>
-                          <span className="text-[9px] font-black uppercase text-[#9A8C7F] tracking-wider">Census deficit</span>
-                        </div>
+                      <td className="py-5 px-4 text-center">
+                        <span className="text-sm font-black theme-accent">{item.infrastructureGapScore}%</span>
                       </td>
 
-                      {/* Top AI Matched Solution Column */}
-                      <td className="py-4 px-4 max-w-xs text-left">
+                      <td className="py-5 px-5 max-w-xs text-left">
                         {item.topSolution ? (
                           <div className="space-y-1">
-                            <div className="flex items-center gap-1">
-                              <span className="text-xs font-black text-[#3F6C51] block truncate max-w-[150px]">{item.topSolution.title}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-black theme-text-main block truncate max-w-37.5">{item.topSolution.title}</span>
                               {(item.topSolution?.aiMatchScore ?? 0) > 0 && (
-                                <span className="text-[9px] font-black bg-emerald-100 text-emerald-700 px-1 rounded" title="AI Match Score">{item.topSolution?.aiMatchScore ?? 0}%</span>
+                                <span className="text-[9px] font-black bg-theme-accent/20 theme-accent px-1.5 rounded" title="AI Match Score">{item.topSolution?.aiMatchScore ?? 0}%</span>
                               )}
                             </div>
-                            <div className="text-[10px] text-[#9A8C7F] font-bold">
-                              by {item.topSolution.developer?.name || 'Anonymous Dev'}
+                            <div className="text-[10px] theme-text-muted font-bold">
+                              Vendor: {item.topSolution.developer?.name || 'Anonymous'}
                             </div>
                           </div>
                         ) : (
-                          <span className="text-[10px] text-[#9A8C7F] font-bold italic">No prototypes listed</span>
+                          <span className="text-[10px] theme-text-muted font-bold italic">No active vectors</span>
                         )}
                       </td>
 
-                      {/* Actions Column */}
-                      <td className="py-4 px-5 text-center" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-center space-x-2">
+                      <td className="py-5 px-6 text-center" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-center space-x-3">
                           {isResolved ? (
-                            <span className="text-xs text-emerald-600 font-bold flex items-center space-x-0.5">
-                              <Check className="w-3.5 h-3.5 font-extrabold" />
-                              <span>Completed</span>
+                            <span className="text-xs text-emerald-500 font-bold flex items-center space-x-1">
+                              <Check className="w-4 h-4 font-extrabold" />
+                              <span>Closed</span>
                             </span>
                           ) : (
                             <>
                               {item.status === 'pending_review' ? (
                                 <button
                                   onClick={() => onVerify(item._id)}
-                                  className="text-xs bg-[#3F6C51] hover:bg-[#2d4d3a] text-white font-black px-3 py-1.5 rounded-xl border border-white/20 shadow-[3px_3px_6px_rgba(63,108,81,0.2),-3px_-3px_6px_#FFFFFF] flex items-center space-x-1 cursor-pointer transition-all"
-                                  title="Verify grievance"
+                                  className="text-xs neumorphic-btn-accent font-black px-4 py-2 rounded-[14px] flex items-center space-x-1.5 cursor-pointer"
                                 >
-                                  <Check className="w-3.5 h-3.5" />
+                                  <Check className="w-4 h-4" />
                                   <span>Verify</span>
                                 </button>
                               ) : (
-                                <span className="text-xs text-[#9A8C7F] font-bold flex items-center space-x-0.5">
-                                  <Check className="w-3.5 h-3.5 text-emerald-600 font-extrabold" />
+                                <span className="text-xs theme-text-muted font-bold flex items-center space-x-1 opacity-50">
+                                  <Check className="w-4 h-4" />
                                   <span>Verified</span>
                                 </span>
                               )}
                               <button
                                 onClick={() => onSelectGrievance(item)}
-                                className="text-xs text-[#9A8C7F] hover:text-[#3F6C51] bg-[#FFFDF9] hover:shadow-[inset_2px_2px_4px_rgba(142,130,114,0.1)] border border-white/40 shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] px-3 py-1.5 rounded-xl font-black uppercase tracking-wider flex items-center space-x-1 cursor-pointer transition-all"
+                                className="text-xs theme-text-muted hover:theme-text-main neumorphic-concave px-4 py-2 rounded-[14px] font-black uppercase tracking-wider flex items-center space-x-1.5 cursor-pointer hover:brightness-125 transition-all"
                               >
-                                <Sparkles className="w-3.5 h-3.5" />
-                                <span>Match</span>
+                                <Sparkles className="w-4 h-4 theme-accent" />
+                                <span>Target</span>
                               </button>
                             </>
                           )}

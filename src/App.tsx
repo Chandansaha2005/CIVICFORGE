@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Navbar } from './components/Navbar';
 import { LandingPage } from './pages/LandingPage';
@@ -14,11 +14,30 @@ import { DeveloperLeaderboard } from './pages/developer/DeveloperLeaderboard';
 import { MPDashboard } from './pages/mp/MPDashboard';
 import { Toaster } from 'react-hot-toast';
 
+// 1. New Component to handle dynamic theme injection
+const ThemeWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    // Determine theme based on role, default to citizen (light mint green)
+    const activeTheme = user?.role === 'developer' ? 'developer' : user?.role === 'mp' ? 'mp' : 'citizen';
+    
+    // Inject theme token into the HTML document root
+    document.documentElement.setAttribute('data-theme', activeTheme);
+  }, [user]);
+
+  return (
+    <div className="min-h-screen theme-bg-canvas flex flex-col font-sans transition-colors duration-500" id="app-root-container">
+      {children}
+    </div>
+  );
+};
+
 export default function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="min-h-screen bg-[#FAF6ED] flex flex-col font-sans selection:bg-[#E76F51]/20 selection:text-[#3A2E2B]" id="app-root-container">
+        <ThemeWrapper>
           <Navbar />
           
           <main className="flex-1 flex flex-col">
@@ -89,16 +108,16 @@ export default function App() {
             </Routes>
           </main>
 
-          {/* Toast Notification Provider */}
+          {/* Toast Notification Provider - Uses Dynamic Theme Variables */}
           <Toaster 
             position="bottom-right"
             toastOptions={{
-              className: 'text-xs font-bold text-[#3A2E2B] bg-[#FFFDF9] border border-[#E5DEC9] rounded-xl shadow-md p-4',
+              className: 'text-xs font-bold theme-text-main theme-bg-card rounded-xl shadow-lg p-4 border border-white/5',
               duration: 4000,
               success: {
                 iconTheme: {
-                  primary: '#3F6C51',
-                  secondary: '#FFFFFF'
+                  primary: 'var(--accent-primary)',
+                  secondary: 'var(--bg-canvas)'
                 }
               },
               error: {
@@ -109,7 +128,7 @@ export default function App() {
               }
             }}
           />
-        </div>
+        </ThemeWrapper>
       </AuthProvider>
     </Router>
   );
