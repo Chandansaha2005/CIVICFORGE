@@ -1,11 +1,44 @@
-# 🏛️ CivicForge
+<p align="center">
+  <img src="./scereenshots/Hero.png" width="100%" alt="Citizen Dashboard" />
+</p>
 
 > **Forging Data-Driven Constituency Progress.**
-> A dual-engine civic-tech ecosystem that replaces manual administrative guesswork with empirical data analytics and rapid crowdsourced execution.
+> *A dual-engine civic-tech ecosystem that replaces manual administrative guesswork with empirical data analytics and rapid crowdsourced execution.*
 
 ## 📖 Overview
 
 CivicForge bridges the operational gap between parliamentary planning and real-time public demands by linking citizens, developers, and representatives on a unified digital canvas. By converting unstructured public distress signals into quantified geographic demands, the system automatically pairs localized infrastructure deficits with ready-to-deploy open-source solutions.
+
+The platform utilizes a dynamic **Tri-Theme "Bento" Design System** that completely transforms the user interface—colors, shadow depth, and layouts—based on the authenticated user's role.
+
+---
+
+## 🖼️ Visual Interface & Tri-Theme Architecture
+
+### Citizen Hub (Light Mint Green Theme)
+Empowering citizens to report issues with a frictionless, social-media-style vertical timeline.
+<p align="center">
+  <img src="./scereenshots/c1.png" width="30%" alt="Citizen Dashboard" />
+  <img src="./scereenshots/c2.png" width="30%" alt="Citizen Feed" />
+  <img src="./scereenshots/c3.png" width="30%" alt="Universal Leaderboard" />
+</p>
+
+### Developer Marketplace (Dark Charcoal Theme)
+A high-contrast, code-centric workspace for technical users to find civic RFPs and submit technical prototypes.
+<p align="center">
+  <img src="./scereenshots/d1.png" width="45%" alt="Developer Dashboard" />
+  <img src="./scereenshots/d3.png" width="45%" alt="Developer Feed" />
+</p>
+
+### Executive Evaluation Station (Dark Noir Theme)
+A premium dashboard for Members of Parliament featuring AI-prioritized matrices, live heatmaps, and automated funding proposals.
+<p align="center">
+  <img src="./scereenshots/e2.png" width="30%" alt="MP Priority Matrix" />
+  <img src="./scereenshots/e1.png" width="30%" alt="Constituency Heatmap" />
+  <img src="./scereenshots/e4.png" width="30%" alt="Executive Blueprints" />
+</p>
+
+---
 
 ## ✨ Core Architecture & Features
 
@@ -30,20 +63,19 @@ The platform operates on a three-layer system designed for transparency, speed, 
 ## 🛠️ Technology Stack
 
 **Frontend**
-* React 18
-* Vite
-* Tailwind CSS
-* Leaflet.js (Interactive Mapping)
+* React 18 & Vite
+* Tailwind CSS (Custom Neumorphic Engine)
+* Leaflet.js (Interactive Geospatial Mapping)
+* Lucide React (Iconography)
 
 **Backend & Database**
-* Node.js
-* Express.js
+* Node.js & Express.js
 * MongoDB (Document storage & `2dsphere` geospatial indexing)
 * Firebase (User Authentication & Asset Storage)
 
 **Artificial Intelligence**
 * Google Gemini AI SDK (Gemini 2.0 Flash)
-* Whisper AI
+* Whisper AI (Audio processing)
 
 ---
 
@@ -61,3 +93,36 @@ The platform operates on a three-layer system designed for transparency, speed, 
    ```bash
    git clone [https://github.com/your-username/CivicForge.git](https://github.com/your-username/CivicForge.git)
    cd CivicForge
+   ```
+   
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+
+3. **Environment Configuration**
+   Create a `.env` file in the root directory and add your keys:
+   ```env
+   MONGO_URI=your_mongodb_connection_string
+   FIREBASE_API_KEY=your_firebase_key
+   GEMINI_API_KEY=your_gemini_api_key
+   WHISPER_API_KEY=your_whisper_api_key
+   ```
+
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+---
+
+<p align="center">
+  <img src="./scereenshots/footer.png" width="100%" alt="Citizen Dashboard" />
+</p> 
+
+<div align='center'>
+
+***CivicForge** — Built for the community, by the community.*
+</div>
