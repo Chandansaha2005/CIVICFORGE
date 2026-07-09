@@ -59,6 +59,7 @@ Thumbs.db
 # =========================
 # Project Specific & Misc
 # =========================
+report.md
 *.md
 !README.md
 .eslintcache
