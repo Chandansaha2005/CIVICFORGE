@@ -28,11 +28,6 @@ const fadeInUp : Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
 };
 
-const textReveal : Variants = {
-  hidden: { opacity: 0, height: 0, marginTop: 0 },
-  visible: { opacity: 1, height: "auto", marginTop: 16 }
-};
-
 const staggerContainer : Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
@@ -254,96 +249,112 @@ export const LandingPage: React.FC = () => {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mt-16">
+          {/* FIX: Added items-start to prevent flex children from stretching vertically when one expands */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mt-16 items-start">
             
             {/* Pillar 1: Citizen */}
-            <motion.div variants={fadeInUp} className="bg-white rounded-4xl shadow-[8px_8px_16px_#D1D9E6,-8px_-8px_16px_#FFFFFF] flex flex-col border border-[#D1D9E6]/30 group hover:shadow-2xl transition-shadow duration-300">
-              <div className="bg-[#F97316] p-6 rounded-4xl text-white relative flex flex-col">
+            <motion.div variants={fadeInUp} className="bg-white rounded-4xl shadow-[8px_8px_16px_#D1D9E6,-8px_-8px_16px_#FFFFFF] flex flex-col border border-[#D1D9E6]/30 group hover:shadow-2xl transition-all duration-500">
+              <div className="bg-[#F97316] p-6 rounded-4xl text-white relative flex flex-col z-10">
                 <div className="flex justify-between items-start z-10 relative">
                   <div>
                     <span className="text-[10px] font-black tracking-widest uppercase bg-white/20 px-2 py-0.5 rounded">CIVIC ROLE</span>
-                    <h3 className="text-xl font-[900] mt-1 uppercase">The Citizen</h3>
+                    {/* FIX: Increased heading font size */}
+                    <h3 className="text-2xl lg:text-3xl font-[900] mt-2 uppercase tracking-tight">The Citizen</h3>
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white transition-all">
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white transition-all group-hover:bg-white group-hover:text-[#F97316]">
                     <ArrowUpRight className="w-4 h-4" />
                   </div>
                 </div>
                 
-                {/* Fixed Image Container: No overflow hidden, proper height */}
                 <div className="mt-4 relative h-[300px] flex items-center justify-center w-full">
                   <div className="absolute inset-4 rounded-2xl border border-white/20 bg-white/5"></div>
-                  {/* 3D Pop Out Effect via h-[115%] and negative margins if needed, keeping drop shadow */}
-                  <img src={citizenImg} alt="Citizen" className="relative z-10 h-[115%] object-contain drop-shadow-2xl group-hover:scale-105 transition-transform duration-500 ease-out origin-bottom" />
+                  {/* FIX: Added stronger distinct drop shadows and improved hover scaling */}
+                  <img src={citizenImg} alt="Citizen" className="relative z-10 h-[115%] object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.35)] group-hover:drop-shadow-[0_25px_25px_rgba(0,0,0,0.55)] group-hover:scale-105 transition-all duration-500 ease-out origin-bottom" />
                 </div>
               </div>
-              <div className="p-8 space-y-4 flex-1 bg-white rounded-b-[32px]">
-                <span className="text-[#F97316] text-[10px] font-black uppercase tracking-widest block">Role Functions</span>
-                <p className="text-xs text-[#4B5563] leading-relaxed font-medium">Track active localized infrastructure demand feeds, review community validation lists, and deploy multi-format intake reports using real-time geolocation.</p>
-                <div className="pt-2">
-                  <Link to="/register" className="inline-flex items-center space-x-1 text-xs font-[900] text-[#F97316] hover:text-[#ea6305] uppercase tracking-wider group-hover:translate-x-1 transition-transform">
-                    <span>Lodge Complaints</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </Link>
+              
+              <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-in-out">
+                <div className="overflow-hidden">
+                  <div className="p-8 space-y-4 flex-1 bg-white rounded-b-[32px]">
+                    <span className="text-[#F97316] text-[10px] font-black uppercase tracking-widest block">Role Functions</span>
+                    <p className="text-xs text-[#4B5563] leading-relaxed font-medium">Track active localized infrastructure demand feeds, review community validation lists, and deploy multi-format intake reports using real-time geolocation.</p>
+                    <div className="pt-2">
+                      <Link to="/register" className="inline-flex items-center space-x-1 text-xs font-[900] text-[#F97316] hover:text-[#ea6305] uppercase tracking-wider group-hover:translate-x-1 transition-transform">
+                        <span>Lodge Complaints</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
 
             {/* Pillar 2: Developer */}
-            <motion.div variants={fadeInUp} className="bg-white rounded-4xl shadow-[8px_8px_16px_#D1D9E6,-8px_-8px_16px_#FFFFFF] flex flex-col border border-[#D1D9E6]/30 group hover:shadow-2xl transition-shadow duration-300">
-              <div className="bg-[#0D9488] p-6 rounded-4xl text-white relative flex flex-col">
+            <motion.div variants={fadeInUp} className="bg-white rounded-4xl shadow-[8px_8px_16px_#D1D9E6,-8px_-8px_16px_#FFFFFF] flex flex-col border border-[#D1D9E6]/30 group hover:shadow-2xl transition-all duration-500">
+              <div className="bg-[#0D9488] p-6 rounded-4xl text-white relative flex flex-col z-10">
                 <div className="flex justify-between items-start z-10 relative">
                   <div>
                     <span className="text-[10px] font-black tracking-widest uppercase bg-white/20 px-2 py-0.5 rounded">BUILD ROLE</span>
-                    <h3 className="text-xl font-[900] mt-1 uppercase">The Developer</h3>
+                    <h3 className="text-2xl lg:text-3xl font-[900] mt-2 uppercase tracking-tight">The Developer</h3>
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white transition-all">
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white transition-all group-hover:bg-white group-hover:text-[#0D9488]">
                     <ArrowUpRight className="w-4 h-4" />
                   </div>
                 </div>
                 
                 <div className="mt-4 relative h-[300px] flex items-center justify-center w-full">
                   <div className="absolute inset-4 rounded-2xl border border-white/20 bg-white/5"></div>
-                  <img src={devImg} alt="Developer" className="relative z-10 h-[115%] object-contain drop-shadow-2xl group-hover:scale-105 transition-transform duration-500 ease-out origin-bottom" />
+                  <img src={devImg} alt="Developer" className="relative z-10 h-[115%] object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.35)] group-hover:drop-shadow-[0_25px_25px_rgba(0,0,0,0.55)] group-hover:scale-105 transition-all duration-500 ease-out origin-bottom" />
                 </div>
               </div>
-              <div className="p-8 space-y-4 flex-1 bg-white rounded-b-[32px]">
-                <span className="text-[#0D9488] text-[10px] font-black uppercase tracking-widest block">Role Functions</span>
-                <p className="text-xs text-[#4B5563] leading-relaxed font-medium">Browse priority system requests for proposal (RFPs), link operational GitHub repository links, and submit functional technical builds for the community.</p>
-                <div className="pt-2">
-                  <Link to="/register" className="inline-flex items-center space-x-1 text-xs font-[900] text-[#0D9488] hover:text-[#0b7d73] uppercase tracking-wider group-hover:translate-x-1 transition-transform">
-                    <span>Browse Open RFPs</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </Link>
+              
+              <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-in-out">
+                <div className="overflow-hidden">
+                  <div className="p-8 space-y-4 flex-1 bg-white rounded-b-[32px]">
+                    <span className="text-[#0D9488] text-[10px] font-black uppercase tracking-widest block">Role Functions</span>
+                    <p className="text-xs text-[#4B5563] leading-relaxed font-medium">Browse priority system requests for proposal (RFPs), link operational GitHub repository links, and submit functional technical builds for the community.</p>
+                    <div className="pt-2">
+                      <Link to="/register" className="inline-flex items-center space-x-1 text-xs font-[900] text-[#0D9488] hover:text-[#0b7d73] uppercase tracking-wider group-hover:translate-x-1 transition-transform">
+                        <span>Browse Open RFPs</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
 
             {/* Pillar 3: MP Representative */}
-            <motion.div variants={fadeInUp} className="bg-white rounded-4xl shadow-[8px_8px_16px_#D1D9E6,-8px_-8px_16px_#FFFFFF] flex flex-col border border-[#D1D9E6]/30 group hover:shadow-2xl transition-shadow duration-300">
-              <div className="bg-[#1E3A8A] p-6 rounded-4xl text-white relative flex flex-col">
+            <motion.div variants={fadeInUp} className="bg-white rounded-4xl shadow-[8px_8px_16px_#D1D9E6,-8px_-8px_16px_#FFFFFF] flex flex-col border border-[#D1D9E6]/30 group hover:shadow-2xl transition-all duration-500">
+              <div className="bg-[#1E3A8A] p-6 rounded-4xl text-white relative flex flex-col z-10">
                 <div className="flex justify-between items-start z-10 relative">
                   <div>
                     <span className="text-[10px] font-black tracking-widest uppercase bg-white/20 px-2 py-0.5 rounded">DECIDE ROLE</span>
-                    <h3 className="text-xl font-[900] mt-1 uppercase">The Representative</h3>
+                    <h3 className="text-2xl lg:text-3xl font-[900] mt-2 uppercase tracking-tight">The Representative</h3>
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white transition-all">
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white transition-all group-hover:bg-white group-hover:text-[#1E3A8A]">
                     <ArrowUpRight className="w-4 h-4" />
                   </div>
                 </div>
                 
                 <div className="mt-4 relative h-[300px] flex items-center justify-center w-full">
                   <div className="absolute inset-4 rounded-2xl border border-white/20 bg-white/5"></div>
-                  <img src={mpImg} alt="MP" className="relative z-10 h-[115%] object-contain drop-shadow-2xl group-hover:scale-105 transition-transform duration-500 ease-out origin-bottom" />
+                  <img src={mpImg} alt="MP" className="relative z-10 h-[115%] object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.35)] group-hover:drop-shadow-[0_25px_25px_rgba(0,0,0,0.55)] group-hover:scale-105 transition-all duration-500 ease-out origin-bottom" />
                 </div>
               </div>
-              <div className="p-8 space-y-4 flex-1 bg-white rounded-b-[32px]">
-                <span className="text-[#1E3A8A] text-[10px] font-black uppercase tracking-widest block">Role Functions</span>
-                <p className="text-xs text-[#4B5563] leading-relaxed font-medium">Analyze live constituency heatmaps, map public regional deficits, and confirm automated execution funding proposal metrics generated by Gemini AI.</p>
-                <div className="pt-2">
-                  <Link to="/register" className="inline-flex items-center space-x-1 text-xs font-[900] text-[#1E3A8A] hover:text-[#162a63] uppercase tracking-wider group-hover:translate-x-1 transition-transform">
-                    <span>Allocate Funds</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </Link>
+              
+              <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-in-out">
+                <div className="overflow-hidden">
+                  <div className="p-8 space-y-4 flex-1 bg-white rounded-b-[32px]">
+                    <span className="text-[#1E3A8A] text-[10px] font-black uppercase tracking-widest block">Role Functions</span>
+                    <p className="text-xs text-[#4B5563] leading-relaxed font-medium">Analyze live constituency heatmaps, map public regional deficits, and confirm automated execution funding proposal metrics generated by Gemini AI.</p>
+                    <div className="pt-2">
+                      <Link to="/register" className="inline-flex items-center space-x-1 text-xs font-[900] text-[#1E3A8A] hover:text-[#162a63] uppercase tracking-wider group-hover:translate-x-1 transition-transform">
+                        <span>Allocate Funds</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
