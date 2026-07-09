@@ -1,4 +1,6 @@
-# 🏛️ CivicForge
+<p align="center">
+  <img src="./scereenshots/Hero.png" width="100%" alt="Citizen Dashboard" />
+</p>
 
 > **Forging Data-Driven Constituency Progress.**
 > *A dual-engine civic-tech ecosystem that replaces manual administrative guesswork with empirical data analytics and rapid crowdsourced execution.*
@@ -115,6 +117,11 @@ The platform operates on a three-layer system designed for transparency, speed, 
    ```
 
 ---
+
+<p align="center">
+  <img src="./scereenshots/footer.png" width="100%" alt="Citizen Dashboard" />
+</p> 
+
 <div align='center'>
 
 ***CivicForge** — Built for the community, by the community.*
