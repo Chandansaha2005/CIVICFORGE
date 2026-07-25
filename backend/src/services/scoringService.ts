@@ -63,3 +63,66 @@ export async function updateClusterMetrics(category: string, lat: number, lng: n
     return { count: 1 };
   }
 }
+
+/**
+ * Returns the _ids of same-category grievances within `maxMeters` of (lat,lng)
+ * using a REAL MongoDB Atlas 2dsphere `$geoNear` aggregation on `geoLocation`.
+ * Falls back to the in-app haversine scan if the geo index/field is unavailable
+ * (e.g. legacy docs), so clustering never hard-fails.
+ */
+export async function getGeoNearIds(
+  category: string,
+  lat: number,
+  lng: number,
+  maxMeters: number = 2000
+): Promise<any[]> {
+  try {
+    const results = await Grievance.aggregate([
+      {
+        $geoNear: {
+          near: { type: 'Point', coordinates: [lng, lat] }, // GeoJSON = [lng, lat]
+          distanceField: 'distanceMeters',
+          maxDistance: maxMeters,
+          spherical: true,
+          query: { category }
+        }
+      },
+      { $project: { _id: 1 } }
+    ]);
+    return results.map((r: any) => r._id);
+  } catch (error) {
+    console.warn('[$geoNear] failed, falling back to haversine scan:', (error as any)?.message);
+    const grievances = await Grievance.find({ category });
+    return grievances
+      .filter((g: any) =>
+        g.location &&
+        g.location.lat !== undefined &&
+        g.location.lng !== undefined &&
+        getHaversineDistanceKm(lat, lng, g.location.lat, g.location.lng) <= maxMeters / 1000
+      )
+      .map((g: any) => g._id);
+  }
+}
+
+/**
+ * Given the full member set of a cluster (geo + semantic union), sets every
+ * member's recurrenceCount to the cluster size and recomputes its composite
+ * urgencyScore. This is the single write-path shared by geo and vector clustering.
+ */
+export async function applyClusterMetrics(memberIds: any[]): Promise<{ count: number }> {
+  const uniqueIds = Array.from(new Set(memberIds.map((id: any) => id.toString())));
+  const clusterSize = uniqueIds.length;
+  if (clusterSize === 0) return { count: 0 };
+
+  const members = await Grievance.find({ _id: { $in: uniqueIds } });
+  for (const g of members as any[]) {
+    const gStress = g.stressScore || 50;
+    const gGap = g.infrastructureGapScore || 50;
+    const newUrgency = computeUrgencyScore(clusterSize, gStress, gGap);
+    await Grievance.findByIdAndUpdate(g._id, {
+      recurrenceCount: clusterSize,
+      urgencyScore: newUrgency
+    });
+  }
+  return { count: clusterSize };
+}

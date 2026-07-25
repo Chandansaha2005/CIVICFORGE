@@ -293,9 +293,9 @@ export const ProblemFeed: React.FC = () => {
             <button
               onClick={loadMore}
               disabled={loadingMore}
-              className="bg-[#FFFDF9] border border-white/40 hover:shadow-[inset_1px_1px_3px_rgba(142,130,114,0.1)] text-[#3F6C51] hover:text-[#2d4d3a] rounded-xl px-6 py-3 text-xs font-black uppercase tracking-wider shadow-[3px_3px_6px_rgba(142,130,114,0.08),-3px_-3px_6px_#FFFFFF] transition-all cursor-pointer disabled:opacity-50"
+              className="neumorphic-convex theme-text-muted hover:text-(--accent-primary) rounded-xl px-6 py-3 text-xs font-black uppercase tracking-wider transition-all cursor-pointer disabled:opacity-50"
             >
-              {loadingMore ? 'Syncing...' : 'View Older Demands'}
+              {loadingMore ? 'Syncing...' : 'View More Demands'}
             </button>
           </div>
         )}
@@ -304,109 +304,109 @@ export const ProblemFeed: React.FC = () => {
 
       {/* Submit Solution Overlay Modal Dialog */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#FAF6ED]/80 backdrop-blur-sm animate-fade-in" id="solution-submission-modal">
-          <div className="bg-[#FFFDF9] border border-white/40 rounded-3xl w-full max-w-lg shadow-[20px_20px_40px_rgba(142,130,114,0.2),-20px_-20px_40px_#FFFFFF] p-6 relative flex flex-col max-h-[90vh]">
-            
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" id="solution-submission-modal">
+          <div className="neumorphic-convex theme-text-main rounded-3xl w-full max-w-lg p-6 relative flex flex-col max-h-[90vh]">
+
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute right-4 top-4 text-[#9A8C7F] hover:text-[#3F6C51] bg-[#FAF6ED] border border-[#E5DEC9]/60 p-1.5 rounded-xl transition-all cursor-pointer shadow-sm"
+              className="absolute right-4 top-4 neumorphic-concave theme-text-muted hover:text-(--accent-primary) p-1.5 rounded-xl transition-all cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
 
             <div className="space-y-1 mb-4 shrink-0 pr-8">
-              <span className="text-[10px] font-black uppercase tracking-widest bg-[#FAF6ED] border border-[#E5DEC9]/60 text-[#9A8C7F] px-2.5 py-1 rounded-md shadow-sm inline-block">
+              <span className="text-[10px] font-black uppercase tracking-widest neumorphic-concave theme-accent px-2.5 py-1 rounded-md inline-block">
                 Targeting: {selectedCategoryForSolution.toUpperCase()}
               </span>
-              <h2 className="text-lg font-black text-[#3A2E2B] uppercase tracking-tight pt-1">Register Prototype Solution</h2>
-              <div className="bg-[#FAF6ED] border border-[#E5DEC9]/60 p-2.5 rounded-2xl mt-2 text-[11px] text-[#9A8C7F] font-medium leading-relaxed italic max-h-16 overflow-y-auto shadow-[inset_1px_1px_2px_rgba(142,130,114,0.06)]">
+              <h2 className="text-lg font-black theme-text-main uppercase tracking-tight pt-1">Register Prototype Solution</h2>
+              <div className="neumorphic-concave p-2.5 rounded-2xl mt-2 text-[11px] theme-text-muted font-medium leading-relaxed italic max-h-16 overflow-y-auto">
                 "For issue: {selectedProblemDesc}"
               </div>
             </div>
 
             <form onSubmit={handleFormSubmit} className="space-y-4 overflow-y-auto flex-1 pr-1.5">
-              
+
               <div className="space-y-1.5">
-                <label className="block text-xs font-black uppercase tracking-wider text-[#9A8C7F]">Solution Title</label>
+                <label className="block text-xs font-black uppercase tracking-wider theme-text-muted">Solution Title</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. IoT Acoustic Pipeline Pressure Monitor"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full neumorphic-concave px-4 py-2.5 text-xs font-medium text-[#3A2E2B] placeholder-[#9A8C7F]/60 focus:outline-none"
+                  className="w-full neumorphic-concave px-4 py-2.5 text-xs font-medium theme-text-main placeholder-[color:var(--text-muted)] focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-black uppercase tracking-wider text-[#9A8C7F]">Technical Details & Description</label>
+                <label className="block text-xs font-black uppercase tracking-wider theme-text-muted">Technical Details & Description</label>
                 <textarea
                   required
                   rows={4}
                   placeholder="Describe your prototype's technical features, how citizens run it, and hardware or cloud dependencies."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full neumorphic-concave p-4 text-xs font-medium text-[#3A2E2B] placeholder-[#9A8C7F]/60 focus:outline-none"
+                  className="w-full neumorphic-concave p-4 text-xs font-medium theme-text-main placeholder-[color:var(--text-muted)] focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-black uppercase tracking-wider text-[#9A8C7F]">Tech Stack (comma-separated tags)</label>
+                <label className="block text-xs font-black uppercase tracking-wider theme-text-muted">Tech Stack (comma-separated tags)</label>
                 <input
                   type="text"
                   placeholder="e.g. React, Python, YOLOv8, MQTT"
                   value={techStack}
                   onChange={(e) => setTechStack(e.target.value)}
-                  className="w-full neumorphic-concave px-4 py-2.5 text-xs font-medium text-[#3A2E2B] placeholder-[#9A8C7F]/60 focus:outline-none"
+                  className="w-full neumorphic-concave px-4 py-2.5 text-xs font-medium theme-text-main placeholder-[color:var(--text-muted)] focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-black uppercase tracking-wider text-[#9A8C7F]">Source Repository URL</label>
+                  <label className="block text-xs font-black uppercase tracking-wider theme-text-muted">Source Repository URL</label>
                   <input
                     type="url"
                     placeholder="https://github.com/..."
                     value={repoUrl}
                     onChange={(e) => setRepoUrl(e.target.value)}
-                    className="w-full neumorphic-concave px-4 py-2.5 text-xs font-medium text-[#3A2E2B] placeholder-[#9A8C7F]/60 focus:outline-none"
+                    className="w-full neumorphic-concave px-4 py-2.5 text-xs font-medium theme-text-main placeholder-[color:var(--text-muted)] focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-black uppercase tracking-wider text-[#9A8C7F]">Live Web Demo URL</label>
+                  <label className="block text-xs font-black uppercase tracking-wider theme-text-muted">Live Web Demo URL</label>
                   <input
                     type="url"
                     placeholder="https://..."
                     value={demoUrl}
                     onChange={(e) => setDemoUrl(e.target.value)}
-                    className="w-full neumorphic-concave px-4 py-2.5 text-xs font-medium text-[#3A2E2B] placeholder-[#9A8C7F]/60 focus:outline-none"
+                    className="w-full neumorphic-concave px-4 py-2.5 text-xs font-medium theme-text-main placeholder-[color:var(--text-muted)] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5 pb-2">
-                <label className="block text-xs font-black uppercase tracking-wider text-[#9A8C7F]">Developer Docs URL</label>
+                <label className="block text-xs font-black uppercase tracking-wider theme-text-muted">Developer Docs URL</label>
                 <input
                   type="url"
                   placeholder="https://docs.example.org"
                   value={docsUrl}
                   onChange={(e) => setDocsUrl(e.target.value)}
-                  className="w-full neumorphic-concave px-4 py-2.5 text-xs font-medium text-[#3A2E2B] placeholder-[#9A8C7F]/60 focus:outline-none"
+                  className="w-full neumorphic-concave px-4 py-2.5 text-xs font-medium theme-text-main placeholder-[color:var(--text-muted)] focus:outline-none"
                 />
               </div>
 
-              <div className="flex gap-3 justify-end shrink-0 pt-2 border-t border-[#E5DEC9]/60">
+              <div className="flex gap-3 justify-end shrink-0 pt-2 border-t border-white/10">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-[#FAF6ED] hover:bg-[#FFFDF9] text-[#9A8C7F] hover:text-[#3A2E2B] text-xs font-black uppercase tracking-wider px-4 py-3 rounded-xl border border-[#E5DEC9]/60 transition-all cursor-pointer shadow-sm"
+                  className="neumorphic-concave theme-text-muted hover:text-(--text-main) text-xs font-black uppercase tracking-wider px-4 py-3 rounded-xl transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="bg-[#3F6C51] hover:bg-[#2d4d3a] text-white text-xs font-black uppercase tracking-wider px-6 py-3 rounded-xl transition-all shadow-[3px_3px_6px_rgba(63,108,81,0.25),-3px_-3px_6px_#FFFFFF] cursor-pointer flex items-center justify-center"
+                  className="neumorphic-btn-accent text-xs font-black uppercase tracking-wider px-6 py-3 rounded-xl transition-all cursor-pointer flex items-center justify-center disabled:opacity-60"
                 >
                   {submitting ? 'Submitting...' : 'Register Solution'}
                 </button>

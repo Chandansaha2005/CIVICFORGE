@@ -12,6 +12,7 @@ import { ProjectBlueprint } from '../models/ProjectBlueprint';
 import { connectDB } from '../config/db';
 import { computeUrgencyScore } from '../services/scoringService';
 import { getInfrastructureGap } from '../services/dataFusionService';
+import { generateEmbedding } from '../services/geminiService';
 
 async function seed() {
   console.log('Starting CivicForge database seeding process...');
@@ -264,13 +265,19 @@ async function seed() {
     for (const spec of grievanceSpecs) {
       // Calculate gap score
       const { gapScore } = getInfrastructureGap(spec.lat, spec.lng, spec.category);
-      
+
+      // Semantic embedding (Gemini) for Atlas Vector Search — null if no API key.
+      const embedding = await generateEmbedding(spec.description);
+
       const g = await Grievance.create({
         citizen: citizens[spec.citizenIdx]._id,
         category: spec.category,
         description: spec.description,
         inputType: spec.inputType,
         location: { lat: spec.lat, lng: spec.lng, address: spec.address },
+        // GeoJSON mirror for Atlas 2dsphere queries ([lng, lat] order)
+        geoLocation: { type: 'Point', coordinates: [spec.lng, spec.lat] },
+        embedding: embedding || undefined,
         stressScore: spec.stressScore,
         infrastructureGapScore: gapScore,
         recurrenceCount: 1, // temporary

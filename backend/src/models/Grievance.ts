@@ -17,6 +17,16 @@ const GrievanceSchema = new mongoose.Schema({
     lng: { type: Number, required: true },
     address: { type: String, required: true }
   },
+  // GeoJSON Point mirror of `location` for MongoDB Atlas 2dsphere geospatial queries.
+  // Note: GeoJSON coordinate order is [lng, lat] (longitude first).
+  geoLocation: {
+    type: { type: String, enum: ['Point'], default: 'Point' },
+    coordinates: { type: [Number], default: undefined }
+  },
+  // Gemini text-embedding of the description, powering Atlas Vector Search
+  // semantic clustering (grouping grievances by MEANING, not just GPS).
+  // select:false keeps the 768-float vector out of normal API payloads.
+  embedding: { type: [Number], default: undefined, select: false },
   stressScore: { type: Number, default: 0 },
   recurrenceCount: { type: Number, default: 1 },
   infrastructureGapScore: { type: Number, default: 0 },
@@ -33,5 +43,9 @@ const GrievanceSchema = new mongoose.Schema({
   
   createdAt: { type: Date, default: Date.now }
 });
+
+// 2dsphere index enables $geoNear / $near geospatial clustering on Atlas.
+// Built at boot via Grievance.syncIndexes() (see config/db.ts).
+GrievanceSchema.index({ geoLocation: '2dsphere' });
 
 export const Grievance = getModelAdapter('Grievance', GrievanceSchema);

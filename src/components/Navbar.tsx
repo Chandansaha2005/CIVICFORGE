@@ -105,9 +105,6 @@ export const Navbar: React.FC = () => {
                 </div>
                 <span className="text-base font-black tracking-tight theme-text-main uppercase flex items-center">
                   CivicForge 
-                  <span className="theme-accent text-[9px] ml-2 font-mono px-2 py-0.5 neumorphic-concave uppercase hidden sm:inline-block">
-                    Bento System
-                  </span>
                 </span>
               </Link>
 

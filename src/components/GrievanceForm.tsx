@@ -106,6 +106,12 @@ export const GrievanceForm: React.FC<GrievanceFormProps> = ({ onSuccess }) => {
       const response = await axiosClient.post('/api/grievances', formData, { headers: { 'Content-Type': 'multipart/form-data' }});
       if (response.data.success) {
         setSuccessMsg(`Grievance submitted successfully! AI classified this under "${response.data.grievance.category.toUpperCase()}" with an urgency of ${response.data.grievance.urgencyScore}/100.`);
+        // Play the ElevenLabs spoken confirmation (accessibility) if the backend
+        // returned one. Imperative Audio survives this component's unmount below.
+        const audioB64 = response.data.grievance.audioBase64;
+        if (audioB64) {
+          try { new Audio(`data:audio/mpeg;base64,${audioB64}`).play().catch(() => {}); } catch { /* no-op */ }
+        }
         setDescription(''); setPhotoFile(null); setPhotoPreview(null); setAudioBlob(null); setAudioUrl(null);
         setTimeout(() => { onSuccess(); setSuccessMsg(null); }, 3000);
       }

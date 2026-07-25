@@ -46,12 +46,14 @@ The platform operates on a three-layer system designed for transparency, speed, 
 
 ### 1. Citizen Ingestion Layer (The Input)
 * **Omnichannel Submissions:** Residents lodge geotagged infrastructure complaints using text, photos, or raw voice notes.
-* **AI Processing:** Whisper AI translates and transcribes multilingual inputs, while Google Gemini extracts category tags and indexes emotional distress scales.
+* **AI Processing:** Google Gemini transcribes & translates multilingual voice notes, extracts category tags, scores emotional distress, and generates a semantic embedding of every complaint.
+* **Spoken Confirmation:** ElevenLabs reads back a confirmation aloud — accessibility for citizens who can't easily read a screen.
 * **High-Precision Geotagging:** Locks exact coordinates for every grievance.
 
 ### 2. MP Priority Matrix (The Triage)
-* **Geospatial Data Fusion:** Uses MongoDB `2dsphere` location clustering to cross-reference incoming reports against open government datasets, calculating structural travel distance gaps (Gap KM).
+* **Dual Clustering — Geo + Semantic:** MongoDB Atlas `2dsphere` geospatial queries group reports by location, while **Atlas Vector Search** groups them by *meaning* — merging duplicate complaints about the same problem even when worded completely differently, so recurring issues stack urgency. Reports are fused with local census datasets to compute infrastructure gap scores.
 * **Distress Heatmap:** Algorithmically ranks and visualizes infrastructure issues into a live, urgency-scaled spatial heatmap for Members of Parliament.
+* **AI Audio Briefing:** One click has ElevenLabs read the top-priority grievances aloud — a hands-free executive briefing.
 
 ### 3. Developer Marketplace (The Execution)
 * **Solution Registry:** Local tech talent registers functional, open-source prototypes (apps, IoT hardware) tagged to specific municipal categories.
@@ -63,19 +65,22 @@ The platform operates on a three-layer system designed for transparency, speed, 
 ## 🛠️ Technology Stack
 
 **Frontend**
-* React 18 & Vite
-* Tailwind CSS (Custom Neumorphic Engine)
-* Leaflet.js (Interactive Geospatial Mapping)
-* Lucide React (Iconography)
+* React 19 & Vite 6
+* Tailwind CSS v4 (Custom Neumorphic Tri-Theme Engine)
+* Leaflet.js + MarkerCluster (Interactive Geospatial Heatmap)
+* Framer Motion · Lucide React
 
 **Backend & Database**
-* Node.js & Express.js
-* MongoDB (Document storage & `2dsphere` geospatial indexing)
-* Firebase (User Authentication & Asset Storage)
+* Node.js & Express.js (single process — serves the SPA **and** the API)
+* **MongoDB Atlas** — `2dsphere` geospatial indexing **and** Atlas Vector Search
+* JWT + bcrypt authentication · Cloudinary media storage
 
-**Artificial Intelligence**
-* Google Gemini AI SDK (Gemini 2.0 Flash)
-* Whisper AI (Audio processing)
+**Artificial Intelligence & Voice**
+* **Google Gemini** — multimodal voice transcription, categorization, priority scoring, funding-proposal generation, and `text-embedding-004` semantic embeddings
+* **ElevenLabs** — text-to-speech (citizen confirmations + MP audio briefings)
+
+**Deployment**
+* **DigitalOcean App Platform** (spec in `.do/app.yaml`)
 
 ---
 
@@ -83,9 +88,8 @@ The platform operates on a three-layer system designed for transparency, speed, 
 
 ### Prerequisites
 * Node.js (v18 or higher)
-* MongoDB database instance
-* Firebase Project Setup
-* API Keys for Google Gemini and Whisper AI
+* A **MongoDB Atlas** cluster (M0 free tier is enough) — needed for `2dsphere` geo + Vector Search
+* API keys: **Google Gemini** (required for AI), **ElevenLabs** (optional, for voice)
 
 ### Installation
 
@@ -102,19 +106,34 @@ The platform operates on a three-layer system designed for transparency, speed, 
 
 
 3. **Environment Configuration**
-   Create a `.env` file in the root directory and add your keys:
+   Copy `.env.example` to `.env` and fill in your keys:
    ```env
-   MONGO_URI=your_mongodb_connection_string
-   FIREBASE_API_KEY=your_firebase_key
+   MONGO_URI=your_atlas_connection_string
+   JWT_SECRET=your_jwt_secret
    GEMINI_API_KEY=your_gemini_api_key
-   WHISPER_API_KEY=your_whisper_api_key
+   ELEVENLABS_API_KEY=your_elevenlabs_key      # optional (voice)
+   ELEVENLABS_VOICE_ID=your_elevenlabs_voice   # optional (voice)
    ```
 
+4. **Create the Atlas Vector Search index** (Atlas UI → Atlas Search → Create Search Index → JSON editor)
+   on the `CivicForge.grievances` collection, named `grievance_vector_index`:
+   ```json
+   { "fields": [
+       { "type": "vector", "path": "embedding", "numDimensions": 768, "similarity": "cosine" },
+       { "type": "filter", "path": "category" } ] }
+   ```
+   *(The `2dsphere` geo index is created automatically at boot. Vector Search degrades gracefully to geo-only clustering if this index is absent.)*
 
-4. **Run the development server**
+5. **Seed demo data** (wipes + seeds users, grievances, solutions, blueprints)
+   ```bash
+   npm run seed
+   ```
+
+6. **Run the development server**
    ```bash
    npm run dev
    ```
+   Then open `http://localhost:3000`. Demo logins (password `123456`): `mp@civicforge.in`, `citizen1@gmail.com`, `dev1@gmail.com`.
 
 ---
 

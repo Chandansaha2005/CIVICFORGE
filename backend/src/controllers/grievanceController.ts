@@ -2,9 +2,11 @@ import { Response, NextFunction } from 'express';
 import fs from 'fs';
 import { AuthenticatedRequest } from '../middleware/auth';
 import { Grievance } from '../models/Grievance';
-import { categorizeAndScoreText } from '../services/geminiService';
+import { categorizeAndScoreText, generateEmbedding } from '../services/geminiService';
 import { getInfrastructureGap } from '../services/dataFusionService';
-import { computeUrgencyScore, updateClusterMetrics } from '../services/scoringService';
+import { computeUrgencyScore, getGeoNearIds, applyClusterMetrics } from '../services/scoringService';
+import { findSimilarGrievanceIds } from '../services/vectorClusterService';
+import { synthesizeSpeech } from '../services/elevenLabsService';
 import { uploadToCloud } from '../utils/uploadAdapter';
 import { runAIPrioritizationTask } from '../services/aiPrioritizer';
 import { GoogleGenAI } from '@google/genai';
@@ -70,6 +72,10 @@ export async function createGrievance(req: AuthenticatedRequest, res: Response, 
     // AI Classification and tone-urgency scoring
     const { category, stressScore, summary } = await categorizeAndScoreText(description);
 
+    // Semantic embedding (Gemini) — powers Atlas Vector Search meaning-based clustering.
+    // Null when no Gemini key; clustering then falls back to geography only.
+    const embedding = await generateEmbedding(description);
+
     // Geographic data fusion with local Indian census metrics
     const { gapScore } = getInfrastructureGap(latitude, longitude, category);
 
@@ -84,6 +90,9 @@ export async function createGrievance(req: AuthenticatedRequest, res: Response, 
       mediaUrl,
       transcript,
       location: { lat: latitude, lng: longitude, address },
+      // GeoJSON mirror for Atlas 2dsphere queries ([lng, lat] order)
+      geoLocation: { type: 'Point', coordinates: [longitude, latitude] },
+      embedding: embedding || undefined,
       stressScore,
       recurrenceCount: 1,
       infrastructureGapScore: gapScore,
@@ -91,20 +100,38 @@ export async function createGrievance(req: AuthenticatedRequest, res: Response, 
       status: 'pending_review',
       aiLastEvaluatedAt: null
     });
-    
+
     const newGrievance = await grievanceDoc.save();
 
     runAIPrioritizationTask(); // Trigger AI prioritization after new grievance creation
 
-    // Recompute cluster-based recurrence counts and update urgency scores for nearby issues within 2km
-    const { count } = await updateClusterMetrics(category, latitude, longitude);
+    // Cluster membership = union of GEOGRAPHY (2dsphere $geoNear within 2km) and
+    // MEANING (Atlas Vector Search on the Gemini embedding). Merging the two lets
+    // duplicate reports of the same problem stack urgency even when worded differently
+    // or just outside the GPS radius.
+    const geoIds = await getGeoNearIds(category, latitude, longitude, 2000);
+    const semanticIds = await findSimilarGrievanceIds(embedding, category, newGrievance._id);
+    const clusterMemberIds = [newGrievance._id, ...geoIds, ...semanticIds];
+    await applyClusterMetrics(clusterMemberIds);
 
     // Re-fetch the updated grievance to return accurate computed scores
     const updatedGrievance = await Grievance.findById(newGrievance._id);
 
+    // Optional spoken confirmation (ElevenLabs) — accessibility for citizens who
+    // can't easily read a screen. Returns null silently if ELEVENLABS_API_KEY is
+    // unset or on error, so it never blocks or breaks the submission.
+    let audioBase64: string | null = null;
+    const priorityWord = ((updatedGrievance as any)?.urgencyScore ?? 0) > 75 ? 'high' : 'standard';
+    const confirmationLine = `Your ${category} complaint at ${address} has been logged and marked ${priorityWord} priority. Thank you for helping improve your community.`;
+    audioBase64 = await synthesizeSpeech(confirmationLine);
+
+    const responseGrievance = updatedGrievance
+      ? { ...(updatedGrievance as any).toObject(), audioBase64 }
+      : updatedGrievance;
+
     return res.status(201).json({
       success: true,
-      grievance: updatedGrievance
+      grievance: responseGrievance
     });
   } catch (error) {
     // Ensure temp files are cleaned up even if the transaction fails

@@ -63,4 +63,5 @@ report.md
 *.md
 !README.md
 .eslintcache
+help
 .vite/

@@ -233,3 +233,32 @@ export async function generateBlueprint(
     };
   }
 }
+
+/**
+ * Generates a 768-dimension text embedding for a grievance description using
+ * Gemini `gemini-embedding-001` (reduced to 768 dims). Powers Atlas Vector
+ * Search semantic clustering. Returns null when no API key or on error (callers
+ * fall back to geo-only clustering), matching this service's graceful degradation.
+ *
+ * NOTE: outputDimensionality (768) must match the Atlas Vector Search index
+ * (`numDimensions: 768`). Cosine similarity is magnitude-invariant, so the
+ * reduced-dimension vectors need no manual normalization.
+ */
+export async function generateEmbedding(text: string): Promise<number[] | null> {
+  const client = getGeminiClient();
+  if (!client) return null;
+
+  try {
+    const response = await client.models.embedContent({
+      model: 'gemini-embedding-001',
+      contents: text,
+      config: { outputDimensionality: 768 }
+    });
+    // @google/genai returns { embeddings: [{ values: number[] }] }
+    const values = response.embeddings?.[0]?.values;
+    return Array.isArray(values) && values.length > 0 ? values : null;
+  } catch (error) {
+    console.error('Gemini embedding generation error:', error);
+    return null;
+  }
+}

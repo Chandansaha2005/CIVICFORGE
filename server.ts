@@ -14,6 +14,16 @@ async function bootstrap() {
 
   const { default: app } = await import('./backend/src/app');
 
+  // Ensure geospatial (2dsphere) and other schema indexes are built on Atlas.
+  // Done here (not in connectDB) so the models are already registered.
+  try {
+    const { Grievance } = await import('./backend/src/models/Grievance');
+    await Grievance.syncIndexes();
+    console.log('Grievance indexes synced (2dsphere geospatial index ready).');
+  } catch (e) {
+    console.warn('Index sync warning (geo queries may fall back to haversine):', (e as any)?.message);
+  }
+
   const { startAIPrioritizer } = await import('./backend/src/services/aiPrioritizer');
   startAIPrioritizer();
 
