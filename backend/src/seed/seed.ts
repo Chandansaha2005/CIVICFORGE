@@ -34,7 +34,7 @@ async function seed() {
     const hashedPassword = await bcrypt.hash('123456', 10);
 
     // 3. Seed Users
-    console.log('Seeding MP, Citizen, and Developer users...');
+    console.log('Seeding MP, Citizen, and Civic Engineer users...');
     
     // MP User
     const mpUser = await User.create({
@@ -67,7 +67,7 @@ async function seed() {
       citizens.push(citizen);
     }
 
-    // 5 Developers
+    // 5 Civic Engineers
     const developers = [];
     const devNames = [
       'TechForge Labs (Arijit)',
@@ -89,7 +89,7 @@ async function seed() {
     }
 
     // 4. Seed Grievances (15-20 across 3 categories & 3 regions)
-    console.log('Seeding 16 community grievances...');
+    console.log('Seeding 17 community grievances...');
     
     // Grievance specs
     const grievanceSpecs = [
@@ -195,6 +195,20 @@ async function seed() {
         address: 'Outram Road, Park Street area, Kolkata, WB',
         stressScore: 88
       },
+      {
+        // Deliberately placed inside 1 km of the three Behala WATER grievances:
+        // selecting this road issue makes the blueprint's cross-department scan
+        // find them, so the generated execution pipeline lays water lines FIRST
+        // and paves after (the live "flow of thought" demo).
+        citizenIdx: 2,
+        category: 'road',
+        description: 'Service lane along Diamond Harbour Road in Behala is completely broken up. Loose gravel and deep craters make it unusable for rickshaws and school vans.',
+        inputType: 'text',
+        lat: 22.4978,
+        lng: 88.3178,
+        address: 'Diamond Harbour Road Service Lane, Behala, Kolkata, WB',
+        stressScore: 72
+      },
       // Category: electricity
       {
         citizenIdx: 0,
@@ -266,7 +280,7 @@ async function seed() {
       // Calculate gap score
       const { gapScore } = getInfrastructureGap(spec.lat, spec.lng, spec.category);
 
-      // Semantic embedding (Gemini) for Atlas Vector Search — null if no API key.
+      // Semantic embedding (Gemini) for Atlas Vector Search, null if no API key.
       const embedding = await generateEmbedding(spec.description);
 
       const g = await Grievance.create({
@@ -332,12 +346,13 @@ async function seed() {
     // Re-fetch all grievances to get updated objects for blueprint references
     const updatedGrievanceList = await Grievance.find({});
 
-    // 5. Seed Developer Solutions (7 solutions across water, road, electricity, sanitation)
-    console.log('Seeding 7 developer prototypes / solutions...');
+    // 5. Seed Civic Engineer Solutions (7 solutions across water, road, electricity, sanitation)
+    console.log('Seeding 7 civic engineer prototypes / solutions...');
     const solutions = [
       {
         devIdx: 0,
         title: 'AquaSensor IoT: Pipe Leak Detection Network',
+        solutionType: 'hybrid',
         description: 'Low-cost acoustic and flow rate IoT hardware clamps that attach to municipal water distribution pipelines. Uses Edge AI to detect pinpoint pressure drops and leak vibration patterns before pavement collapses occur.',
         techStack: ['Node.js', 'React', 'C++', 'MQTT', 'TensorFlow Lite'],
         targetCategory: 'water',
@@ -348,6 +363,7 @@ async function seed() {
       {
         devIdx: 1,
         title: 'RoadScan AI: Autonomous Pavement Defect Mapper',
+        solutionType: 'software',
         description: 'A mobile application utilizing computer vision that dash-mounts in municipal buses or garbage trucks. Automatically video-scans city streets, classifies potholes, fissures, and crumbling edges with GPS stamps, and exports a GIS maintenance map.',
         techStack: ['Python', 'React Native', 'YOLOv8', 'PostgreSQL', 'FastAPI'],
         targetCategory: 'road',
@@ -359,6 +375,7 @@ async function seed() {
       {
         devIdx: 2,
         title: 'EcoSort Smart Grid: Civic Waste Router',
+        solutionType: 'hybrid',
         description: 'A logistics optimization platform connecting community rubbish bins to public garbage trucks. Uses acoustic fill-level ultrasonic sensors to alert garbage management services of filled bins, optimizing diesel truck paths and avoiding street litter.',
         techStack: ['React', 'Express', 'D3.js', 'Tailwind CSS', 'Leaflet'],
         targetCategory: 'sanitation',
@@ -369,6 +386,7 @@ async function seed() {
       {
         devIdx: 3,
         title: 'GridPulse: Smart Grid Local Voltage Balancer',
+        solutionType: 'software',
         description: 'An open-source telemetry dashboard compiling consumer smart-meter voltage records. Isolates high-tension transformers that are over-loaded, allowing electricity boards to preemptively balance phase voltages and prevent local blackouts.',
         techStack: ['TypeScript', 'React', 'InfluxDB', 'Grafana', 'Go'],
         targetCategory: 'electricity',
@@ -379,6 +397,7 @@ async function seed() {
       {
         devIdx: 4,
         title: 'HydroAlert: Early Warning Drainage Flow Meter',
+        solutionType: 'hardware',
         description: 'Submersible water level and flow speed indicators designed for municipal storm drains. Alerts local administration immediately when drainage speeds fall below thresholds, identifying blockages and preventing heavy waterlogging.',
         techStack: ['Arduino', 'React', 'Tailwind', 'Node-RED'],
         targetCategory: 'water',
@@ -388,6 +407,7 @@ async function seed() {
       {
         devIdx: 1,
         title: 'LightGuard: Photocell Power Theft Detector',
+        solutionType: 'hybrid',
         description: 'Retrofit mesh controllers for solar street lights that detect line-tapping power thefts and wire shortages. Instantly flags inactive street lights on a live administrative dashboard, reducing crime-vulnerable dark zones.',
         techStack: ['React', 'Express', 'Mongoose', 'Leaflet.js'],
         targetCategory: 'electricity',
@@ -397,6 +417,7 @@ async function seed() {
       {
         devIdx: 2,
         title: 'SafeCrossing: Smart Radar Pedestrian Warning Systems',
+        solutionType: 'hardware',
         description: 'A Doppler-radar and smart LED display system that alerts fast-approaching vehicles when pedestrians or students step near school crosswalks. Tracks crossing usage statistics and speed averages, reporting traffic behavior to the municipal planners.',
         techStack: ['React', 'Raspberry Pi', 'Python', 'OpenCV'],
         targetCategory: 'road',
@@ -411,6 +432,7 @@ async function seed() {
         title: spec.title,
         description: spec.description,
         techStack: spec.techStack || ['React', 'Express'],
+        solutionType: spec.solutionType || 'software',
         targetCategory: spec.targetCategory,
         repoUrl: spec.repoUrl || 'https://github.com/civicforge',
         demoUrl: spec.demoUrl || 'https://demo.civicforge.in',
@@ -482,7 +504,7 @@ async function seed() {
       'How does the sensor deal with heavy monsoon flooding?',
       'The radar warning is very smart, school zones are currently death traps.',
       'Very clean code repository!',
-      'This is a model example of citizen-led developer innovation!'
+      'This is a model example of citizen-led civic engineer innovation!'
     ];
 
     for (let i = 0; i < 18; i++) {
@@ -529,12 +551,21 @@ By integrating **HydroAlert Flow Speed and Water Level Meters** into local catch
 - **Phase 2**: Central dashboard configuration and integration with municipal sanitation teams (Month 3).`,
       estimatedBudget: '₹ 8,40,000 INR',
       generatedByAI: true,
-      status: 'draft'
+      status: 'draft',
+      executionStatus: 'not_started',
+      executionPipeline: [
+        { order: 1, title: 'Site survey and drainage capacity mapping', detail: 'Mapping every catch basin and existing storm line first fixes the work sequence and prevents accidental damage in later stages.', category: 'general', status: 'pending', coveredGrievanceIds: [] },
+        { order: 2, title: 'Clear blocked storm drains and rehabilitate lines', detail: 'The drainage network must flow before sensors go in, otherwise the telemetry only confirms what is already blocked.', category: 'water', status: 'pending', coveredGrievanceIds: waterGrievanceIds },
+        { order: 3, title: 'Install HydroAlert flow and level sensor nodes', detail: 'Sensors mount into cleaned basins; installing them earlier would mean removing them again during rehabilitation.', category: 'water', status: 'pending', coveredGrievanceIds: [] },
+        { order: 4, title: 'Municipal dashboard integration and monsoon-readiness walkthrough', detail: 'Final verification happens only after all physical works are complete and reporting live.', category: 'general', status: 'pending', coveredGrievanceIds: [] }
+      ]
     });
 
-    // Pothole cluster (Garia and Park Street road complaints)
+    // Pothole cluster (Garia and Park Street road complaints).
+    // The Behala road grievance is deliberately EXCLUDED: it stays open as the
+    // live-demo entry point for generating a fresh cross-department pipeline.
     const roadGrievanceIds = updatedGrievanceList
-      .filter(g => g.category === 'road')
+      .filter(g => g.category === 'road' && !g.location.address.includes('Behala'))
       .map(g => g._id);
     const roadSolutionId = seededSolutions[1]._id; // RoadScan AI
 
@@ -553,7 +584,17 @@ This initiative deploys the **RoadScan AI Pavement Defect Mapper** on 15 municip
 - **Budget Priority Routing**: Prioritizes municipal asphalt patching trucks to highest-urgency zones.`,
       estimatedBudget: '₹ 14,50,000 INR',
       generatedByAI: true,
-      status: 'draft'
+      // Seeded mid-execution so the Briefs tab shows a live pipeline (with
+      // history and an active stage) the moment it opens, without spending a
+      // Gemini call during a demo.
+      status: 'approved',
+      executionStatus: 'executing',
+      executionPipeline: [
+        { order: 1, title: 'Mount RoadScan units on municipal buses and calibrate', detail: 'Detection hardware must ride the fleet before any defect data exists to plan repairs from.', category: 'road', status: 'done', coveredGrievanceIds: [] },
+        { order: 2, title: 'Baseline city-wide defect scan and GIS map generation', detail: 'A complete defect map decides where repair crews go first; patching before scanning wastes crew-hours on low-priority spots.', category: 'road', status: 'done', coveredGrievanceIds: [] },
+        { order: 3, title: 'Priority patching of highest-urgency pothole zones', detail: 'Crews work the ranked map top-down so the most dangerous craters close first.', category: 'road', status: 'active', coveredGrievanceIds: [] },
+        { order: 4, title: 'Post-repair verification scans and sign-off', detail: 'The same buses re-scan repaired stretches to confirm quality before the project closes.', category: 'road', status: 'pending', coveredGrievanceIds: [] }
+      ]
     });
 
     console.log('Seeding completed successfully!');
@@ -566,7 +607,7 @@ This initiative deploys the **RoadScan AI Pavement Defect Mapper** on 15 municip
     console.log(`\nRole: Citizen (5 Users seeded)`);
     console.log(`  - Emails:   citizen1@gmail.com, citizen2@gmail.com, citizen3@gmail.com...`);
     console.log(`  - Password: 123456`);
-    console.log(`\nRole: Developer (5 Users seeded)`);
+    console.log(`\nRole: Civic Engineer (5 Users seeded)`);
     console.log(`  - Emails:   dev1@gmail.com, dev2@gmail.com, dev3@gmail.com...`);
     console.log(`  - Password: 123456`);
     console.log('=====================================================================\n');

@@ -2,6 +2,24 @@ import { GoogleGenAI, Type } from '@google/genai';
 
 let aiInstance: GoogleGenAI | null = null;
 
+/**
+ * Model tiers, split by call volume rather than by importance.
+ *
+ * FAST_MODEL handles everything that runs per grievance: categorisation, the
+ * background priority daemon, and briefing translation. These are short,
+ * schema-constrained tasks a lite model does well, and they dominate request
+ * count, so this is where cost and free-tier quota are won or lost.
+ *
+ * QUALITY_MODEL handles the funding blueprint only. That is one call per MP
+ * authorisation and it produces the document an MP actually reads, so it is
+ * worth the stronger model.
+ *
+ * Free-tier request quota is per project PER MODEL, so these two tiers also draw
+ * from separate buckets. Override either without touching code.
+ */
+const FAST_MODEL = process.env.GEMINI_FAST_MODEL || 'gemini-3.5-flash-lite';
+const QUALITY_MODEL = process.env.GEMINI_QUALITY_MODEL || 'gemini-flash-lite-latest';
+
 function getGeminiClient(): GoogleGenAI {
   if (!aiInstance) {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -60,7 +78,7 @@ export async function categorizeAndScoreText(description: string): Promise<{ cat
 
   try {
     const response = await client.models.generateContent({
-      model: 'gemini-3.5-flash',
+      model: FAST_MODEL,
       contents: `You are a civic analytics AI. Analyze this citizen complaint description and classify it into one of these categories: 'water', 'road', 'electricity', 'sanitation', 'health', 'education', 'other'. Also estimate a stress/urgency score (0 to 100) based on the tone, language intensity, safety hazards, and distress level of the text. Finally, write a one-sentence summary of the grievance.
       
       Grievance Description: "${description}"`,
@@ -113,8 +131,8 @@ export async function evaluatePriorityAndSuitability(grievance: any, solutions: 
 
   try {
     const response = await client.models.generateContent({
-      model: 'gemini-3.5-flash',
-      contents: `You are a civic triage AI. Analyze this community problem and the available developer solutions.
+      model: FAST_MODEL,
+      contents: `You are a civic triage AI. Analyze this community problem and the available civic engineer solutions.
       
       PROBLEM:
       Description: ${grievance.description}
@@ -157,25 +175,138 @@ export async function evaluatePriorityAndSuitability(grievance: any, solutions: 
   }
 }
 
+export interface PipelineStage {
+  order: number;
+  title: string;
+  detail: string;
+  category: string;
+  coveredGrievanceIds: string[];
+}
+
+const PIPELINE_CATEGORIES = ['water', 'road', 'electricity', 'sanitation', 'health', 'education', 'general'];
+
+/** Depth order for the fallback: deepest utilities first, so nothing built on top is reopened. */
+const SUBSURFACE_ORDER = ['water', 'sanitation', 'electricity'];
+
+/**
+ * Deterministic execution pipeline used when Gemini is unavailable. Follows the
+ * same site-engineering rule the prompt teaches the model: subsurface utilities
+ * (water, sewage, electrical ducts) before any surface work, restoration last.
+ */
+function buildFallbackPipeline(grievances: any[], nearbyGrievances: any[]): PipelineStage[] {
+  const clusterCategory = grievances[0]?.category || 'general';
+  const idsByCategory = new Map<string, string[]>();
+  for (const g of [...grievances, ...nearbyGrievances]) {
+    const cat = g.category || 'general';
+    idsByCategory.set(cat, [...(idsByCategory.get(cat) || []), String(g._id)]);
+  }
+
+  const stages: Omit<PipelineStage, 'order'>[] = [{
+    title: 'Site survey and utility mapping',
+    detail: 'Mapping every existing utility line first prevents accidental damage and fixes the work sequence for all later stages.',
+    category: 'general',
+    coveredGrievanceIds: []
+  }];
+
+  for (const cat of SUBSURFACE_ORDER) {
+    if (!idsByCategory.has(cat)) continue;
+    const labels: Record<string, string> = {
+      water: 'Excavate and lay water supply and drainage lines',
+      sanitation: 'Install sewage and waste conduits',
+      electricity: 'Lay electrical cable ducts and crossings'
+    };
+    stages.push({
+      title: labels[cat],
+      detail: 'Subsurface work goes in before anything is built on top, so the finished surface is never dug up again for a utility that was already known.',
+      category: cat,
+      coveredGrievanceIds: idsByCategory.get(cat) || []
+    });
+  }
+
+  if (!SUBSURFACE_ORDER.includes(clusterCategory)) {
+    stages.push({
+      title: clusterCategory === 'road'
+        ? 'Roadbed preparation, drainage grading and paving'
+        : `Primary ${clusterCategory} works`,
+      detail: 'Surface construction begins only after every underground utility on this stretch is in place.',
+      category: clusterCategory,
+      coveredGrievanceIds: idsByCategory.get(clusterCategory) || []
+    });
+  }
+
+  stages.push({
+    title: 'Surface restoration and quality walkthrough',
+    detail: 'Final finishing, site clearance and a verification walkthrough before the works are signed off.',
+    category: 'general',
+    coveredGrievanceIds: []
+  });
+
+  return stages.map((s, i) => ({ ...s, order: i + 1 }));
+}
+
+/**
+ * Cleans a model-emitted pipeline: reindexes order, clamps categories to the
+ * known set, and drops any coveredGrievanceIds that were not in the lists we
+ * actually showed the model (never trust generated ids).
+ */
+function normalizePipeline(raw: any, allowedIds: Set<string>): PipelineStage[] {
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+  return raw
+    .filter((s: any) => s && typeof s.title === 'string' && s.title.trim())
+    .sort((a: any, b: any) => (Number(a.order) || 0) - (Number(b.order) || 0))
+    .slice(0, 8)
+    .map((s: any, i: number) => ({
+      order: i + 1,
+      title: String(s.title).trim(),
+      detail: String(s.detail || '').trim(),
+      category: PIPELINE_CATEGORIES.includes(s.category) ? s.category : 'general',
+      coveredGrievanceIds: (Array.isArray(s.coveredGrievanceIds) ? s.coveredGrievanceIds : [])
+        .map((id: any) => String(id))
+        .filter((id: string) => allowedIds.has(id))
+    }));
+}
+
 export async function generateBlueprint(
-  grievances: any[], 
-  solution: any
-): Promise<{ title: string, summary: string, estimatedBudget: string }> {
+  grievances: any[],
+  solution: any,
+  nearbyGrievances: any[] = []
+): Promise<{ title: string, summary: string, estimatedBudget: string, executionPipeline: PipelineStage[] }> {
   const client = getGeminiClient();
-  
+
   const formattedGrievances = grievances.map((g, idx) => `
-    [Grievance ${idx + 1}]
+    [Grievance ${idx + 1}] (id: ${g._id})
     Category: ${g.category}
     Description: ${g.description}
     Location: ${g.location?.address || 'Kolkata, West Bengal'} (Lat: ${g.location?.lat}, Lng: ${g.location?.lng})
     Urgency Score: ${g.urgencyScore}/100
   `).join('\n');
 
+  const formattedNearby = nearbyGrievances.length
+    ? nearbyGrievances.map((g) => `
+    (id: ${g._id}) [${g.category}] ${g.description} — ${g.location?.address || 'nearby'}`).join('\n')
+    : 'None found.';
+
+  const allowedIds = new Set<string>([...grievances, ...nearbyGrievances].map(g => String(g._id)));
+
+  // Costing guidance differs sharply by delivery type, and the budget line is the
+  // number the MP actually authorises, so the type is stated explicitly.
+  const BUDGET_GUIDANCE: Record<string, string> = {
+    software: 'This is a SOFTWARE solution. Budget for development, hosting, integration with municipal systems, training and support. There is no per-unit hardware cost.',
+    hardware: 'This is a HARDWARE solution. Budget per unit and state the unit count, plus site installation labour, power and connectivity, spares, calibration and annual maintenance.',
+    hybrid: 'This is a HYBRID hardware plus software solution. Budget the physical units (per-unit cost x unit count, installation, maintenance) AND the software platform (development, hosting, integration) as separate line items.'
+  };
+
+  const solutionType = solution?.solutionType || 'software';
+
   const formattedSolution = solution ? `
     Title: ${solution.title}
     Description: ${solution.description}
-    Tech Stack: ${solution.techStack?.join(', ')}
-  ` : 'No developer solution prototype has been submitted yet. Design a standard infrastructure-level solution.';
+    Delivery Type: ${solutionType}
+    Tech Stack / Components: ${solution.techStack?.join(', ')}
+
+    BUDGETING RULES FOR THIS DELIVERY TYPE:
+    ${BUDGET_GUIDANCE[solutionType] || BUDGET_GUIDANCE.software}
+  ` : 'No civic engineer solution prototype has been submitted yet. Design a standard infrastructure-level solution.';
 
   if (!client) {
     // Return standard fallback proposal text
@@ -183,27 +314,37 @@ export async function generateBlueprint(
     const summary = `Proposal Draft:
     This blueprint addresses ${grievances.length} public complaints regarding ${grievances[0]?.category || 'civic infrastructure'}.
     Location Focus: ${grievances[0]?.location?.address || 'Local Constituency Cluster'}.
-    The planned intervention leverages developer ideas to repair and monitor public facilities, ensuring direct relief.
+    The planned intervention leverages civic engineer-built solutions to repair and monitor public facilities, ensuring direct relief.
     Project Goals:
     1. Resolve immediate safety and utility concerns.
     2. Deliver scalable, citizen-vetted software or structural monitoring modules.`;
     const estimatedBudget = `₹ ${grievances.length * 150000} INR`;
-    return { title, summary, estimatedBudget };
+    return { title, summary, estimatedBudget, executionPipeline: buildFallbackPipeline(grievances, nearbyGrievances) };
   }
 
   try {
     const response = await client.models.generateContent({
-      model: 'gemini-3.5-flash',
+      model: QUALITY_MODEL,
       contents: `You are an elite policy planner and budget director for a Member of Parliament (MP).
-      Write a professional, funding-ready constituency development proposal draft (Project Blueprint) that aggregates the following citizen grievances and addresses them with the selected developer solution.
+      Write a professional, funding-ready constituency development proposal draft (Project Blueprint) that aggregates the following citizen grievances and addresses them with the selected civic engineer solution.
       
       CITIZEN GRIEVANCE CLUSTER:
       ${formattedGrievances}
       
-      MATCHED DEVELOPER SOLUTION:
+      MATCHED CIVIC ENGINEER SOLUTION:
       ${formattedSolution}
-      
-      Generate a professional Title for the project, an executive Summary detailing the problem, solution, implementation plan, and public impact, and an estimated budget (in Indian Rupees, formatted clearly, e.g. "₹ 8,50,000 INR"). Make it realistic, highly detailed, and compelling.`,
+
+      NEARBY OPEN ISSUES FROM OTHER DEPARTMENTS (within 1 km of this cluster):
+      ${formattedNearby}
+
+      Generate a professional Title for the project, an executive Summary detailing the problem, solution, implementation plan, and public impact, and an estimated budget (in Indian Rupees, formatted clearly, e.g. "₹ 8,50,000 INR"). Make it realistic, highly detailed, and compelling.
+
+      Also generate an executionPipeline: 3 to 6 ordered stages describing how the work is physically sequenced on site, the way a site engineer plans it.
+      SEQUENCING RULES:
+      - Underground or subsurface work (water pipelines, sewage, electrical cable ducts) MUST come before surface work (roadbed, paving, footpaths). A freshly built surface must never be dug up again for a utility that was already known.
+      - If a NEARBY OPEN ISSUE can be solved by work inside this same project (for example laying water lines under a road before it is paved), give that work its own early stage and put that issue's id in the stage's coveredGrievanceIds.
+      - Every stage's detail must state in one sentence why this stage comes before the next one.
+      - coveredGrievanceIds may ONLY contain ids that appear in the lists above. Use an empty array otherwise.`,
       config: {
         responseMimeType: 'application/json',
         responseSchema: {
@@ -211,26 +352,78 @@ export async function generateBlueprint(
           properties: {
             title: { type: Type.STRING, description: "A formal government project title" },
             summary: { type: Type.STRING, description: "A detailed, markdown-formatted executive summary, describing the community grievances, the technical/infrastructure solution, the implementation timeline, and the positive civic outcomes." },
-            estimatedBudget: { type: Type.STRING, description: "A realistic budget estimate in INR (e.g. '₹ 12,00,000 INR')" }
+            estimatedBudget: { type: Type.STRING, description: "A realistic budget estimate in INR (e.g. '₹ 12,00,000 INR')" },
+            executionPipeline: {
+              type: Type.ARRAY,
+              description: "Ordered on-site work stages, subsurface utilities before surface construction.",
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  order: { type: Type.INTEGER, description: "1-based position in the sequence" },
+                  title: { type: Type.STRING, description: "Short imperative stage name, e.g. 'Excavate and lay water supply lines'" },
+                  detail: { type: Type.STRING, description: "What the stage covers and why it precedes the next stage" },
+                  category: { type: Type.STRING, description: "One of: water, road, electricity, sanitation, health, education, general" },
+                  coveredGrievanceIds: { type: Type.ARRAY, items: { type: Type.STRING }, description: "ids from the provided lists that this stage resolves; empty if none" }
+                },
+                required: ['order', 'title', 'detail', 'category']
+              }
+            }
           },
-          required: ['title', 'summary', 'estimatedBudget']
+          required: ['title', 'summary', 'estimatedBudget', 'executionPipeline']
         }
       }
     });
 
     const result = JSON.parse(response.text || '{}');
+    const pipeline = normalizePipeline(result.executionPipeline, allowedIds);
     return {
       title: result.title || `Development Blueprint: ${grievances[0]?.category?.toUpperCase()} restoration`,
-      summary: result.summary || `Detailed policy summary of ${grievances.length} grievances solved via developer prototype.`,
-      estimatedBudget: result.estimatedBudget || '₹ 5,00,000 INR'
+      summary: result.summary || `Detailed policy summary of ${grievances.length} grievances solved via civic engineer prototype.`,
+      estimatedBudget: result.estimatedBudget || '₹ 5,00,000 INR',
+      executionPipeline: pipeline.length ? pipeline : buildFallbackPipeline(grievances, nearbyGrievances)
     };
   } catch (error) {
     console.error('Gemini API blueprint generation error:', error);
     return {
       title: `Development Project Blueprint: ${grievances[0]?.category || 'Civic'} infrastructure upgrade`,
       summary: `A cohesive constituency plan compiling ${grievances.length} separate public grievances.`,
-      estimatedBudget: `₹ ${grievances.length * 200000} INR`
+      estimatedBudget: `₹ ${grievances.length * 200000} INR`,
+      executionPipeline: buildFallbackPipeline(grievances, nearbyGrievances)
     };
+  }
+}
+
+/**
+ * Translates text into `targetLanguage` for the MP audio briefing, so ElevenLabs
+ * can speak the summary in the language the MP picked.
+ *
+ * The output is fed straight to text-to-speech, so the prompt forbids any
+ * preamble, quoting or markdown.
+ *
+ * Returns null when the translation could not be produced (no API key, rate
+ * limit, empty reply). It deliberately does NOT fall back to the original text:
+ * callers must be able to tell that they are about to speak English, otherwise
+ * the UI highlights Hindi while English plays and the failure is invisible.
+ */
+export async function translateText(text: string, targetLanguage: string): Promise<string | null> {
+  const client = getGeminiClient();
+  if (!client || !text?.trim()) return null;
+
+  try {
+    const response = await client.models.generateContent({
+      model: FAST_MODEL,
+      contents: `Translate the text below into ${targetLanguage}.
+      It will be read aloud by a text-to-speech engine, so reply with ONLY the translated text: no preamble, no quotation marks, no markdown.
+      Translate EVERY word into the native script of ${targetLanguage}. Do not leave ordinary words in Latin script.
+      Keep numbers as digits. Place names may stay in their usual form.
+
+      Text: "${text}"`
+    });
+
+    return response.text?.trim() || null;
+  } catch (error) {
+    console.error('Gemini translation error:', error);
+    return null;
   }
 }
 

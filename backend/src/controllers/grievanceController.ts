@@ -35,9 +35,11 @@ export async function createGrievance(req: AuthenticatedRequest, res: Response, 
 
     // Handle photo or voice note uploads from multer
     if (req.file) {
-      // 1. Upload to Cloudinary (via your existing adapter)
-      const cloudUrl = await uploadToCloud(req.file.path);
-      mediaUrl = cloudUrl;
+      // 1. Upload to Cloudinary (via your existing adapter). If Cloudinary is
+      // unavailable this falls back to serving the file from /uploads, in which
+      // case the local file must survive (see the cleanup step below).
+      const upload = await uploadToCloud(req.file.path);
+      mediaUrl = upload.url;
 
       // 2. Transcribe and Translate Audio using Gemini
       if (inputType === 'voice') {
@@ -61,8 +63,12 @@ export async function createGrievance(req: AuthenticatedRequest, res: Response, 
         description = transcript; // Make transcribed text the description
       }
 
-      // 3. Clean up the local temp file to prevent server bloat
-      fs.unlinkSync(req.file.path);
+      // 3. Clean up the local temp file to prevent server bloat, but ONLY when the
+      // media actually reached Cloudinary. On the local fallback this file IS the
+      // asset behind mediaUrl, so deleting it would leave a broken /uploads/ link.
+      if (!upload.storedLocally) {
+        fs.unlinkSync(req.file.path);
+      }
     }
 
     if (!description && inputType !== 'voice') {
@@ -72,7 +78,7 @@ export async function createGrievance(req: AuthenticatedRequest, res: Response, 
     // AI Classification and tone-urgency scoring
     const { category, stressScore, summary } = await categorizeAndScoreText(description);
 
-    // Semantic embedding (Gemini) — powers Atlas Vector Search meaning-based clustering.
+    // Semantic embedding (Gemini) powers Atlas Vector Search meaning-based clustering.
     // Null when no Gemini key; clustering then falls back to geography only.
     const embedding = await generateEmbedding(description);
 
@@ -117,7 +123,7 @@ export async function createGrievance(req: AuthenticatedRequest, res: Response, 
     // Re-fetch the updated grievance to return accurate computed scores
     const updatedGrievance = await Grievance.findById(newGrievance._id);
 
-    // Optional spoken confirmation (ElevenLabs) — accessibility for citizens who
+    // Optional spoken confirmation (ElevenLabs), accessibility for citizens who
     // can't easily read a screen. Returns null silently if ELEVENLABS_API_KEY is
     // unset or on error, so it never blocks or breaks the submission.
     let audioBase64: string | null = null;
@@ -172,6 +178,32 @@ export async function getAllGrievances(req: AuthenticatedRequest, res: Response,
       .populate('citizen');
 
     return res.json({ success: true, grievances });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Constituency-wide transparency counters for the citizen dashboard: how many
+ * problems the community has reported, how many are inside a funded project
+ * (matched), and how many are resolved. Counts only, no grievance content, so it
+ * is safe to expose to every authenticated role (citizens cannot list all
+ * grievances, and should not need to just to see the totals).
+ */
+export async function getGrievanceStats(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  try {
+    const byStatus: Record<string, number> = {};
+    const groups = await Grievance.aggregate([
+      { $group: { _id: '$status', count: { $sum: 1 } } }
+    ]);
+    for (const g of groups) byStatus[g._id] = g.count;
+
+    const resolved = byStatus['resolved'] || 0;
+    const inProgress = byStatus['matched'] || 0;
+    const open = (byStatus['pending_review'] || 0) + (byStatus['verified'] || 0);
+    const reported = resolved + inProgress + open;
+
+    return res.json({ success: true, stats: { reported, open, inProgress, resolved } });
   } catch (error) {
     next(error);
   }

@@ -3,10 +3,13 @@ import axiosClient from '../../api/axiosClient';
 import { HeatmapView } from '../../components/HeatmapView';
 import { PriorityMatrixTable } from '../../components/PriorityMatrixTable';
 import { SolutionCard } from '../../components/SolutionCard';
+import { BriefingPlayer } from '../../components/BriefingPlayer';
+import { ExecutionPipeline, PipelineStage } from '../../components/ExecutionPipeline';
+import { GrievanceMedia } from '../../components/GrievanceMedia';
 import {
   Landmark, Map, TableProperties, Cpu, FileText, CheckCircle,
   Loader2, Sparkles, ArrowRight, ShieldCheck, Check, IndianRupee,
-  MapPin, Volume2
+  MapPin
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -28,6 +31,7 @@ interface Blueprint {
   _id: string; mp: { name: string }; grievanceCluster: Grievance[];
   matchedSolution: Solution | null; generatedTitle: string; generatedSummary: string;
   estimatedBudget: string; status: 'draft' | 'approved'; createdAt: string;
+  executionPipeline?: PipelineStage[]; executionStatus?: string;
 }
 
 type TabType = 'heatmap' | 'priority' | 'matchmaker' | 'blueprints';
@@ -43,8 +47,6 @@ export const MPDashboard: React.FC = () => {
   const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
   const [loadingBlueprints, setLoadingBlueprints] = useState(false);
   const [loadingGeneral, setLoadingGeneral] = useState(true);
-  const [loadingBriefing, setLoadingBriefing] = useState(false);
-  const briefingAudioRef = React.useRef<HTMLAudioElement | null>(null);
 
   const fetchGrievances = async () => {
     try {
@@ -184,33 +186,7 @@ export const MPDashboard: React.FC = () => {
               <Sparkles className="w-4 h-4" />
               <span>Force AI Sync</span>
             </button>
-            <button
-              onClick={async () => {
-                // Stop any briefing already playing so a re-click replaces it.
-                if (briefingAudioRef.current) { briefingAudioRef.current.pause(); briefingAudioRef.current = null; }
-                const toastId = toast.loading('Generating your audio briefing...');
-                setLoadingBriefing(true);
-                try {
-                  const res = await axiosClient.get('/api/priority-matrix/briefing');
-                  if (res.data.success && res.data.audioBase64) {
-                    const audio = new Audio(`data:audio/mpeg;base64,${res.data.audioBase64}`);
-                    briefingAudioRef.current = audio;
-                    audio.play().catch(() => {});
-                    toast.success('Playing your priority briefing.', { id: toastId });
-                  } else {
-                    toast.success(res.data.script || 'Briefing ready (voice unavailable).', { id: toastId });
-                  }
-                } catch (e) {
-                  toast.error('Failed to generate briefing.', { id: toastId });
-                } finally {
-                  setLoadingBriefing(false);
-                }
-              }}
-              className="flex items-center gap-2 px-5 py-3.5 neumorphic-concave theme-text-main hover:brightness-110 rounded-[18px] text-xs font-black uppercase transition-colors"
-            >
-              {loadingBriefing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Volume2 className="w-4 h-4" />}
-              <span>Audio Briefing</span>
-            </button>
+            <BriefingPlayer />
             <div className="text-center neumorphic-concave px-6 py-3 rounded-[18px]">
               <span className="block text-xl font-black text-red-500">
                 {grievances.filter(g => g.status === 'verified' || g.status === 'pending_review').length}
@@ -282,7 +258,8 @@ export const MPDashboard: React.FC = () => {
                         {selectedGrievance.category}
                       </span>
                       <span className="text-xs font-black theme-accent flex items-center gap-1.5">
-                        <Sparkles className="w-4 h-4" /> AI Priority: {selectedGrievance.urgencyScore}/100
+                        <Sparkles className="w-4 h-4" /> AI Priority: {selectedGrievance.aiPriorityScore ?? 0}/100
+                        <span className="theme-text-muted font-bold">· Urgency {selectedGrievance.urgencyScore}/100</span>
                       </span>
                     </div>
 
@@ -292,6 +269,9 @@ export const MPDashboard: React.FC = () => {
                         <MapPin className="w-3.5 h-3.5" /> Located near: {selectedGrievance.location?.address}
                       </p>
                     </div>
+
+                    {/* Photo evidence / original voice note attached by the citizen */}
+                    <GrievanceMedia inputType={selectedGrievance.inputType} mediaUrl={selectedGrievance.mediaUrl} />
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="neumorphic-concave p-4 rounded-[20px] text-center">
@@ -349,7 +329,7 @@ export const MPDashboard: React.FC = () => {
                 )}
               </div>
 
-              {/* Matched Developer Prototypes */}
+              {/* Matched Civic Engineer Prototypes */}
               <div className="w-full space-y-6">
                 <div className="flex items-center space-x-2 px-2">
                   <Cpu className="w-6 h-6 theme-accent" />
@@ -363,11 +343,11 @@ export const MPDashboard: React.FC = () => {
                 ) : loadingMatches ? (
                   <div className="neumorphic-convex rounded-4xl p-16 text-center">
                     <Loader2 className="w-8 h-8 theme-accent animate-spin mx-auto" />
-                    <p className="theme-text-muted text-xs font-black mt-4 uppercase tracking-wider">Querying developer registry...</p>
+                    <p className="theme-text-muted text-xs font-black mt-4 uppercase tracking-wider">Querying civic engineer registry...</p>
                   </div>
                 ) : matchedSolutions.length === 0 ? (
                   <div className="neumorphic-convex rounded-4xl p-16 text-center space-y-4">
-                    <p className="theme-text-main text-base font-black">No developer prototypes registered for this sector.</p>
+                    <p className="theme-text-main text-base font-black">No civic engineer prototypes registered for this sector.</p>
                     <button
                       onClick={handleGenerateProposal}
                       disabled={generatingProposal}
@@ -463,6 +443,15 @@ export const MPDashboard: React.FC = () => {
                       <div className="whitespace-pre-wrap leading-relaxed text-sm font-medium font-mono neumorphic-concave theme-text-main p-6 rounded-3xl max-h-96 overflow-y-auto custom-scrollbar border border-white/5">
                         {b.generatedSummary}
                       </div>
+
+                      {/* Execution Pipeline: AI-sequenced work stages, advanced by the MP */}
+                      <ExecutionPipeline
+                        blueprintId={b._id}
+                        blueprintStatus={b.status}
+                        executionStatus={b.executionStatus || 'not_started'}
+                        stages={b.executionPipeline || []}
+                        onChanged={() => { fetchBlueprints(); fetchGrievances(); }}
+                      />
 
                       {/* Approval Actions */}
                       <div className="flex justify-between items-center pt-4">
