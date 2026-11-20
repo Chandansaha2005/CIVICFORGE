@@ -31,7 +31,21 @@ export const HeatmapView: React.FC = () => {
 
     if (!mapInstanceRef.current) {
       mapInstanceRef.current = L.map(mapContainerRef.current, { center: [22.535, 88.390], zoom: 12 });
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 20 }).addTo(mapInstanceRef.current);
+      
+      const cartoKey = import.meta.env.VITE_CARTO_API_KEY;
+      const tileUrl = cartoKey
+        ? `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png?key=${cartoKey}`
+        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+      const attribution = cartoKey
+        ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+      L.tileLayer(tileUrl, {
+        subdomains: 'abcd',
+        maxZoom: 20,
+        attribution
+      }).addTo(mapInstanceRef.current);
       
       // Initialize the Cluster Group with Dynamic Severity Coloring
       layerGroupRef.current = L.markerClusterGroup({
